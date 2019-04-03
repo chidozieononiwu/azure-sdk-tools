@@ -52,10 +52,6 @@ jobs:
       releaseNotes: 'Tools for managing build pipelines'
       assets: '$(Build.ArtifactStagingDirectory)/sdk-tools.zip'
 
-  - script: |
-      twine check $(Build.ArtifactStagingDirectory)/*
-    displayName: 'Verify Readme'
-
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
     condition: succeededOrFailed()
