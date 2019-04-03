@@ -40,18 +40,6 @@ jobs:
       includeRootFolder: false
       archiveFile: '$(Build.ArtifactStagingDirectory)/sdk-tools.zip'
 
-  - task: GitHubRelease@0
-    displayName: 'GitHub release of public sdk tools'
-    condition: and(succeededOrFailed(), ne(variables['System.TeamProject'], 'public'))
-    inputs:
-      gitHubConnection: GithubReleases
-      repositoryName: 'azure/azure-sdk-tools'
-      tagSource: manual
-      tag: 'sdk-tools_$(Build.BuildId)'
-      releaseNotesSource: input
-      releaseNotes: 'Tools for managing build pipelines'
-      assets: '$(Build.ArtifactStagingDirectory)/sdk-tools.zip'
-
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifacts'
     condition: succeededOrFailed()
