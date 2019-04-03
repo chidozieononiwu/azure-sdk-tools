@@ -30,8 +30,6 @@ jobs:
       SourceFolder: '$(Build.SourcesDirectory)'
       Contents: 'scripts/**/*.py'
       TargetFolder: '$(Build.BinariesDirectory)/sdk-tools'
-      OverWrite: true
-      flattenFolders: true
   
   - task: ArchiveFiles@2
     displayName: 'Archive files for GitHub release'
