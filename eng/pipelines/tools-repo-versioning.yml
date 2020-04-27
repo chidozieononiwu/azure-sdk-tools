@@ -22,15 +22,15 @@ jobs:
 
     steps:
     - checkout: self
-    - checkout: azure-sdk-build-tools
 
-    - task: PowerShell@2
-      displayName: 'Verify and Create Tag on Repo'
-      inputs:
-        targetType: filePath
-        filePath: $(Agent.BuildDirectory)/s/azure-sdk-tools/scripts/powershell/version-repo-with-tag.ps1
-        arguments: >
-          -RepoName $(ToolsRepoName) -SourceDir $(Agent.BuildDirectory)/s
-          -CommitSHA $(CommitSHA) -PATForAPI $(GitHubPAT-REPO) -BuildNumber $(Build.BuildNumber)
-        pwsh: true
-      timeoutInMinutes: 5
+    - pwsh: |
+        $tag = "$(Build.Repository.Name)_$(Build.BuildNumber)"
+        $tag = $tag.Substring($tag.IndexOf('/') + 1)
+
+        Write-Host "Tagging $(Build.Repository.Name) with $tag"
+        git -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" tag -a $tag -m "Append version tag: $tag to $(Build.Repository.Name)"
+
+        $PushURL = "https://$(GitHubPAT-REPO)@github.com/$(Build.Repository.Name).git"
+        Write-Host $PushURL
+        git push $PushURL origin/master $tag
+      workingDirectory: $(Build.SourcesDirectory)
