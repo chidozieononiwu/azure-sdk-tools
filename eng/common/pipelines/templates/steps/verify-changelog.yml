@@ -1,0 +1,20 @@
+parameters:
+  PackageName: 'not-specified'
+  ServiceName: 'not-specified'
+
+steps:
+  - pwsh: |
+      Import-Module "$(Build.SourcesDirectory)/eng/common/scripts/modules/common-manifest.psd1"
+      $Language = "$(Build.Repository.Name)".Substring("$(Build.Repository.Name)".LastIndexOf('-') + 1)
+      $PackageProp = Get-PkgProperties -PackageName ${{ parameters.PackageName }} -ServiceName ${{ parameters.ServiceName }} -Language $Language -RepoRoot $(Build.SourcesDirectory)
+      Write-Host ($PackageProp | Format-List | Out-String)
+
+      $ReleaseNotes = (& "$(Build.SourcesDirectory)/eng/common/Extract-ReleaseNotes.ps1" -ChangeLogLocation $PackageProp.pkgChangeLogPath -VersionString $PackageProp.pkgVersion -IncludeTitle $true) -Split [Environment]::NewLine
+
+      # Verify Header Has Unreleased or an has accurate date
+      # Verify Header does not have unreleased and the date id the current date for an outgoing release
+      # Verify that content is present for and out going release
+
+      Write-Host ($ReleaseNotes | Format-Table | Out-String)
+
+    displayName: Verify ChangeLog
