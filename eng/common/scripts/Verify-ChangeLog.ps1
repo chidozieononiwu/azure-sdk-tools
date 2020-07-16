@@ -7,7 +7,6 @@ param (
   [string]$RepoRoot,
   [ValidateSet("net", "java", "js", "python")]
   [string]$Language,
-  [string]$RepoName,
   [boolean]$ForRelease = $False
 )
 
@@ -23,19 +22,7 @@ if ($ChangeLogLocation -and $VersionString)
 else
 {
   Import-Module (Join-Path $PSScriptRoot modules Package-Properties.psm1)
-  if ([System.String]::IsNullOrEmpty($Language))
-  {
-    if ($RepoName -match "azure-sdk-for-(?<lang>[^-]+)")
-    {
-      $Language = $matches["lang"]
-    }
-    else
-    {
-      Write-Error "Failed to set Language automatically. Please pass the appropriate Language as a parameter."
-      exit 1
-    }
-  }
-
+ 
   $PackageProp = Get-PkgProperties -PackageName $PackageName -ServiceName $ServiceName -Language $Language -RepoRoot $RepoRoot
   $validChangeLog = Confirm-ChangeLogEntry -ChangeLogLocation $PackageProp.pkgChangeLogPath -VersionString $PackageProp.pkgVersion -ForRelease $ForRelease
 }
