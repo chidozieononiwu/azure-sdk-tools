@@ -47,7 +47,7 @@ stages:
           vmImage: 'vs2017-win2016'
 
         steps:
-          - script: 'dotnet pack $(ProjectFile) -o $(Build.ArtifactStagingDirectory) -warnaserror $(VersioningProps)'
+          - script: 'dotnet pack $(ProjectFile) -o $(Build.ArtifactStagingDirectory) -warnaserror $(VersioningProps) -c release'
             displayName: 'Build and Package'
             env:
               DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
