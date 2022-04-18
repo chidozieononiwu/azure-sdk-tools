@@ -3,6 +3,10 @@ parameters:
   ServiceDirectory: ''
   TestPipeline: false
 
+# This step creates get the next valid version for release and updates the package version and CHANGELOG accordingly.
+# This all happens without persisting the changes.
+# This is needed to facilitate easy release of the template package for testing the pipelines.
+
 steps:
 - ${{ if eq(parameters.TestPipeline, 'true') }}:
     - task: PowerShell@2
