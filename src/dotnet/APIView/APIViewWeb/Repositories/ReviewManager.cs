@@ -828,37 +828,38 @@ namespace APIViewWeb.Repositories
                     _telemetryClient.TrackTrace($"Failed to retrieve review with reviewId : {review.ReviewId} containing revision with revisionId {revision.RevisionId}");
                 }
 
-                var codeFileA = await _codeFileRepository.GetCodeFileAsync(revision, false);
-                var htmlLinesA = codeFileA.RenderReadOnly(false);
-                var textLinesA = codeFileA.RenderText(false);
+                var latestRevisionCodeFile = await _codeFileRepository.GetCodeFileAsync(revision, false);
+                var latestRevisionHtmlLines = latestRevisionCodeFile.Render(false);
+                var latestRevisionTextLines = latestRevisionCodeFile.RenderText(false);
                 ReviewRevisionModelList updatedRevisions = new ReviewRevisionModelList(review);
-                updatedRevisions.Add(revision);
 
                 foreach (var rev in review.Revisions)
                 {
                     if (rev.RevisionId !=  revision.RevisionId)
                     {
-                        var lineNumbersForHeadingOfSectiosnWithChanges = new HashSet<int>();
-                        var codeFileB = await _codeFileRepository.GetCodeFileAsync(rev, false);
-                        var htmlLinesB = codeFileB.RenderReadOnly(false);
-                        var textLinesB = codeFileB.RenderText(false);
+                        HashSet<int> lineNumbersForHeadingOfSectionWithDiff = new HashSet<int>();
+                        var earlierRevisionCodeFile = await _codeFileRepository.GetCodeFileAsync(rev, false);
+                        var earlierRevisionHtmlLines = earlierRevisionCodeFile.RenderReadOnly(false);
+                        var earlierRevisionTextLines = earlierRevisionCodeFile.RenderText(false);
 
-                        var diffLines = InlineDiff.Compute(textLinesB, textLinesA, htmlLinesB, htmlLinesA);
+                        var diffLines = InlineDiff.Compute(earlierRevisionTextLines, latestRevisionTextLines, earlierRevisionHtmlLines, latestRevisionHtmlLines);
 
                         foreach (var diffLine in diffLines)
                         {
                             if (diffLine.Kind == DiffLineKind.Unchanged && (diffLine.Line.SectionKey != null && diffLine.OtherLine.SectionKey != null))
                             {
-                                var rootNodeA = codeFileA.GetCodeLineSectionRoot((int)diffLine.Line.SectionKey);
-                                var rootNodeB = codeFileB.GetCodeLineSectionRoot((int)diffLine.OtherLine.SectionKey);
-                                var diffSectionRoot = ComputeSectionDiff(rootNodeB, rootNodeA, codeFileB, codeFileA);
-                                lineNumbersForHeadingOfSectiosnWithChanges.UnionWith(codeFileA.GetLineNumbersForSectionHeadingsWithDiff(diffSectionRoot));
+                                var latestRevisionRootNode = latestRevisionCodeFile.GetCodeLineSectionRoot((int)diffLine.Line.SectionKey);
+                                var earlierRevisionRootNode = earlierRevisionCodeFile.GetCodeLineSectionRoot((int)diffLine.OtherLine.SectionKey);
+                                var diffSectionRoot = ComputeSectionDiff(earlierRevisionRootNode, latestRevisionRootNode, earlierRevisionCodeFile, latestRevisionCodeFile);
+                                if (latestRevisionCodeFile.ChildNodeHasDiff(diffSectionRoot))
+                                    lineNumbersForHeadingOfSectionWithDiff.Add((int)diffLine.Line.LineNumber);
                             }
                         }
-                        rev.HeadingsOfSectionsWithDiff.Add(revision.RevisionId, lineNumbersForHeadingOfSectiosnWithChanges);
+                        rev.HeadingsOfSectionsWithDiff.Add(revision.RevisionId, lineNumbersForHeadingOfSectionWithDiff);
                         updatedRevisions.Add(rev);
                     }
                 }
+                updatedRevisions.Add(revision);
                 review.Revisions = updatedRevisions;
                 await _reviewsRepository.UpsertReviewAsync(review);
             }

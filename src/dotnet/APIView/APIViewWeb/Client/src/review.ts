@@ -138,6 +138,7 @@ $(() => {
       $.each(subSectionDescendants, function (index, value) {
         var rowClasses = $(value).attr("class");
         var rowLineNumber = $(value).find(".line-number>span").text();
+        console.log(`lineNumber: ${rowLineNumber}`);
         if (rowClasses) {
           if (rowClasses.match(new RegExp(`lvl_${subSectionLevel}_parent_${subSectionHeadingPosition}`)) && rowLineNumber == lineNumber)
             startHiding = true;
@@ -231,6 +232,7 @@ $(() => {
       if (subSectionContentClass) {
         const subSectionClass = headingRowClasses.filter(c => c.match(/.*lvl_[0-9]+_parent.*/))[0];
         const lineNumber = headingRow.find(".line-number>span").text();
+        console.log(`lineNumber: ${lineNumber}`);
         if (subSectionClass) {
           const subSectionLevel = subSectionClass.split('_')[1];
           const subSectionHeadingPosition = subSectionClass.split('_')[3];

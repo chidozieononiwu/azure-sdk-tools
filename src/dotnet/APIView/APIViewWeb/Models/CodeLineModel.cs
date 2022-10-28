@@ -13,7 +13,7 @@ namespace APIViewWeb.Models
     {
         public CodeLineModel(DiffLineKind kind, CodeLine codeLine, CommentThreadModel commentThread,
             CodeDiagnostic[] diagnostics, int lineNumber, int[] documentedByLines = null,
-            bool isDiffView = false, int? diffSectionId = null, int? otherLineSectionKey = null, HashSet<int> headingsOfSectionsWithDiff = null)
+            bool isDiffView = false, int? diffSectionId = null, int? otherLineSectionKey = null, HashSet<int> headingsOfSectionsWithDiff = null, bool isSubHeadingWithDiffInSection = false)
         {
             CodeLine = codeLine;
             CommentThread = commentThread;
@@ -24,13 +24,14 @@ namespace APIViewWeb.Models
             IsDiffView = isDiffView;
             DiffSectionId = diffSectionId;
             OtherLineSectionKey = otherLineSectionKey;
-            HeadingsOfSectionsWithDiff = headingsOfSectionsWithDiff;
+            HeadingsOfSectionsWithDiff = headingsOfSectionsWithDiff ?? new HashSet<int>();
+            IsSubHeadingWithDiffInSection = isSubHeadingWithDiffInSection;
         }
 
         public CodeLineModel(CodeLineModel codeLineModel, DiffLineKind kind = DiffLineKind.Unchanged, CodeLine codeLine = default(CodeLine),
             CommentThreadModel commentThread = default(CommentThreadModel), CodeDiagnostic[] diagnostics = null,
             int lineNumber = default(int), int[] documentedByLines = null, bool isDiffView = false, int? diffSectionId = null,
-            int? otherLineSectionKey = null, HashSet<int> headingsOfSectionsWithDiff = null)
+            int? otherLineSectionKey = null, HashSet<int> headingsOfSectionsWithDiff = null, bool isSubHeadingWithDiffInSection = false)
         {
             CodeLine = (codeLine.Equals(default(CodeLine))) ? codeLineModel.CodeLine : codeLine;
             CommentThread = commentThread ?? codeLineModel.CommentThread;
@@ -42,6 +43,7 @@ namespace APIViewWeb.Models
             DiffSectionId = diffSectionId ?? codeLineModel.DiffSectionId;
             OtherLineSectionKey = otherLineSectionKey ?? codeLineModel.OtherLineSectionKey;
             HeadingsOfSectionsWithDiff = headingsOfSectionsWithDiff ?? codeLineModel.HeadingsOfSectionsWithDiff;
+            IsSubHeadingWithDiffInSection = (!isSubHeadingWithDiffInSection) ? codeLineModel.IsSubHeadingWithDiffInSection : isSubHeadingWithDiffInSection;
         }
 
         public CodeLine CodeLine { get; }
@@ -54,5 +56,6 @@ namespace APIViewWeb.Models
         public int? DiffSectionId { get; }
         public int? OtherLineSectionKey { get; }
         public HashSet<int> HeadingsOfSectionsWithDiff { get; }
+        public bool IsSubHeadingWithDiffInSection { get; }
     }
 }

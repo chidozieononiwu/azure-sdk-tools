@@ -64,9 +64,7 @@
     }
 
     if (Model.Kind == DiffLineKind.Unchanged && 
-        Model.HeadingsOfSectionsWithDiff != null && 
-        Model.HeadingsOfSectionsWithDiff.Contains(Model.LineNumber) && 
-        (isSectionHeading || isSubSectionHeading))
+        ((isSubSectionHeading && Model.IsSubHeadingWithDiffInSection) || (isSectionHeading && Model.HeadingsOfSectionsWithDiff.Contains(Model.LineNumber))))
     {
         lineClass += " code-delta";
         isHeadingWithDelta = true;
@@ -112,15 +110,16 @@
                     {
                         if (Model.IsDiffView)
                         {
+                            var paddValue = new string('0', Model.LineNumber.ToString().Length);
                             if (Model.Kind == DiffLineKind.Added)
                             {
-                                <td class="@lineNumberClass"><span class="invisible">@Model.LineNumber</span></td>
+                                <td class="@lineNumberClass"><span class="invisible">@paddValue</span></td>
                                 <td class="@lineNumberClass"><span>@Model.LineNumber</span></td>
                             }
                             else if (Model.Kind == DiffLineKind.Removed)
                                 {
                                 <td class="@lineNumberClass"><span>@Model.LineNumber</span></td>
-                                <td class="@lineNumberClass"><span class="invisible">@Model.LineNumber</span></td>
+                                <td class="@lineNumberClass"><span class="invisible">@paddValue</span></td>
                             }
                             else
                             {

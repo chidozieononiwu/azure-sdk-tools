@@ -158,13 +158,14 @@ namespace APIViewWeb.Models
 
         public InlineDiffLine<CodeLine>[] GetDiffCodeLineSection(TreeNode<InlineDiffLine<CodeLine>> sectionNode, bool skipDiff = false)
         {
-            var result = new List<InlineDiffLine<CodeLine>>();
+            var diffLines = new List<InlineDiffLine<CodeLine>>();
 
             using (IEnumerator<TreeNode<InlineDiffLine<CodeLine>>> enumerator = sectionNode.GetEnumerator())
             {
                 TreeNode<InlineDiffLine<CodeLine>> detachedLeafParent = null;
                 InlineDiffLine<CodeLine> diffLine;
                 int ? detachedLeafParentLineNo = null;
+                var childNodeHasDiff = false;
 
                 enumerator.MoveNext();
                 while (enumerator.MoveNext())
@@ -203,50 +204,44 @@ namespace APIViewWeb.Models
 
                     if (detachedLeafParent != null && detachedLeafParent.IsParentOf(node))
                     {
-                        diffLine = new InlineDiffLine<CodeLine>(new CodeLine(node.Data.Line, lineClass: lineClasses, lineNumber: detachedLeafParentLineNo, indent: level), node.Data.Kind);
-                        result.Add(diffLine);
+                        childNodeHasDiff = ChildNodeHasDiff(node);
+                        var codeLine = new CodeLine(node.Data.Line, lineClass: lineClasses, lineNumber: detachedLeafParentLineNo, indent: level);
+                        diffLine = new InlineDiffLine<CodeLine>(codeLine, node.Data.Kind, childNodeHasDiff);
+                        diffLines.Add(diffLine);
                         detachedLeafParentLineNo++;
                     }
                     else
                     {
-                        diffLine = new InlineDiffLine<CodeLine>(new CodeLine(node.Data.Line, lineClass: lineClasses, indent: level), node.Data.Kind);
-                        result.Add(diffLine);
+                        childNodeHasDiff = ChildNodeHasDiff(node);
+                        var codeLine = new CodeLine(node.Data.Line, lineClass: lineClasses, indent: level);
+                        diffLine = new InlineDiffLine<CodeLine>(codeLine, node.Data.Kind, childNodeHasDiff);
+                        diffLines.Add(diffLine);
                     }
                 }
             }
-            return result.ToArray();
+            return diffLines.ToArray();
         }
 
-        public HashSet<int> GetLineNumbersForSectionHeadingsWithDiff(TreeNode<InlineDiffLine<CodeLine>> sectionNode)
+        public bool ChildNodeHasDiff (TreeNode<InlineDiffLine<CodeLine>> sectionNode)
         {
-            var lineNumbersForHeadingOfSectiosnWithChanges = new HashSet<int>();
-            int rootLineNumber = (int)sectionNode.Data.Line.LineNumber;
-
+            bool childNodeHasDiff = false;
             using (IEnumerator<TreeNode<InlineDiffLine<CodeLine>>> enumerator = sectionNode.GetEnumerator())
             {
                 enumerator.MoveNext();
                 while (enumerator.MoveNext())
                 {
                     var node = enumerator.Current;
+                    if (node.WasDetachedLeafParent)
+                        continue;
 
                     if (node.Data.Kind == DiffLineKind.Added || node.Data.Kind == DiffLineKind.Removed)
                     {
-                        var nodeParent = node.Parent;
-                        if (nodeParent.WasDetachedLeafParent)
-                        {
-                            nodeParent = nodeParent.Parent;
-                        }
-                        lineNumbersForHeadingOfSectiosnWithChanges.Add((int)nodeParent.Data.Line.LineNumber);
+                        childNodeHasDiff = true;
+                        break;
                     }
                 }
             }
-
-            if (lineNumbersForHeadingOfSectiosnWithChanges.Count > 0)
-            {
-                lineNumbersForHeadingOfSectiosnWithChanges.Add(rootLineNumber);
-            }
-
-            return lineNumbersForHeadingOfSectiosnWithChanges;
+            return childNodeHasDiff;
         }
 
         public TreeNode<CodeLine> GetCodeLineSectionRoot(int sectionId, RenderType renderType = RenderType.Normal, bool showDocumentation = false, bool skipDiff = false)

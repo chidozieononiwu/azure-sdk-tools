@@ -64,7 +64,7 @@ namespace APIViewWeb.Pages.Assemblies
         public InlineDiffLine<CodeLine>[] DiffLines { get; set; }
         public ReviewCommentsModel Comments { get; set; }
         public HashSet<GithubUser> TaggableUsers { get; set; }
-        public HashSet<int> HeadingsOfSectionsWithDiff { get; set; }
+        public HashSet<int> HeadingsOfSectionsWithDiff { get; set; } = new HashSet<int>();
 
         /// <summary>
         /// The number of active conversations for this iteration
@@ -289,7 +289,8 @@ namespace APIViewWeb.Pages.Assemblies
             DiffRevision = DiffRevisionId != null ?
                 PreviousRevisions.Single(r => r.RevisionId == DiffRevisionId) :
                 DiffRevision;
-            HeadingsOfSectionsWithDiff = (DiffRevisionId != null && Revision.HeadingsOfSectionsWithDiff.ContainsKey(DiffRevisionId)) ? Revision.HeadingsOfSectionsWithDiff[DiffRevisionId] : new HashSet<int>();
+            HeadingsOfSectionsWithDiff = (DiffRevision != null && DiffRevision.HeadingsOfSectionsWithDiff.ContainsKey(Revision.RevisionId)) ? 
+                DiffRevision.HeadingsOfSectionsWithDiff[Revision.RevisionId] : new HashSet<int>();
         }
 
         private InlineDiffLine<CodeLine>[] CreateDiffOnlyLines(InlineDiffLine<CodeLine>[] lines)
@@ -364,7 +365,8 @@ namespace APIViewWeb.Pages.Assemblies
                             isDiffView: true,
                             diffSectionId: diffLine.Line.SectionKey != null ? ++diffSectionId : null,
                             otherLineSectionKey: diffLine.Kind == DiffLineKind.Unchanged ? diffLine.OtherLine.SectionKey : null,
-                            headingsOfSectionsWithDiff: HeadingsOfSectionsWithDiff
+                            headingsOfSectionsWithDiff: HeadingsOfSectionsWithDiff,
+                            isSubHeadingWithDiffInSection: diffLine.IsHeadingWithDiffInSection
                         );
                     }
                     else
@@ -384,8 +386,8 @@ namespace APIViewWeb.Pages.Assemblies
                              isDiffView: true,
                              diffSectionId: diffLine.Line.SectionKey != null ? ++diffSectionId : null,
                              otherLineSectionKey: diffLine.Kind == DiffLineKind.Unchanged ? diffLine.OtherLine.SectionKey : null,
-                             headingsOfSectionsWithDiff: HeadingsOfSectionsWithDiff
-
+                             headingsOfSectionsWithDiff: HeadingsOfSectionsWithDiff,
+                             isSubHeadingWithDiffInSection: diffLine.IsHeadingWithDiffInSection
                          );
                         documentedByLines.Clear();
                         return c;
