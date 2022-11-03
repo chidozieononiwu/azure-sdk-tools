@@ -1,4 +1,4 @@
-﻿$(() => {
+$(() => {
   const defaultPageSize = 50;
   const reviewsFilterPartial = $( '#reviews-filter-partial' );
   const languageFilter = $( '#language-filter-bootstraps-select' );
@@ -91,7 +91,7 @@
       url: uri
     }).done(function(partialViewResult) {
       filter.html(partialViewResult);
-      (<any>filter).selectpicker('refresh');
+      //(<any>filter).SumoSelect();
     });
   }
 
@@ -102,10 +102,18 @@
   });
 
   // Update list of reviews when any dropdown is changed
-  [languageFilter, stateFilter, statusFilter, typeFilter].forEach(function(value, index) {
-    value.on('hidden.bs.select', function() {
-      updateListedReviews();
+  [languageFilter, stateFilter, statusFilter, typeFilter].forEach(function (value, index) {
+    (<any>value).SumoSelect({
+      isClickAwayOk: true,
+      triggerChangeCombined: true,
+      selectAll: true,
+      search: true,
+      prefix: 'language',
+      clearAll : true
     });
+    //value.on('hidden.bs.select', function() {
+    //  updateListedReviews();
+    //});
   });
 
   // Update list of reviews based on search input
@@ -119,10 +127,10 @@
 
   // Reset list of reviews as well as filters
   resetButton.on('click', function(e) {
-    (<any>languageFilter).selectpicker('deselectAll');
-    (<any>stateFilter).selectpicker('deselectAll').selectpicker('val', 'Open');
-    (<any>statusFilter).selectpicker('deselectAll');
-    (<any>typeFilter).selectpicker('deselectAll');
+    //(<any>languageFilter).selectpicker('deselectAll');
+    //(<any>stateFilter).selectpicker('deselectAll').selectpicker('val', 'Open');
+    //(<any>statusFilter).selectpicker('deselectAll');
+    //(<any>typeFilter).selectpicker('deselectAll');
     searchBox.val('');
     updateListedReviews();
   });
