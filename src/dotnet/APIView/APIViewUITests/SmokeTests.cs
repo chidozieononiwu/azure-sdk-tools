@@ -106,7 +106,7 @@ namespace APIViewUITests
     public class SmokeTests : IClassFixture<SmokeTestsFixture>
     {
         SmokeTestsFixture _fixture;
-        const int WaitTime = 120;
+        const int WaitTime = 60;
 
         public SmokeTests(SmokeTestsFixture fixture)
         {

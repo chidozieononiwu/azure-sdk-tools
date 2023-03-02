@@ -89,6 +89,7 @@ steps:
     APIVIEW_ENDPOINT: "http://localhost:5000"
     APIVIEW_BLOB__CONNECTIONSTRING: '${{ parameters.AzuriteConnectionString }}'
     APIVIEW_COSMOS__CONNECTIONSTRING: '${{ parameters.CosmosEmulatorConnectionString }}'
+    APIVIEW_APPROVERS: 'azure-sdk'
   inputs:
     command: test
     projects: src/dotnet/APIView/**/APIViewUITests.csproj
