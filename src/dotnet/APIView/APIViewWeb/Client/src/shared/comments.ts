@@ -19,25 +19,16 @@ $(() => {
   const githubLoginTagMatch = /(\s|^)@([a-zA-Z\d-]+)/g;
 
   $(document).on("click", ".commentable", e => {
-    var rowSectionClasses = getCodeRowSectionClasses(e.target.id);
-    showCommentBox(e.target.id, rowSectionClasses);
+    showCommentBox(e.target.id);
     e.preventDefault();
   });
 
   $(document).on("click", ".line-comment-button", e => {
     let id = getElementId(e.target);
-    let inlineId = getElementId(e.target, "data-inline-id");
     if (id) {
-      var rowSectionClasses = getCodeRowSectionClasses(id);
-      if (inlineId) {
-        let groupNo = inlineId.replace(`${id}-tr-`, '');
-        showCommentBox(id, rowSectionClasses, groupNo);
-      }
-      else {
-        showCommentBox(id, rowSectionClasses);
-      }
-  }
-  e.preventDefault();
+        showCommentBox(id);
+    }
+    e.preventDefault();
   });
 
   $(document).on("click", ".comment-cancel-button", e => {
@@ -78,11 +69,6 @@ $(() => {
   $(document).on("submit", "form[data-post-update='comments']", e => {
     const form = <HTMLFormElement><any>$(e.target);
     let lineId = getElementId(e.target);
-    let inlineRowNo = $(e.target).find(".new-comment-content small");
-
-    if (inlineRowNo.length == 0) {
-      inlineRowNo = getReplyGroupNo($(e.target));
-    }
 
     if (lineId) {
       let commentRow = getCommentsRow(lineId);
@@ -93,11 +79,6 @@ $(() => {
       serializedForm.push({ name: "revisionId", value: getRevisionId(e.target) });
       serializedForm.push({ name: "sectionClass", value: rowSectionClasses });
       serializedForm.push({ name: "taggedUsers", value: getTaggedUsers(e.target) });
-      
-      if (inlineRowNo.length > 0) {
-        let groupNo = inlineRowNo.text().replace("ROW-", '');
-        serializedForm.push({ name: "groupNo", value: groupNo });
-      }
       
       $.ajax({
         type: "POST",
@@ -113,15 +94,8 @@ $(() => {
 
   $(document).on("click", ".review-thread-reply-button", e => {
     let lineId = getElementId(e.target);
-    let inlineRowNo = getReplyGroupNo($(e.target).parent().parent());
     if (lineId) {
-      if (inlineRowNo.length > 0) {
-        let groupNo = inlineRowNo.text().replace("ROW-", '');
-        showCommentBox(lineId,'', groupNo);
-      }
-      else {
         showCommentBox(lineId);
-      }
     }
     e.preventDefault();
   });
@@ -340,14 +314,6 @@ $(() => {
     });
   });
 
-  $(document).on("click", ".comment-group-anchor-link", e => {
-    e.preventDefault();
-    var inlineId = $(e.currentTarget).prop("hash").substring(1);
-    var inlineRow = $(`tr[data-inline-id='${inlineId}']`);
-    inlineRow[0].scrollIntoView();
-    highlightCurrentRow(inlineRow, true);
-  });
-
   $("#jump-to-first-comment").on("click", function () {
     var commentRows = $('.comment-row');
     var displayedCommentRows = getDisplayedCommentRows(commentRows, false, true);
@@ -437,70 +403,23 @@ $(() => {
     }
   }
 
-  function showCommentBox(id: string, classes: string = '', groupNo: string = '') {
+  function showCommentBox(id: string) {
     let commentForm;
     let commentsRow = getCommentsRow(id);
-    let commentRowClasses = "comment-row";
-    if (classes) {
-      commentRowClasses = `${commentRowClasses} ${classes}`;
-    }
 
     if (commentsRow.length === 0) {
-      commentForm = createCommentForm(groupNo);
+      commentForm = createCommentForm();
       commentsRow =
-      $(`<tr class="${commentRowClasses}" data-line-id="${id}">`)
+              $(`<tr class="comment-row" data-line-id="${id}">`)
               .append($("<td colspan=\"3\">")
-                .append(commentForm));
+              .append(commentForm));
 
       commentsRow.insertAfter(getDiagnosticsRow(id).get(0) || getCodeRow(id).get(0));
     }
     else {
-      // there is one or more comment rows - insert form
-      let replyArea = $(commentsRow).find(".review-thread-reply");
-      let targetReplyArea = replyArea.first();
-      let firstReplyId = targetReplyArea.attr("data-reply-id");
-      let insertAtBegining = false;
-
-      if (groupNo) {
-        replyArea.siblings(".comment-form").remove();
-        if (Number(groupNo) < Number(firstReplyId)) {
-          insertAtBegining = true;
-        }
-        else {
-          replyArea.each(function (index, value) {
-            let replyId = $(value).attr("data-reply-id");
-
-            if (replyId == groupNo) {
-              targetReplyArea = $(value);
-              return false;
-            }
-
-            if (Number(replyId) > Number(groupNo)) {
-              return false;
-            }
-
-            targetReplyArea = $(value);
-          });
-        }
-      }
-      else {
-        let rowGroupNo = getReplyGroupNo($(targetReplyArea));
-        if (rowGroupNo.length > 0) {
-          insertAtBegining = true;
-        }
-      }
-
-      commentForm = $(targetReplyArea).next();
-      if (!commentForm.hasClass("comment-form")) {
-        if (insertAtBegining) {
-          let commentThreadContent = $(targetReplyArea).closest(".comment-thread-contents");
-          $(createCommentForm(groupNo)).prependTo(commentThreadContent);
-        }
-        else {
-          commentForm = $(createCommentForm(groupNo)).insertAfter(targetReplyArea);
-        }
-      }
-      replyArea.hide();
+      // there is a comment row - insert form
+      let reply = $(commentsRow).find(".review-thread-reply");
+      reply.hide();
       commentForm.show();
       commentsRow.show(); // ensure that entire comment row isn't being hidden
     }
@@ -515,12 +434,8 @@ $(() => {
     commentForm.find(".new-thread-comment-text").focus();
   }
 
-  function createCommentForm(groupNo: string = '') {
-    var commentForm = $("#js-comment-form-template").children().clone();
-    if (groupNo) {
-      commentForm.find("form .new-comment-content").prepend(`<span class="badge badge-pill badge-light mb-2"><small>ROW-${groupNo}</small></span>`);
-    }
-    return commentForm;
+  function createCommentForm() {
+    return $("#js-comment-form-template").children().clone();
   }
 
   function createCommentEditForm(commentId: string, text: string) {
