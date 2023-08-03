@@ -27,7 +27,7 @@ using APIView.Identity;
 using APIViewWeb.Managers;
 using APIViewWeb.Hubs;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.DataProtection; // Need to be same version in all APIView Apps
 
 namespace APIViewWeb
 {
@@ -84,6 +84,11 @@ namespace APIViewWeb
                 options.Conventions.AddPageRoute("/Assemblies/Index", "");
             });
 
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new System.IO.DirectoryInfo(Configuration["SharedKeysPath"]))
+                .SetApplicationName("SharedAPIViewApps");
+                //.ProtectKeysWithCertificate("{CERTIFICATE THUMBPRINT}"); // For Production See https://learn.microsoft.com/en-us/aspnet/core/security/cookie-sharing?view=aspnetcore-7.0#encrypt-data-protection-keys-at-rest
+
             services.AddSingleton<IBlobCodeFileRepository, BlobCodeFileRepository>();
             services.AddSingleton<IBlobOriginalsRepository, BlobOriginalsRepository>();
             services.AddSingleton<IBlobUsageSampleRepository, BlobUsageSampleRepository>();
@@ -134,6 +139,8 @@ namespace APIViewWeb
                 })
                 .AddCookie(options =>
                 {
+                    options.Cookie.Name = ".APIView.SharedCookie";
+                    options.Cookie.Path = "/";
                     options.LoginPath = "/Login";
                     options.AccessDeniedPath = "/Unauthorized";
                 })

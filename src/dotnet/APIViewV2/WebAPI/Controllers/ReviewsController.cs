@@ -12,8 +12,8 @@ public class ReviewsController : BaseApiController
     }
 
     [HttpGet]
-    public IEnumerable<WeatherForecast> GetReviews()
+    public ActionResult GetReviews()
     {
-
+        return Ok();
     }
 }

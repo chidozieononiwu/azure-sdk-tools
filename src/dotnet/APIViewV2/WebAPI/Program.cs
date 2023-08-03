@@ -1,7 +1,29 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
 
 // Add services to the container.
 
+
+builder.Services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(builder.Configuration["SharedKeysPath"]))
+                .SetApplicationName("SharedAPIViewApps");
+//.ProtectKeysWithCertificate("{CERTIFICATE THUMBPRINT}"); // For Production See https://learn.microsoft.com/en-us/aspnet/core/security/cookie-sharing?view=aspnetcore-7.0#encrypt-data-protection-keys-at-rest
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+.AddCookie(options => {
+    options.Cookie.Name = ".APIView.SharedCookie";
+    options.Cookie.Path = "/";
+});
+
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -18,8 +40,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().WithOrigins("http://localhost:4200"));
 app.MapControllers();
 
