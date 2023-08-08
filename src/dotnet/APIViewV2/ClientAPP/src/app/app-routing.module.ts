@@ -1,7 +1,18 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-const routes: Routes = [];
+import { IndexPageComponent } from './_components/index-page/index-page.component';
+import { AuthGuard } from './_guards/auth.guard';
+
+const routes: Routes = [
+  {path: '', component: IndexPageComponent, canActivate: [AuthGuard]},
+  {path: '',
+    runGuardsAndResolvers: 'always',
+    canActivate: [AuthGuard],
+    children: []
+  },
+  {path: '**', component: IndexPageComponent, pathMatch: 'full'}
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
