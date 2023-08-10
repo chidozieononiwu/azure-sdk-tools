@@ -1,30 +1,30 @@
+using System.Reflection.Metadata.Ecma335;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.Managers;
+using WebAPI.Models;
 
 namespace WebAPI.Controllers;
 
 public class ReviewsController : BaseApiController
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
     private readonly ILogger<ReviewsController> _logger;
+    private readonly IReviewManager _reviewManager;
 
-    public ReviewsController(ILogger<ReviewsController> logger)
+    public ReviewsController(ILogger<ReviewsController> logger, IReviewManager reviewManager)
     {
         _logger = logger;
+        _reviewManager = reviewManager;
     }
 
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    [HttpGet(Name = "GetReviews")]
+    public async Task<ReviewsListModel> Get(int offset = 0, int limit = 100)
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        var result = await _reviewManager.GetReviewsAsync(offset, limit);
+        ReviewsListModel reviewListModel = new ReviewsListModel()
         {
-            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
+            TotalNumberOfReviews = result.TotalNumberOfReviews,
+            Reviews = result.Reviews.ToList()
+        };
+        return reviewListModel; 
     }
 }

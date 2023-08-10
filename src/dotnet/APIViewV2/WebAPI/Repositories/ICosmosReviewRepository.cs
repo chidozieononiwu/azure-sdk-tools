@@ -1,8 +1,8 @@
 using WebAPI.Models;
 
-namespace WebAPI.Managers
+namespace WebAPI.Repositories
 {
-    public interface IReviewManager
+    public interface ICosmosReviewRepository
     {
         /// <summary>
         /// Retrieve Reviews from the Reviews container in CosmosDb after applying filter to the query

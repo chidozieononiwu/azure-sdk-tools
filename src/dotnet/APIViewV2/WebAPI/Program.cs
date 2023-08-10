@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Azure.Cosmos;
+using WebAPI.Managers;
+using WebAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
@@ -37,6 +40,9 @@ builder.Services.AddCors(options => {
             .AllowCredentials();
     });
 });
+builder.Services.AddSingleton(new CosmosClient(builder.Configuration["Cosmos:ConnectionString"]));
+builder.Services.AddSingleton<ICosmosReviewRepository, CosmosReviewRepository>();
+builder.Services.AddSingleton<IReviewManager, ReviewManager>();
 
 var app = builder.Build();
 

@@ -9,6 +9,7 @@ import { NavBarComponent } from './_components/shared/nav-bar/nav-bar.component'
 import { IndexPageComponent } from './_components/index-page/index-page.component';
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
+import { TableModule } from 'primeng/table';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { ButtonModule } from 'primeng/button';
     BrowserAnimationsModule,
     ButtonModule,
     MenubarModule,
-    HttpClientModule
+    HttpClientModule,
+    TableModule
   ],
   providers: [],
   bootstrap: [AppComponent]
