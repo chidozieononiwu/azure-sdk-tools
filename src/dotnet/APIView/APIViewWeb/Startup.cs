@@ -213,8 +213,16 @@ namespace APIViewWeb
             }
 
             services.AddAuthorization();
+            services.AddCors(options => {
+                options.AddPolicy("AllowCredentials", builder =>
+                {
+                    builder.WithOrigins("https://localhost:4200")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
             services.AddSingleton<IConfigureOptions<AuthorizationOptions>, ConfigureOrganizationPolicy>();
-
             services.AddSingleton<IAuthorizationHandler, OrganizationRequirementHandler>();
             services.AddSingleton<IAuthorizationHandler, CommentOwnerRequirementHandler>();
             services.AddSingleton<IAuthorizationHandler, ReviewOwnerRequirementHandler>();
@@ -267,6 +275,7 @@ namespace APIViewWeb
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("AllowCredentials");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

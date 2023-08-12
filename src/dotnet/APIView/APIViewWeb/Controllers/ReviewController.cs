@@ -1,8 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using APIViewWeb.Extensions;
 using APIViewWeb.Filters;
+using APIViewWeb.Helpers;
 using APIViewWeb.Managers;
+using APIViewWeb.Models;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
