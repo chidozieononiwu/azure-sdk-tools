@@ -290,6 +290,7 @@ namespace APIViewWeb
             var queryStringBuilder = new StringBuilder(@"
 SELECT VALUE {
     Id: r.id,
+    LastRevisionName: ARRAY_SLICE(r.Revisions, -1)[0].Name,
     Name: r.Name,
     Author: r.Author,
     NoOfRevisions: ARRAY_LENGTH(r.Revisions),
@@ -299,8 +300,7 @@ SELECT VALUE {
     FilterType: r.FilterType,
     IsApproved: ARRAY_SLICE(r.Revisions, -1)[0].IsApproved,
     IsApprovedForFirstRelease: r.IsApprovedForFirstRelease,
-    ServiceName: r.ServiceName,
-    PackageDisplayName: r.PackageDisplayName,
+    Label: ARRAY_SLICE(r.Revisions, -1)[0].Label,
     LastUpdated: r.LastUpdated
 } FROM Reviews r");
 
