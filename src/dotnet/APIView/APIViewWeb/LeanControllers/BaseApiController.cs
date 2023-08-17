@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace APIViewWeb.LeanControllers
 {
-    [Authorize]
+    [Authorize("RequireOrganization")]
     [ApiController]
     [Route("api/[controller]")]
     public class BaseApiController : ControllerBase
