@@ -638,8 +638,52 @@
         </div>
     </form>
     <partial name="_CommentFormPartial" model="@Model.ReviewContent.TaggableUsers" /> 
-    <div id="line-context-menu" class="line-context-menu list-group" style="display: none">
-        <a href="#" class="list-group-item list-group-item-action" aria-current="true"><i class="far fa-comment-alt"></i> Add Comment</a>
-        <a href="#" class="list-group-item list-group-item-action" aria-current="true"><i class="fa-solid fa-table-columns"></i> View Cross Language</a>
+</div>
+
+<div id="line-context-menu" class="line-context-menu list-group" style="display: none">
+    <a href="#cross-lang-view" data-bs-toggle="offcanvas" class="list-group-item list-group-item-action" aria-current="true"><i class="fa-solid fa-table-columns"></i> View Cross Language</a>
+</div>
+
+<div class="offcanvas offcanvas-size-xl offcanvas-bottom" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="cross-lang-view" aria-labelledby="cross-lang-view-title">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="cross-lang-view-title">Cross Language View</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body cross-language-view-content">
+        <div class="row">
+            <div class="col-4">
+                <select id="cross-language-select-1" aria-label="Cross Language Select 1">
+                    @foreach (var language in LanguageServiceHelpers.SupportedLanguages.Where(l => l != Model.Review.Language))
+                    {
+                        <option value="@language">@language</option>
+                    }
+                </select>
+                <div class="cross-lang-code-panel border rounded mt-2">
+                    C Codelines
+                </div>
+            </div>
+            <div class="col-4">
+                <select id="cross-language-select-2" aria-label="Cross Language Select">
+                    @foreach (var language in LanguageServiceHelpers.SupportedLanguages.Where(l => l != Model.Review.Language && l != "C"))
+                    {
+                        <option value="@language">@language</option>
+                    }
+                </select>
+                <div class="cross-lang-code-panel border rounded mt-2">
+                    C# Codelines
+                </div>
+            </div>
+            <div class="col-4">
+                <select id="cross-language-select-3" aria-label="Cross Language Select">
+                    @foreach (var language in LanguageServiceHelpers.SupportedLanguages.Where(l => l != Model.Review.Language && l != "C#"))
+                    {
+                        <option value="@language">@language</option>
+                    }
+                </select>
+                <div class="cross-lang-code-panel border rounded mt-2">
+                    C++ Codelines
+                </div>
+            </div>
+        </div>
     </div>
 </div>

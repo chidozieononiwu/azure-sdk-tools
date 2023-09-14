@@ -59,6 +59,15 @@
     margin-top: 150px;
 }
 
+#cross-lang-view {
+    height: 45vh;
+}
+
+.cross-lang-code-panel {
+    padding: 10px;
+    height: 430px;
+}
+
 .review-approved {
     border: solid 2px var(--success-color);
     box-shadow: var(--box-shadow-success);
