@@ -23,6 +23,9 @@ $(() => {
     (<any>$("#diff-select")).SumoSelect({ search: true, searchText: 'Search Revisons for Diff...' });
     (<any>$("#revision-type-select")).SumoSelect();
     (<any>$("#diff-revision-type-select")).SumoSelect();
+    (<any>$("#cross-language-select-1")).SumoSelect({ placeholder: 'Select Language' });
+    (<any>$("#cross-language-select-2")).SumoSelect({ placeholder: 'Select Language' });
+    (<any>$("#cross-language-select-3")).SumoSelect({ placeholder: 'Select Language' });
 
     // Update codeLine Section state after page refresh
     const shownSectionHeadingLineNumbers = sessionStorage.getItem("shownSectionHeadingLineNumbers");
