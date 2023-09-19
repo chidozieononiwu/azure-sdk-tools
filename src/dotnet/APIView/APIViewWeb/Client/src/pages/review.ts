@@ -40,11 +40,17 @@ $(() => {
     if (uriHash) {
       let targetAnchorId = uriHash.replace('#', '');
       targetAnchorId = decodeURIComponent(targetAnchorId);
-      const targetAnchor = $(`[id="${targetAnchorId}"]`);
-      if (targetAnchor.length == 0) {
-        console.log(`Target anchor not found, calling findTargetAnchorWithinSections`);
-        rvM.findTargetAnchorWithinSections(targetAnchorId);
+      const targetAnchor = $(`[data-cross-lang-id="${targetAnchorId}"]`);
+      console.log("Target Anchor ${targetAnchor}");
+      if (targetAnchor.length > 0) {
+        targetAnchor[0].scrollIntoView();
       }
+
+      // Disable to allow POC for Cross Languae Review
+      //if (targetAnchor.length == 0) {
+      //  console.log(`Target anchor not found, calling findTargetAnchorWithinSections`);
+      //  rvM.findTargetAnchorWithinSections(targetAnchorId);
+      //}
     }
   });
 
@@ -307,6 +313,12 @@ $(() => {
   // Show context Menu
   $(".line-number").on("contextmenu", function (e: JQuery.ContextMenuEvent) {
     e.preventDefault();
-    rvM.toggleLineContextMenu(rvM.ContextMenuAction.show, e);
+    const codeLine = $(this).closest(".code-line");
+    console.log(`Code Line ${codeLine}`);
+    const crossLangId = codeLine.data("cross-lang-id");
+    console.log(`Cross Language Id ${crossLangId}`);
+    if (crossLangId) {
+      rvM.toggleLineContextMenu(rvM.ContextMenuAction.show, crossLangId, e);
+    }
   })
 });
