@@ -755,7 +755,7 @@ export function addApprover(lowerTextSpan: HTMLElement, approvedByText: string, 
 /**
 * Toggle line-context-menu
 */
-export function toggleLineContextMenu(action: ContextMenuAction, e: any = undefined) {
+export function toggleLineContextMenu(action: ContextMenuAction, crossLangId: string = "", e: any = undefined) {
 
   const contextMenu = $("#line-context-menu");
 
@@ -764,6 +764,9 @@ export function toggleLineContextMenu(action: ContextMenuAction, e: any = undefi
     contextMenu.css("display", "none");
   }
   else if (action == ContextMenuAction.show) {
+    const targetReview = $("#line-context-menu").children(".list-group-item").first().data("id")
+    console.log(`Target ${targetReview}`)
+    $("#line-context-menu").children(".list-group-item").first().attr("href", `${targetReview}#${crossLangId}`);
     console.log("Context Menu Trigger Open")
     $("#line-context-menu").css("display", "block");
 
