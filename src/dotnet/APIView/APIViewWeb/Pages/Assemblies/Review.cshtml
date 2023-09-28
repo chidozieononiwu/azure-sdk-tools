@@ -580,7 +580,6 @@
                 reviewLeftDisplay = "d-none";
                 reviewRightSize = "12";
             }
-
             var reviewApprovedClass = (Model.ReviewContent.ActiveAPIRevision.Approvers.Count() > 0) ? "review-approved" : "border rounded-1";
         }
         <div id="review-left" class="col-2 @reviewApprovedClass @reviewLeftDisplay">
@@ -646,10 +645,12 @@
     var crossLangReviewId = (Model.Review.Language == "Python") ? "f53de4e3b67f43199f5c270c7a687505" : "7374d26712ad4f05a74015b8bd62d84e";
     <div id="line-context-menu" class="line-context-menu list-group" style="display: none">
         <a href="" data-id="@crossLangReviewId" target="_blank" class="list-group-item list-group-item-action" aria-current="true">View in @lang</a>
+        <a href="" class="list-group-item list-group-item-action" data-bs-toggle="offcanvas" data-bs-target="#cross-lang-view" aria-current="true">Cross Language Tab</a>
     </div>
 }
 
-@*<div class="offcanvas offcanvas-size-xl offcanvas-bottom" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="cross-lang-view" aria-labelledby="cross-lang-view-title">
+@*
+<div class="offcanvas offcanvas-size-xl offcanvas-bottom" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="cross-lang-view" aria-labelledby="cross-lang-view-title">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="cross-lang-view-title">Cross Language View</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
