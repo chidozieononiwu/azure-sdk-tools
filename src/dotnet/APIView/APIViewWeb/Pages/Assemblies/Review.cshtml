@@ -640,12 +640,24 @@
     <partial name="_CommentFormPartial" model="@Model.ReviewContent.TaggableUsers" /> 
 </div>
 
-@if (Model.Review.Language == "Python" || Model.Review.Language == "TypeSpec")
+@if (Model.ReviewContent.Review.Language == "Python" || Model.ReviewContent.Review.Language == "TypeSpec" || Model.ReviewContent.Review.Language == "Java")
 {
-    var lang = (Model.Review.Language == "Python") ? "TypeSpec" : "Python";
-    var crossLangReviewId = (Model.Review.Language == "Python") ? "f53de4e3b67f43199f5c270c7a687505" : "7374d26712ad4f05a74015b8bd62d84e";
+    (string, string) langA = ("Python", "7374d26712ad4f05a74015b8bd62d84e");
+    (string, string) langB = ("Java", "4cacd931c83a4699b804ef6d4ca4b489");
+    if (Model.ReviewContent.Review.Language == "Python")
+    {
+        langA = ("TypeSpec", "f53de4e3b67f43199f5c270c7a687505");
+        langB = ("Java", "4cacd931c83a4699b804ef6d4ca4b489");
+    }
+    else if (Model.ReviewContent.Review.Language == "Java")
+    {
+        langA = ("Python", "7374d26712ad4f05a74015b8bd62d84e");
+        langB = ("TypeSpec", "f53de4e3b67f43199f5c270c7a687505");
+    }
+
     <div id="line-context-menu" class="line-context-menu list-group" style="display: none">
-        <a href="" data-id="@crossLangReviewId" target="_blank" class="list-group-item list-group-item-action" aria-current="true">View in @lang</a>
+        <a href="" data-id="@langA.Item2" target="_blank" class="list-group-item list-group-item-action" aria-current="true">View in @langA.Item1</a>
+        <a href="" data-id="@langB.Item2" target="_blank" class="list-group-item list-group-item-action" aria-current="true">View in @langB.Item1</a>
         <a href="" class="list-group-item list-group-item-action" data-bs-toggle="offcanvas" data-bs-target="#cross-lang-view" aria-current="true">Cross Language Tab</a>
     </div>
 }

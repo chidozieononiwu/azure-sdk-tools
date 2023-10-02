@@ -764,9 +764,11 @@ export function toggleLineContextMenu(action: ContextMenuAction, crossLangId: st
     contextMenu.css("display", "none");
   }
   else if (action == ContextMenuAction.show) {
-    const targetReview = $("#line-context-menu").children(".list-group-item").first().data("id")
-    console.log(`Target ${targetReview}`)
-    $("#line-context-menu").children(".list-group-item").first().attr("href", `${targetReview}#${crossLangId}`);
+    const targetReviewA = $("#line-context-menu").children(".list-group-item").first().data("id")
+
+    const menuItems = $("#line-context-menu").children(".list-group-item");
+    $(menuItems[0]).attr("href", `${$(menuItems[0]).data("id")}#${crossLangId}`);
+    $(menuItems[1]).attr("href", `${$(menuItems[1]).data("id")}#${crossLangId}`);
     console.log("Context Menu Trigger Open")
     $("#line-context-menu").css("display", "block");
 
