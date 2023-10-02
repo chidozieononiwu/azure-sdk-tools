@@ -521,7 +521,7 @@ namespace APIViewWeb.Helpers
                         // Add sepearator to show skipping lines. for e.g. .....
                         if (filteredLines.Count > 0)
                         {
-                            filteredLines.Add(new InlineDiffLine<CodeLine>(new CodeLine(diffContextSeparator, null, null), DiffLineKind.Unchanged));
+                            filteredLines.Add(new InlineDiffLine<CodeLine>(new CodeLine(html: diffContextSeparator, id: null, crossLangId: null, lineClass: null), DiffLineKind.Unchanged));
                         }
 
                         while (preContextIndx < i)
