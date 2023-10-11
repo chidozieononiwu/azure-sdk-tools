@@ -3,6 +3,7 @@ import { ActivatedRouteSnapshot, CanActivateFn, RouterStateSnapshot } from '@ang
 
 import { AuthService } from '../_services/auth/auth.service';
 import { firstValueFrom } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 export const AuthGuard: CanActivateFn = async (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
   const authService = inject(AuthService);
@@ -13,12 +14,12 @@ export const AuthGuard: CanActivateFn = async (route: ActivatedRouteSnapshot, st
     if (isLoggedIn != true)
     {
       console.log(`Inside AuthGuard isLoggedIn ${isLoggedIn}`);
-      window.location.href = "http://localhost:5000/login";
+      window.location.href = environment.webAppUrl + "login";
     }
   }
   catch (error){
     isLoggedIn = false;
-    window.location.href = "http://localhost:5000/login";
+    window.location.href = environment.webAppUrl + "login";
   }
   return isLoggedIn;
 };
