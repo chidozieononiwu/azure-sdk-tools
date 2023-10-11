@@ -54,10 +54,16 @@ export interface CodeLine {
   nodeRef: any
   isHiddenApi: boolean
 }
+export interface CodeDiagnostics {
+  diagnosticId : string
+  text : string
+  helpLinkUri : string
+  level : string
+}
 
 export interface ReviewLine {
   codeLine: CodeLine
-  diagnostics: any[]
+  diagnostics: CodeDiagnostics[]
   commentThread: any
   kind: DiffLineKind
   lineNumber: number

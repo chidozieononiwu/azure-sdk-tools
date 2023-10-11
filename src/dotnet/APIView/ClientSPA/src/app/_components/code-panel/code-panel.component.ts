@@ -1,7 +1,5 @@
-import {Component, Input } from '@angular/core';
+import {Component, Input, SimpleChanges } from '@angular/core';
 import { ReviewLine, DiffLineKind} from 'src/app/_models/review';
-
-declare var monaco: any;
 
 @Component({
   selector: 'app-code-panel',
@@ -11,5 +9,12 @@ declare var monaco: any;
 
 export class CodePanelComponent { 
   @Input() reviewLines: ReviewLine[] = [];
-  public diffKind = DiffLineKind;
+  lineNumberWidth: string = "2ch";
+
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['reviewLines']){
+      this.lineNumberWidth = this.reviewLines[this.reviewLines.length - 1].codeLine.lineNumber.toString().length + "ch";
+    }
+  }
 }

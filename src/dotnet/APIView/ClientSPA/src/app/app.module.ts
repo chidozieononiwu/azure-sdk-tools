@@ -36,6 +36,8 @@ import { ReviewInfoComponent } from './_components/review-info/review-info.compo
 import { RevisionsListComponent } from './_components/revisions-list/revisions-list.component';
 import { ReviewNavComponent } from './_components/review-nav/review-nav.component';
 import { SanitizeHtmlPipe } from './_pipes/sanitize-html.pipe';
+import { LineDetailsComponent } from './_components/line-details/line-details.component';
+import { DiagnosticsLineComponent } from './_components/diagnostics-line/diagnostics-line.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +52,9 @@ import { SanitizeHtmlPipe } from './_pipes/sanitize-html.pipe';
     ReviewInfoComponent,
     RevisionsListComponent,
     ReviewNavComponent,
-    SanitizeHtmlPipe
+    SanitizeHtmlPipe,
+    LineDetailsComponent,
+    DiagnosticsLineComponent
   ],
   imports: [
     AppRoutingModule,

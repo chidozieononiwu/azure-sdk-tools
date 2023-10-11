@@ -1,0 +1,9 @@
+<span *ngIf="codeLine" class="line-details">
+    <span class="line-number"  [style.width]="lineNumberWidth">{{codeLine.lineNumber}}</span>
+    <span class="line-details-button-cell comment-icon-cell">
+        <a *ngIf="codeLine.elementId; else commentBtnTemplate" class="line-comment-button">+</a>
+        <ng-template #commentBtnTemplate>
+            <a class="line-comment-button invisible">+</a>
+        </ng-template>
+    </span>
+</span>

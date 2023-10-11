@@ -11,6 +11,10 @@
         height: calc(100vh - 70px);
     }
 
+    .invisible {
+        visibility: hidden;
+    }
+
     @include base-tags;
     @include webkit-scrollbar;
 }

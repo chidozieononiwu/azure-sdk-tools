@@ -1,8 +1,34 @@
 
-<p-virtualScroller [value]="reviewLines" class="border-1 surface-border border-round" [style]="{'width': 'auto'}" scrollHeight="calc(100vh - 129px)" [itemSize]="25">
-    <ng-template pTemplate="item" let-item>
-        <div *ngIf="item.kind == 'Unchanged'" class="flex align-items-center p-2 h-full" [ngClass]="{ 'surface-hover': item.index % 2 === 0 }">
-            <div class="code-inner" [innerHTML]="item.codeLine.displayString | sanitizeHtml"></div>
-        </div>
+
+
+<p-table
+    [value]="reviewLines"
+    [tableStyle]="{'width': '200%'}"
+    [scrollable]="true"
+    scrollHeight="calc(100vh - 127px)">
+    <ng-template pTemplate="body" let-line>
+        <tr>
+            <td class="code-inner" [innerHTML]="line.codeLine.displayString | sanitizeHtml"></td>
+        </tr>
     </ng-template>
-</p-virtualScroller>
+</p-table>
+
+<!--<p-virtualScroller [value]="reviewLines" class="border-1 surface-border border-round" [style]="{'width': 'auto'}" scrollHeight="calc(100vh - 130px)" [itemSize]="21">
+    <ng-template pTemplate="item" let-item>
+        <app-diagnostics-line *ngIf="item.diagnostics.length > 0; else NonDiagnosticLines" [diagnosticsLine]="item.diagnostics"></app-diagnostics-line>
+        <ng-template #NonDiagnosticLines>
+            <div class="flex align-items-center h-full code-line">
+                <span class="line-details">
+                    <span class="line-number"  [style.width]="lineNumberWidth">{{item.codeLine.lineNumber}}</span>
+                    <span class="line-details-button-cell comment-icon-cell">
+                        <a *ngIf="item.codeLine.elementId; else commentBtnTemplate" class="line-comment-button">+</a>
+                        <ng-template #commentBtnTemplate>
+                            <a class="line-comment-button invisible">+</a>
+                        </ng-template>
+                    </span>
+                </span>
+                <span class="code-inner" [innerHTML]="item.codeLine.displayString | sanitizeHtml"></span>
+            </div>
+        </ng-template>
+    </ng-template>
+</p-virtualScroller> -->
