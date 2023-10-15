@@ -45,8 +45,8 @@
           },
           "configurations": {
             "production": {
-              "baseHref": "./",
-              "deployUrl": "./spa/",
+              "baseHref": "/",
+              "deployUrl": "/spa/",
               "budgets": [
                 {
                   "type": "initial",
