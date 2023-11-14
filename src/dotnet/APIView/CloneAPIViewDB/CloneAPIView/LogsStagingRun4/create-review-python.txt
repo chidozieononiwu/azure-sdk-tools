@@ -1,0 +1,25 @@
+Skip Creating for ReviewId 0107663eb7314923bc375ed20ee3f123 Empty Package Name
+Skip Creating Review : 3d76fbc103f343b784af6c041fc41a45 with Resolved PackageName: azure-schemaregistry-avro-serializer. Package name is not in Official List.
+Skip Creating Review : 3c33b239fe0d4e42af03d9d9c7a8959b with Resolved PackageName: azure-schemaregistry-avro-serializer. Package name is not in Official List.
+Skip Creating Review : 2b899215b9044dc1a8bebc83cdf49b67 with Resolved PackageName: azure-schemaregistry-avro-serializer. Package name is not in Official List.
+Skip Creating for ReviewId 2c24e08c529b456e9fbdaa05cd94331e Empty Package Name
+Skip Creating Review : b4767c5c88b24f788ca10f79aa8f5b1d with Resolved PackageName: azure-deviceupdate. Package name is not in Official List.
+Skip Creating for ReviewId ab6ff77f208d4ee2adb851a45ea210a9 Empty Package Name
+Skip Creating for ReviewId ed73dfdf098a4631a7ac7702b8c3aa29 Empty Package Name
+Skip Creating for ReviewId 44441082929540cca626d7c380021f8e Empty Package Name
+Skip Creating Review : f4c6ce5c89df424da3031dca013111bd with Resolved PackageName: azure-learnappconfig. Package name is not in Official List.
+Skip Creating Review : 12a59a4a085b4a6f95f5322216a6434d with Resolved PackageName: azure-learnappconfig. Package name is not in Official List.
+Skip Creating for ReviewId 86ff5b613b284d27a6b34163433de9ec Empty Package Name
+Skip Creating Review : b855633b444b4983b309ac95895950fc with Resolved PackageName: azure-learnappconfig. Package name is not in Official List.
+Skip Creating Review : 49812cb4d6054216bfec02c29ab5985b with Resolved PackageName: azure-computation. Package name is not in Official List.
+Skip Creating Review : df8e3cd1168841cfae9f2e2495ab4d36 with Resolved PackageName: azure-computation. Package name is not in Official List.
+Skip Creating Review : a2894f28aa5b44e8b7b0f037aabc67fb with Resolved PackageName: azure-computation. Package name is not in Official List.
+Skip Creating for ReviewId 3530baa952684d9c94edaf47064344f0 Empty Package Name
+Skip Creating Review : bceda5bf01cf4ea5bfc698a97fb8d3f3 with Resolved PackageName: azure-computation. Package name is not in Official List.
+Skip Creating for ReviewId c1ba407a93074aa2896d607cced4ca07 Empty Package Name
+Skip Creating for ReviewId 5b227ceb8e7445c88af9dcd403851c53 Empty Package Name
+Skip Creating Review : 7873aaa63d9b4f28911cb4736fa86707 with Resolved PackageName: azure-synapse-vnet. Package name is not in Official List.
+Skip Creating for ReviewId d5a37240e5904dfa8ed2b3e477a384ff Empty Package Name
+Skip Creating Review : b49e508311a74fad8513844939526c55 with Resolved PackageName: azure-communication-common. Package name is not in Official List.
+Skip Creating Review : 2da269f7a5d449d98e9298adab5392a9 with Resolved PackageName: azure-media-livevideoanalytics-edge. Package name is not in Official List.
+Skip Creating for ReviewId 4186f269e02e43af88f2351551274435 Empty Package Name

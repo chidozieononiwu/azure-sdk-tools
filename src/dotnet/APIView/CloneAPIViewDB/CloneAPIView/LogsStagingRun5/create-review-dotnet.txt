@@ -1,0 +1,2 @@
+Skip Creating Review : dc2af135af1b4f55b89c836b137cace5 with Resolved PackageName: Microsoft.Spatial. Package name is not in Official List.
+Skip Creating Review : 507aab1bbb984bd2a2f134f9e25ef486 with Resolved PackageName: Azure.Storage.Blobs.Cryptography. Package name is not in Official List.

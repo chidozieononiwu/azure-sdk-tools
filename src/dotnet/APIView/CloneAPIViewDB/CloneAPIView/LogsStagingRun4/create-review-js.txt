@@ -1,0 +1,39 @@
+Skip Creating for ReviewId de658bff69424a0395c4aa6ef2c1940a Empty Package Name
+Skip Creating for ReviewId b56884d37ad9442490e329c0fecb3e94 Empty Package Name
+Skip Creating for ReviewId 0a96f968aa144a479d63d56a169c9d05 Empty Package Name
+Skip Creating for ReviewId acdb27b8099743da9ba19ea6e9fd315e Empty Package Name
+Skip Creating for ReviewId b494b6161584438898edd793525e987a Empty Package Name
+Skip Creating for ReviewId 567be6b0c991415c88056dff5cd54af1 Empty Package Name
+Skip Creating for ReviewId b78cdad4c123494b9fffcd3ad59b6167 Empty Package Name
+Skip Creating for ReviewId 993c2889239f4b369f3c1e7d182f32d3 Empty Package Name
+Skip Creating for ReviewId 1c40e98846df499a8b9721cce4d4831b Empty Package Name
+Skip Creating for ReviewId 791cae70e9194fa2b9fa950f3b2c45da Empty Package Name
+Skip Creating for ReviewId eb47742c95834f6c84d3499300cd9a0b Empty Package Name
+Skip Creating for ReviewId 90f71525adb84c099417e299eedee314 Empty Package Name
+Skip Creating for ReviewId 2ea58ab64215450eb33e306df6861ade Empty Package Name
+Skip Creating for ReviewId 1d505254309f48fa89304c53c2f2e62d Empty Package Name
+Skip Creating for ReviewId bcf274b6c9374875bd7aa2868431f468 Empty Package Name
+Skip Creating for ReviewId 92f1a8ecc6c441a48492a350937f199d Empty Package Name
+Skip Creating for ReviewId 2a800e17beca4014a66f124005039afe Empty Package Name
+Skip Creating for ReviewId 4759311b8b354cb5a1daf32fef3d3557 Empty Package Name
+Skip Creating for ReviewId 5d9d2b59c39a4b4b8ff199061752c109 Empty Package Name
+Skip Creating for ReviewId edad0515e4ff45b39740cf289b85e1c4 Empty Package Name
+Skip Creating for ReviewId c368b6f205d047ed9f26d5b403095625 Empty Package Name
+Skip Creating for ReviewId b4700c64cfe743ccbe88aa67665cadb4 Empty Package Name
+Skip Creating for ReviewId 2145b770255c491a826a5a086dc2eec1 Empty Package Name
+Skip Creating for ReviewId 2c9def4d166841c08ab6a9fc96d60403 Empty Package Name
+Skip Creating for ReviewId 9891ea97072f4d6aaba1d0f719f28abe Empty Package Name
+Skip Creating for ReviewId 9e6b072223ad4b459c737c3229db7b63 Empty Package Name
+Skip Creating for ReviewId 4dd2627a0aea416095004e91d75e29fb Empty Package Name
+Skip Creating for ReviewId 2af08bc407e3479e9de6012d50c2b2e8 Empty Package Name
+Skip Creating for ReviewId 404fbb7c068b40c4aa56c9e66b56a25f Empty Package Name
+Skip Creating Review : 9a67b94f720c4138845ecf5e8f0efac8 with Resolved PackageName: @skype/spool-sdk. Package name is not in Official List.
+Skip Creating for ReviewId a9e6dabb38064def8f28f0fd0f89ac55 Empty Package Name
+Skip Creating for ReviewId 454e3f0da9524e6b9be2f019b0e373c2 Empty Package Name
+Skip Creating for ReviewId 506992a723d342039c63e2bf1550ae84 Empty Package Name
+Skip Creating for ReviewId 9c9903a56f5f46e59eaa995d5b09342b Empty Package Name
+Skip Creating for ReviewId ad12f47b2bc949e4ac58bc9f279a9c28 Empty Package Name
+Skip Creating for ReviewId 1217848d087349dba905dd677e9d8635 Empty Package Name
+Skip Creating Review : f0005259226f414bbe70c0b83ca8a635 with Resolved PackageName: @azure/opentelemetry-exporter-azure-monitor. Package name is not in Official List.
+Skip Creating Review : ca13b1045ad549849267ae8e94ba4c7c with Resolved PackageName: @azure/design-tutorial. Package name is not in Official List.
+Skip Creating Review : 28dc19d5d6814e639c8c89986edfdfd3 with Resolved PackageName: @azure/design-tutorial. Package name is not in Official List.

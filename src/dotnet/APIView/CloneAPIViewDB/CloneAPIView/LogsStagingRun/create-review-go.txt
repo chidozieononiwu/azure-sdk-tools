@@ -1,0 +1,3 @@
+Skip Review with Resolved PackageName: keyvault/internal. Package name is not in Official List.
+Skip Review with Resolved PackageName: resourcemanager/internal. Package name is not in Official List.
+Skip Review with Resolved PackageName: security/keyvault/internal. Package name is not in Official List.
