@@ -112,6 +112,7 @@ namespace CloneAPIViewDB
         public bool IsApprovedForFirstRelease { get; set; }
         public string ApprovedForFirstReleaseBy { get; set; }
         public DateTime ApprovedForFirstReleaseOn { get; set; }
+        public DateTime LastUpdated { get; set; }
     }
 
     public class RevisionModelOld 
@@ -141,6 +142,7 @@ namespace CloneAPIViewDB
         public bool RunAnalysis { get; set; }
         public string PackageName { get; set; }
         public string FileName { get; set; }
+        public string PackageVersion { get; set; }
     }
 
     public class CodeFileModel
@@ -155,6 +157,7 @@ namespace CloneAPIViewDB
         public bool RunAnalysis { get; set; }
         public string PackageName { get; set; }
         public string FileName { get; set; }
+        public string PackageVersion { get; set; }
     }
 
 
@@ -292,6 +295,7 @@ namespace CloneAPIViewDB
         [JsonProperty("id")]
         public string Id { get; set; }
         public string ReviewId { get; set; }
+        public string APIRevisionId { get; set; }
         public int PullRequestNumber { get; set; }
         public List<string> Commits { get; set; } = new List<string>();
         public string RepoName { get; set; }

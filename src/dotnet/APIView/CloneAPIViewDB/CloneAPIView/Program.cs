@@ -2,11 +2,10 @@ using CloneAPIViewDB;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualBasic.FileIO;
-using System.Configuration;
 using System.Text;
 using System.Text.RegularExpressions;
 
-// Add Cosmos DB Connection String to User Secrets
+
 var config = new ConfigurationBuilder()
     .AddUserSecrets(typeof(Program).Assembly)
     .Build();
@@ -48,51 +47,33 @@ static string ArrayToQueryString<T>(IEnumerable<T> items)
 }
 
 static void LogToFile(string message, LogType type) {
-    // Define Local Paths for LogFiles
-    var reviewsLogFile = "";
-    var revisionsLogFile = "";
-    var commentsLogFile = "";
-    var samplesLogFile = "";
-    var prLogFile = "";
-
     string logFile = string.Empty;
     if (type == LogType.Review)
     {
-        logFile = reviewsLogFile;
+        logFile = "C:\\Users\\chononiw\\OneDrive - Microsoft\\Jobs\\APIView\\APIView Restructure\\Clone APIView DB\\CloneAPIViewDB\\CloneAPIView\\LogsStagingRun6\\create-review-swagger.txt";
     }
     else if (type == LogType.Samples)
     {
-        logFile = samplesLogFile;
+        logFile = "C:\\Users\\chononiw\\OneDrive - Microsoft\\Jobs\\APIView\\APIView Restructure\\Clone APIView DB\\CloneAPIViewDB\\CloneAPIView\\LogsStagingRun6\\create-samples-swagger.txt";
     }
     else if (type == LogType.PR)
     {
-        logFile = prLogFile;
+        logFile = "C:\\Users\\chononiw\\OneDrive - Microsoft\\Jobs\\APIView\\APIView Restructure\\Clone APIView DB\\CloneAPIViewDB\\CloneAPIView\\LogsStagingRun6\\create-pr-swagger.txt";
     }
     else if (type == LogType.Revision)
     {
-        logFile = revisionsLogFile;
+        logFile = "C:\\Users\\chononiw\\OneDrive - Microsoft\\Jobs\\APIView\\APIView Restructure\\Clone APIView DB\\CloneAPIViewDB\\CloneAPIView\\LogsStagingRun6\\create-revision-swagger.txtt";
     }
 
     File.AppendAllText(logFile, message + Environment.NewLine);
-}
+} 
 
 // Read Revisions in Reviews
 // Check to see if there are any Reviews that have the same package name for that language
 // If there is create a revision with ReviewId found, add the revision Id to the review
 // If a review with the same package name and language is not present log the review, revisionid, Language, PackageName and Review type to a file
-
-/// <summary>
-/// 
-/// </summary>
-/// <param name="reviewsContainerOld"></param>
-/// <param name="reviewsContainerNew"></param>
-/// <param name="revisionsContainerNew"></param>
-/// <param name="languages"></param> List of Languages
-/// <param name="csvFilePath"></param> Add local path to csv file containing official package names download from https://github.com/Azure/azure-sdk/tree/main/_data/releases/latest
-/// <param name="limit"></param> Used to limit run length for testing script
-/// <returns></returns>
 async Task CreateRevisions(Container reviewsContainerOld, Container reviewsContainerNew, Container revisionsContainerNew,
-    List<string> languages, string? csvFilePath = null, bool limit = false) 
+    List<string> languages, DateTime lastUpdate = default(DateTime), string? csvFilePath = null, bool limit = false) 
 {
     HashSet<string> officialPackageNames = new HashSet<string>();
     if (!String.IsNullOrEmpty(csvFilePath))
@@ -149,6 +130,11 @@ WHERE c.Revisions[0].Files[0].Language IN {languagesAsQueryString}";
 
     foreach (var reviewOld in reviewsOld)
     {
+        if (lastUpdate != default(DateTime) && reviewOld.LastUpdated != default(DateTime) && reviewOld.LastUpdated <= lastUpdate)
+        {
+            continue;
+        }
+
         if (!reviewOld.Revisions.Any())
         {
             //LogToFile($"ReviewOld {reviewOld.ReviewId} has no Revisions...");
@@ -250,7 +236,8 @@ WHERE c.Revisions[0].Files[0].Language IN {languagesAsQueryString}";
                             CreationDate = file.CreationDate,
                             RunAnalysis = file.RunAnalysis,
                             PackageName = file.PackageName,
-                            FileName = file.FileName
+                            FileName = file.FileName,
+                            PackageVersion = file.PackageVersion
                         }
                     );
                 }
@@ -547,22 +534,10 @@ static bool IsOfficialPackageName (string name, string language, HashSet<string>
     return officialPackageNames.Contains(name);
 }
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="reviewsContainerOld"></param>
-/// <param name="reviewsContainerNew"></param>
-/// <param name="prContainerOld"></param>
-/// <param name="prContainerNew"></param>
-/// <param name="samplesContainerOld"></param>
-/// <param name="samplesContainerNew"></param>
-/// <param name="language"></param> List of Languages
-/// <param name="csvFilePath"></param> Add local path to csv file containing official package names download from https://github.com/Azure/azure-sdk/tree/main/_data/releases/latest
-/// <param name="limit"></param> Used to limit run length for testing script
-/// <returns></returns>
+// The one to Use
 static async Task CreateReviewsFromExistingReviews(Container reviewsContainerOld, Container reviewsContainerNew,
     Container prContainerOld, Container prContainerNew, Container samplesContainerOld, Container samplesContainerNew,
-    string language, string? csvFilePath=null, int? limit=null)
+    string language, DateTime lastUpdate = default(DateTime), string? csvFilePath=null, int? limit=null)
 {
     HashSet<string> officialPackageNames = new HashSet<string>();
     var reviewsOld = new List<ReviewModelOld>();
@@ -589,6 +564,11 @@ static async Task CreateReviewsFromExistingReviews(Container reviewsContainerOld
 
     foreach (var reviewOld in reviewsOld)
     {
+        if (lastUpdate != default(DateTime) && reviewOld.LastUpdated != default(DateTime) && reviewOld.LastUpdated <= lastUpdate)
+        {
+            continue;
+        }
+
         var revisionsWithPackageNames = reviewOld.Revisions.Where(r => !String.IsNullOrEmpty(r.Files[0].PackageName));
         var reviewKey = String.Empty;
 
@@ -783,7 +763,8 @@ static async Task UpdatePullRequests(Container prContainerNew)
 // Find the corresponding review new with the same package and language
 // Update the comment with id from Review Old
 // Update the Review Id 
-async Task UpdateComments(Container commentsContainerOld, Container commentsContainerNew, Container reviewsContainerOld, Container reviewsContainerNew, Container revisionsContainerNew) 
+async Task UpdateComments(Container commentsContainerOld, Container commentsContainerNew, Container reviewsContainerOld,
+        Container reviewsContainerNew, Container revisionsContainerNew, DateTime lastUpdate = default(DateTime)) 
 {
     var commentsOld = new List<CommentModelOld>();
     var commentsOldQuery = $"SELECT * FROM c";
@@ -798,6 +779,13 @@ async Task UpdateComments(Container commentsContainerOld, Container commentsCont
 
     foreach (var comment in commentsOld)
     {
+        if (lastUpdate != default(DateTime) &&
+           ((comment.TimeStamp != default(DateTime) && comment.TimeStamp < lastUpdate) ||
+           (comment.EditedTimeStamp != default(DateTime) && comment.EditedTimeStamp < lastUpdate))
+           )
+        {
+            continue;
+        }   
         bool reviewIDUpdated = false;
 
         if (!String.IsNullOrEmpty(comment.RevisionId))
@@ -962,8 +950,19 @@ static async Task DeleteAllRevisions(Container revisionsContainerNew)
 }
 
 
+///Move time back by a few minutes when runing script
+//await DeleteAllRevisions(revisionsContainerNew);
+
+//await UpdateComments(commentsContainerOld, commentsContainerNew, reviewsContainerOld, reviewsContainerNew, revisionsContainerNew);
+//await AddRevisionIdsToReviews(reviewsContainerNew, revisionsContainerNew);
+//await UpdatePullRequests(prContainerNew: prContainerNew);
 
 
+//await CreateReviewsFromExistingReviews(reviewsContainerOld: reviewsContainerOld, reviewsContainerNew: reviewsContainerNew,
+//   prContainerOld: prContainerOld, prContainerNew: prContainerNew, samplesContainerOld: samplesContainerOld, samplesContainerNew: samplesContainerNew,
+//    language: "Swagger");
+
+//await CreateRevisions(reviewsContainerOld: reviewsContainerOld, reviewsContainerNew: reviewsContainerNew, revisionsContainerNew: revisionsContainerNew, languages: new List<string> { "Swagger" });
 
 enum LogType
 {
