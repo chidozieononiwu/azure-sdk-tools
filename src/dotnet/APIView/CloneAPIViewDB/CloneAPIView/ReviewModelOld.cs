@@ -18,7 +18,7 @@ namespace CloneAPIViewDB
     [JsonConverter(typeof(StringEnumConverter))]
     public enum CommentType
     {
-        ReviewRevision = 0,
+        APIRevision = 0,
         SampleRevision
     }
 
@@ -113,6 +113,7 @@ namespace CloneAPIViewDB
         public string ApprovedForFirstReleaseBy { get; set; }
         public DateTime ApprovedForFirstReleaseOn { get; set; }
         public DateTime LastUpdated { get; set; }
+        public int _ts { get; set; }
     }
 
     public class RevisionModelOld 
@@ -275,7 +276,7 @@ namespace CloneAPIViewDB
         [JsonProperty("id")]
         public string Id { get; set; }
         public string ReviewId { get; set; }
-        public string ReviewRevisionId { get; set; }
+        public string APIRevisionId { get; set; }
         public string ElementId { get; set; }
         public string SectionClass { get; set; }
         public string CommentText { get; set; }
@@ -306,5 +307,12 @@ namespace CloneAPIViewDB
         public string Language { get; set; }
         public string Assignee { get; set; }
         public bool IsDeleted { get; set; }
+    }
+
+    public class MappingModel
+    {
+        [JsonProperty("id")]
+        public string ReviewNewId { get; set; }
+        public HashSet<string> ReviewOldIds { get; set; }
     }
 }
