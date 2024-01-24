@@ -222,6 +222,7 @@ namespace APIViewWeb.Helpers
         /// <param name="codeFileRepository"></param>
         /// <param name="signalRHubContext"></param>
         /// <param name="user"></param>
+        /// <param name="review"></param>
         /// <param name="reviewId"></param>
         /// <param name="revisionId"></param>
         /// <param name="diffRevisionId"></param>
@@ -233,7 +234,7 @@ namespace APIViewWeb.Helpers
         public static async Task<ReviewContentModel> GetReviewContentAsync(
             IConfiguration configuration, IReviewManager reviewManager, UserPreferenceCache preferenceCache,
             ICosmosUserProfileRepository userProfileRepository, IAPIRevisionsManager reviewRevisionsManager, ICommentsManager commentManager,
-            IBlobCodeFileRepository codeFileRepository, IHubContext<SignalRHub> signalRHubContext, ClaimsPrincipal user, string reviewId,
+            IBlobCodeFileRepository codeFileRepository, IHubContext<SignalRHub> signalRHubContext, ClaimsPrincipal user, ReviewListItemModel review = null, string reviewId = null,
             string revisionId = null, string diffRevisionId = null, bool showDocumentation = false, bool showDiffOnly = false, int diffContextSize = 3,
             string diffContextSeperator = "<br><span>.....</span><br>")
         {
@@ -243,18 +244,21 @@ namespace APIViewWeb.Helpers
             };
 
             var userId = user.GetGitHubLogin();
-            var review = await reviewManager.GetReviewAsync(user, reviewId);
-
+            if (review == null)
+            {
+                review = await reviewManager.GetReviewAsync(user, reviewId);
+            }
+           
             if (review == null)
             {
                 reviewPageContent.Directive = ReviewContentModelDirective.TryGetlegacyReview;
                 return reviewPageContent;
             }
 
-            var apiRevisions = await reviewRevisionsManager.GetAPIRevisionsAsync(reviewId);
+            var apiRevisions = await reviewRevisionsManager.GetAPIRevisionsAsync(review.Id);
 
             // Try getting latest Automatic Revision, otherwise get latest of any type or default
-            var activeRevision = await reviewRevisionsManager.GetLatestAPIRevisionsAsync(reviewId, apiRevisions, APIRevisionType.Automatic);
+            var activeRevision = await reviewRevisionsManager.GetLatestAPIRevisionsAsync(review.Id, apiRevisions, APIRevisionType.Automatic);
             if (activeRevision == null)
             {
                 reviewPageContent.Directive = ReviewContentModelDirective.ErrorDueToInvalidAPIRevisonRedirectToIndexPage;

@@ -17,7 +17,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.TeamFoundation.Common;
 
-
 namespace APIViewWeb.Pages.Assemblies
 {
     public class ReviewPageModel : PageModel
@@ -70,6 +69,9 @@ namespace APIViewWeb.Pages.Assemblies
         public bool ShowDiffOnly { get; set; }
         [BindProperty(Name = "notificationMessage", SupportsGet = true)]
         public string NotificationMessage { get; set; }
+        [BindProperty(Name = "crossLanguage", SupportsGet = true)]
+        public IEnumerable<string>CrossLanguage { get; set; }
+
 
         /// <summary>
         /// Handler for loading page
@@ -89,6 +91,25 @@ namespace APIViewWeb.Pages.Assemblies
                 signalRHubContext: _signalRHubContext, user: User, reviewId: id, revisionId: revisionId, diffRevisionId: DiffRevisionId,
                 showDocumentation: ShowDocumentation, showDiffOnly: ShowDiffOnly, diffContextSize: REVIEW_DIFF_CONTEXT_SIZE,
                 diffContextSeperator: DIFF_CONTEXT_SEPERATOR);
+
+            // Get Cross  Language View Details
+            foreach (var language in CrossLanguage)
+            {
+                var lang = Uri.UnescapeDataString(language);
+                var packageName = LanguageServiceHelpers.GetCorrespondingPackageName(ReviewContent.Review.Language, lang, ReviewContent.Review.PackageName);
+                var review = await _reviewManager.GetReviewAsync(lang, packageName);
+                if (review != null)
+                {
+                    var reviewContent = await PageModelHelpers.GetReviewContentAsync(configuration: _configuration,
+                        reviewManager: _reviewManager, preferenceCache: _preferenceCache, userProfileRepository: _userProfileRepository,
+                        reviewRevisionsManager: _apiRevisionsManager, commentManager: _commentsManager, codeFileRepository: _codeFileRepository,
+                        signalRHubContext: _signalRHubContext, user: User, review: review, revisionId: null, diffRevisionId: null,
+                        showDocumentation: ShowDocumentation, showDiffOnly: ShowDiffOnly, diffContextSize: REVIEW_DIFF_CONTEXT_SIZE,
+                        diffContextSeperator: DIFF_CONTEXT_SEPERATOR);
+
+                    ReviewContent.CrossLanguageViewContent.Add(review.Language, reviewContent);
+                }
+            }
 
             if (ReviewContent.Directive == ReviewContentModelDirective.TryGetlegacyReview)
             {

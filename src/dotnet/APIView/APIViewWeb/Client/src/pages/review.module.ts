@@ -16,22 +16,45 @@ export function splitReviewPageContent() {
     const rl = $('#review-left');
     const rr = $('#review-right');
 
-    if (rl.length && rr.length) {
-        Split(['#review-left', '#review-right'], {
-        direction: 'horizontal',
-        sizes: [17, 83],
-        elementStyle: (dimension, size, gutterSize) => {
-            return {
-                'flex-basis': `calc(${size}% - ${gutterSize}px`
-            }
-        },
-        gutterStyle: (dimension, gutterSize) => {
-            return {
-                'flex-basis': `${gutterSize}px`
-            }
+  if (rl.length && rr.length) {
+    Split(['#review-left', '#review-right'], {
+      direction: 'horizontal',
+      sizes: [17, 83],
+      elementStyle: (dimension, size, gutterSize) => {
+        return {
+          'flex-basis': `calc(${size}% - ${gutterSize}px`
         }
-        });
-    }
+      },
+      gutterStyle: (dimension, gutterSize) => {
+        return {
+          'flex-basis': `${gutterSize}px`
+        }
+      }
+    });
+  }
+  else {
+    // Cross Language View
+    const clPanels = $("div[class^='col cross-lang-panel-']");
+    const sizes = [5];
+    clPanels.each(function (index) {
+      sizes.push(95 / clPanels.length);
+    });
+    Split(clPanels.toArray(), {
+      direction: 'horizontal',
+      sizes: sizes,
+      gutterSize: 1,
+      elementStyle: (dimension, size, gutterSize) => {
+        return {
+          'flex-basis': `calc(${size}% - ${gutterSize}px`
+        }
+      },
+      gutterStyle: (dimension, gutterSize) => {
+        return {
+          'flex-basis': `${gutterSize}px`
+        }
+      }
+    })
+  }
 }
 
 //-------------------------------------------------------------------------------------------------

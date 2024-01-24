@@ -41,6 +41,10 @@
     animation: glow normal 1.5s ease-in-out;
 }
 
+.code-line.cl-active, .code-line tr.cl-active {
+    background: rgba(239,155,15, 0.22);
+}
+
 .code {
     padding: 0px;
     position: relative;
@@ -138,6 +142,10 @@
     text-align: right;
     white-space: nowrap;
     width: auto;
+}
+
+.cl-line-no-color {
+    color: maroon;
 }
 
 .line-comment-button:hover {
