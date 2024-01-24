@@ -1,11 +1,28 @@
 using System.Collections.Generic;
 using System.Linq;
+using APIViewWeb.LeanModels;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow;
+using Microsoft.Identity.Client;
+using Microsoft.VisualStudio.Services.Common;
 
 namespace APIViewWeb.Helpers
 {
     public class LanguageServiceHelpers
     {
         public static string[] SupportedLanguages = new string[] { "C", "C#", "C++", "Go", "Java", "JavaScript", "Json", "Kotlin", "Python", "Swagger", "Swift", "TypeSpec", "Xml" };
+
+        public static string GetCorrespondingPackageName(string sourceLanguage, string targetlanguage, string packageName)
+        {
+            if (packageName.Equals("widgetmanagerclient"))
+            {
+                return "Contoso.WidgetManager";
+            }
+            else 
+            {
+                return "widgetmanagerclient";
+            }
+        }
 
         public static IEnumerable<string> MapLanguageAliases(IEnumerable<string> languages)
         {
@@ -42,8 +59,8 @@ namespace APIViewWeb.Helpers
         }
 
         public static LanguageService GetLanguageService(string language, IEnumerable<LanguageService> languageServices)
-        { 
+        {
             return languageServices.FirstOrDefault(service => service.Name == language);
-        }
+        } 
     }
 }

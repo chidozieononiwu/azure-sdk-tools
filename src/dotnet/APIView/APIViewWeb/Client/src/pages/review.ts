@@ -133,19 +133,23 @@ $(() => {
       var leftContainer = $("#review-left");
       var rightContainer = $("#review-right");
       var gutter = $(".gutter-horizontal");
-
-      if (leftContainer.hasClass("d-none")) {
-        leftContainer.removeClass("d-none");
-        rightContainer.removeClass("col-12");
-        rightContainer.addClass("col-10");
-        rvM.splitReviewPageContent();
+      if (leftContainer.length && rightContainer.length) {
+        if (leftContainer.hasClass("d-none")) {
+          leftContainer.removeClass("d-none");
+          rightContainer.removeClass("col-12");
+          rightContainer.addClass("col-10");
+          rvM.splitReviewPageContent();
+        }
+        else {
+          leftContainer.addClass("d-none");
+          rightContainer.css("flex-basis", "100%");
+          gutter.remove();
+          rightContainer.removeClass("col-10");
+          rightContainer.addClass("col-12");
+        }
       }
       else {
-        leftContainer.addClass("d-none");
-        rightContainer.css("flex-basis", "100%");
-        gutter.remove();
-        rightContainer.removeClass("col-10");
-        rightContainer.addClass("col-12");
+        $(".cross-lang-panel-nav").toggleClass("d-none");
       }
     });
   });
@@ -270,7 +274,7 @@ $(() => {
 
   // Manage Expand / Collapse State of options
   [$("#approveCollapse"), $("#requestReviewersCollapse"), $("#reviewOptionsCollapse"), $("#pageSettingsCollapse"),
-    $("#associatedPRCollapse"), $("#associatedReviewsCollapse"), $("#generateAIReviewCollapse")].forEach(function (value, index) {
+    $("#associatedPRCollapse"), $("#associatedReviewsCollapse"), $("#generateAIReviewCollapse"), $("#crossLangReviewCollapse")].forEach(function (value, index) {
     const id = value.attr("id");
     value.on('hidden.bs.collapse', function () {
       document.cookie = `${id}=hidden; max-age=${7 * 24 * 60 * 60}`;
@@ -321,4 +325,39 @@ $(() => {
       rvM.toggleLineContextMenu(rvM.ContextMenuAction.show, crossLangId, e);
     }
   })
+
+  $("#load-cross-language-view").on("click", function (e: JQuery.ClickEvent) {
+    const crossLangusges = $(".cross-lang-view-switch");
+    const uri = new URL(window.location.href);
+    const urlParams = new URLSearchParams(uri.search);
+    urlParams.delete("crossLanguage");
+    crossLangusges.each(function (index, value) {
+      const language = value.querySelector("label")?.textContent;
+      const isChecked = value.querySelector("input")?.checked;
+      if (isChecked) {
+        urlParams.append("crossLanguage", encodeURIComponent(language!));
+      }
+    });
+    uri.search = urlParams.toString();
+    window.location.href = uri.toString()
+  })
+
+  // Jump To API Line
+
+  $(".cl-line-no-color").on("click", function (e: JQuery.ClickEvent) {
+    e.preventDefault();
+    const codeLine = $(this).closest(".code-line");
+    const crossLangId = codeLine.data("cross-lang-id");
+    const lines = $(`[data-cross-lang-id='${crossLangId}']`);
+
+    $(".code-line").removeClass("cl-active");
+
+    for (var i = lines.length - 1; i >= 0; i--) {
+      const codeWindow = $(lines[i]).closest("div[class^='col cross-lang-panel-']");
+      codeWindow[0].scroll({
+        top: lines[i].offsetTop, behavior: 'smooth'
+      });
+      $(lines[i]).addClass("cl-active");
+    }
+  });
 });
