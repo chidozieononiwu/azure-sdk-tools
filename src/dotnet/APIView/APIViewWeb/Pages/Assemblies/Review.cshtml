@@ -10,7 +10,7 @@
     TempData["UserPreference"] = userPreference;
     TempData["LanguageCssSafeName"] = PageModelHelpers.GetLanguageCssSafeName(Model.ReviewContent.Review.Language);
     TempData["Comments"] = Model.Comments;
-    TempData["IsCrossLanguageView"] = (Model.CrossLanguage != null && Model.CrossLanguage.Any());
+    TempData["CrossLanguageEntries"] = Model.CrossLanguage;
     ViewBag.HasSections = Model.ReviewContent.PageHasLoadableSections;
 }
 @{
@@ -250,21 +250,20 @@
         <ul class="list-group collapse mb-3@(crossLangReviewCollapseState)" id="crossLangReviewCollapse">
             @foreach (var language in LanguageServiceHelpers.SupportedLanguages.Where(l => l != Model.ReviewContent.Review.Language))
             {
-                var lang = Uri.UnescapeDataString(language);
                 var langs = new List<string>() { "Python", "TypeSpec" };
-                if (langs.Contains(lang))
+                if (langs.Contains(language))
                 {
                     <li class="list-group-item">
                         <div class="form-check form-switch cross-lang-view-switch">
-                            @if (Model.CrossLanguage.Contains(lang))
+                            @if (Model.CrossLanguage.Contains(language))
                             {
-                                <input class="form-check-input" type="checkbox" checked role="switch" id="@(lang)-cross-lang-switch">
+                                <input class="form-check-input" type="checkbox" checked role="switch" id="@(language)-cross-lang-switch">
                             }
                             else
                             {
-                                <input class="form-check-input" type="checkbox" role="switch" id="@(lang)-cross-lang-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="@(language)-cross-lang-switch">
                             }
-                            <label class="form-check-label" for="@(lang)-cross-lang-switch">@(lang)</label>
+                            <label class="form-check-label" for="@(language)-cross-lang-switch">@(language)</label>
                         </div>
                     </li>
                 }
@@ -653,7 +652,7 @@
                 </div>
                 @for (int i = 0; i < Model.CrossLanguage.Count(); i++)
                 {
-                    var lang = Uri.UnescapeDataString(Model.CrossLanguage.ElementAt(i));
+                    var lang = Model.CrossLanguage.ElementAt(i);
                     @if (Model.ReviewContent.CrossLanguageViewContent.ContainsKey(lang))
                     {
                         <div class="col cross-lang-panel-@(i) @reviewApprovedClass">

@@ -1,7 +1,10 @@
+@using APIViewWeb.Helpers
 @using APIViewWeb.Models
 @{
     var id = ViewContext.RouteData.Values["id"];
     var userPreference = TempData["UserPreference"] as UserPreferenceModel;
+    var crossLanguageView = TempData["CrossLanguageEntries"] as IEnumerable<string>;
+    var language = TempData["LanguageCssSafeName"] as string;
 }
 
 <div class="row mx-1 p-0 mt-0 border-bottom">
@@ -19,6 +22,28 @@
             <li class="nav-item">
                 <a class="nav-link" active-if="@TempData["page"].Equals("samples")" asp-page="Samples" asp-route-id="@id">Usage Samples</a>
             </li>
+            @if (crossLanguageView.Any())
+            {
+                <li class="nav-item border-start ps-2 cross-lang-nav">
+                    <nav style="--bs-breadcrumb-divider: '-';" aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            @{
+                                string iconClassName = "icon-" + PageModelHelpers.GetLanguageCssSafeName(language);
+                            }
+                            <li class="breadcrumb-item">
+                                <span role="img" class="icon-language @iconClassName" aria-label="@language"></span>
+                            </li>
+                            @foreach (var lang in crossLanguageView)
+                            {
+                                iconClassName = "icon-" + PageModelHelpers.GetLanguageCssSafeName(lang);
+                                <li class="breadcrumb-item">
+                                    <span role="img" class="icon-language @iconClassName" aria-label="@lang"></span>
+                                </li>
+                            }
+                        </ol>
+                    </nav>
+                </li>
+            }
         </ul>
         @if (TempData["page"].Equals("api"))
         {

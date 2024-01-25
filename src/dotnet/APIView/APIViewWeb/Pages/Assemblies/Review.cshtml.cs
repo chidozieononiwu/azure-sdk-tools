@@ -70,6 +70,7 @@ namespace APIViewWeb.Pages.Assemblies
         [BindProperty(Name = "notificationMessage", SupportsGet = true)]
         public string NotificationMessage { get; set; }
         [BindProperty(Name = "crossLanguage", SupportsGet = true)]
+        [ModelBinder(BinderType = typeof(DecodeModelBinder))]
         public IEnumerable<string>CrossLanguage { get; set; }
 
 
@@ -95,9 +96,8 @@ namespace APIViewWeb.Pages.Assemblies
             // Get Cross  Language View Details
             foreach (var language in CrossLanguage)
             {
-                var lang = Uri.UnescapeDataString(language);
-                var packageName = LanguageServiceHelpers.GetCorrespondingPackageName(ReviewContent.Review.Language, lang, ReviewContent.Review.PackageName);
-                var review = await _reviewManager.GetReviewAsync(lang, packageName);
+                var packageName = LanguageServiceHelpers.GetCorrespondingPackageName(ReviewContent.Review.Language, language, ReviewContent.Review.PackageName);
+                var review = await _reviewManager.GetReviewAsync(language, packageName);
                 if (review != null)
                 {
                     var reviewContent = await PageModelHelpers.GetReviewContentAsync(configuration: _configuration,

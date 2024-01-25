@@ -99,6 +99,14 @@
     border-bottom: 1px solid var(--border-color) !important;
 }
 
+.border-start {
+    border-left: 1px solid var(--border-color) !important;
+}
+
+.border-end {
+    border-right: 1px solid var(--border-color) !important;
+}
+
 .list-group-item {
     color: var(--base-text-color);
     background-color: var(--base-fg-color);

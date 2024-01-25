@@ -300,6 +300,23 @@ $(() => {
 
   /* CROSS LANGUAGE VIEW
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
+  $("#load-cross-language-view").on("click", function (e: JQuery.ClickEvent) {
+    const crossLangusges = $(".cross-lang-view-switch");
+    const uri = new URL(window.location.href);
+    const urlParams = new URLSearchParams(uri.search);
+    urlParams.delete("crossLanguage");
+    crossLangusges.each(function (index, value) {
+      const language = value.querySelector("label")?.textContent;
+      const isChecked = value.querySelector("input")?.checked;
+      if (isChecked) {
+        urlParams.append("crossLanguage", encodeURIComponent(language!));
+      }
+    });
+    uri.search = urlParams.toString();
+    window.location.href = uri.toString()
+  })
+
+
   $(".cl-line-no-color").on("click", function (e: JQuery.ClickEvent) {
     e.preventDefault();
     const codeLine = $(this).closest(".code-line");
