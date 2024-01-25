@@ -62,7 +62,6 @@ export function splitReviewPageContent() {
 //-------------------------------------------------------------------------------------------------
 
 export enum CodeLineSectionState { shown, hidden }
-export enum ContextMenuAction { show, hide }
 
 /**
 * Get the section row that was clicked
@@ -625,7 +624,7 @@ export function addApprover(lowerTextSpan: HTMLElement, approvedByText: string, 
         addApprovedBorder();
     }
     addApproverHrefToApprovers(lowerTextSpan, approverHref, approver);
-  }
+}
   
   /**
    * Removes the @approver from @lowerTextSpan of review page
@@ -773,31 +772,3 @@ export function addApprover(lowerTextSpan: HTMLElement, approvedByText: string, 
       }
     }
   }
-
-
-/**
-* Toggle line-context-menu
-*/
-export function toggleLineContextMenu(action: ContextMenuAction, crossLangId: string = "", e: any = undefined) {
-
-  const contextMenu = $("#line-context-menu");
-
-  if (action == ContextMenuAction.hide && contextMenu.css("display") == "block") {
-    console.log("Context Menu Trigger Hide")
-    contextMenu.css("display", "none");
-  }
-  else if (action == ContextMenuAction.show) {
-    const targetReviewA = $("#line-context-menu").children(".list-group-item").first().data("id")
-
-    const menuItems = $("#line-context-menu").children(".list-group-item");
-    $(menuItems[0]).attr("href", `${$(menuItems[0]).data("id")}#${crossLangId}`);
-    $(menuItems[1]).attr("href", `${$(menuItems[1]).data("id")}#${crossLangId}`);
-    console.log("Context Menu Trigger Open")
-    $("#line-context-menu").css("display", "block");
-
-    if (e) {
-      $("#line-context-menu").css("left", `${e.pageX}px`);
-      $("#line-context-menu").css("top", `${e.pageY}px`);
-    }
-  }
-}

@@ -246,24 +246,3 @@ select {
 pre {
     color: var(--base-text-color);
 }
-
-.offcanvas {
-    border-top: 1px solid var(--border-color);
-    background-color: var(--base-fg-color);
-}
-
-.offcanvas-size-xl {
-    --bs-offcanvas-width: min(95vw, 700px) !important;
-}
-
-.offcanvas-size-xxl {
-    --bs-offcanvas-width: min(95vw, 90vw) !important;
-}
-
-.offcanvas-size-md { /* add Responsivenes to default offcanvas */
-    --bs-offcanvas-width: min(95vw, 400px) !important;
-}
-
-.offcanvas-size-sm {
-    --bs-offcanvas-width: min(95vw, 250px) !important;
-}

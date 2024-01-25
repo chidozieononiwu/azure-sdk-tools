@@ -23,9 +23,6 @@ $(() => {
     (<any>$("#diff-select")).SumoSelect({ search: true, searchText: 'Search Revisons for Diff...' });
     (<any>$("#revision-type-select")).SumoSelect();
     (<any>$("#diff-revision-type-select")).SumoSelect();
-    (<any>$("#cross-language-select-1")).SumoSelect({ placeholder: 'Select Language' });
-    (<any>$("#cross-language-select-2")).SumoSelect({ placeholder: 'Select Language' });
-    (<any>$("#cross-language-select-3")).SumoSelect({ placeholder: 'Select Language' });
 
     // Update codeLine Section state after page refresh
     const shownSectionHeadingLineNumbers = sessionStorage.getItem("shownSectionHeadingLineNumbers");
@@ -40,17 +37,11 @@ $(() => {
     if (uriHash) {
       let targetAnchorId = uriHash.replace('#', '');
       targetAnchorId = decodeURIComponent(targetAnchorId);
-      const targetAnchor = $(`[data-cross-lang-id="${targetAnchorId}"]`);
-      console.log("Target Anchor ${targetAnchor}");
-      if (targetAnchor.length > 0) {
-        targetAnchor[0].scrollIntoView();
+      const targetAnchor = $(`[id="${targetAnchorId}"]`);
+      if (targetAnchor.length == 0) {
+        console.log(`Target anchor not found, calling findTargetAnchorWithinSections`);
+        rvM.findTargetAnchorWithinSections(targetAnchorId);
       }
-
-      // Disable to allow POC for Cross Languae Review
-      //if (targetAnchor.length == 0) {
-      //  console.log(`Target anchor not found, calling findTargetAnchorWithinSections`);
-      //  rvM.findTargetAnchorWithinSections(targetAnchorId);
-      //}
     }
   });
 
@@ -307,43 +298,8 @@ $(() => {
   });
 
 
-  /* LINE DETAILS CONTEXT MENU
+  /* CROSS LANGUAGE VIEW
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
-  // Hide Menu on click outside
-  $(document).on("click", function () {
-    rvM.toggleLineContextMenu(rvM.ContextMenuAction.hide);
-  })
-
-  // Show context Menu
-  $(".line-number").on("contextmenu", function (e: JQuery.ContextMenuEvent) {
-    e.preventDefault();
-    const codeLine = $(this).closest(".code-line");
-    console.log(`Code Line ${codeLine}`);
-    const crossLangId = codeLine.data("cross-lang-id");
-    console.log(`Cross Language Id ${crossLangId}`);
-    if (crossLangId) {
-      rvM.toggleLineContextMenu(rvM.ContextMenuAction.show, crossLangId, e);
-    }
-  })
-
-  $("#load-cross-language-view").on("click", function (e: JQuery.ClickEvent) {
-    const crossLangusges = $(".cross-lang-view-switch");
-    const uri = new URL(window.location.href);
-    const urlParams = new URLSearchParams(uri.search);
-    urlParams.delete("crossLanguage");
-    crossLangusges.each(function (index, value) {
-      const language = value.querySelector("label")?.textContent;
-      const isChecked = value.querySelector("input")?.checked;
-      if (isChecked) {
-        urlParams.append("crossLanguage", encodeURIComponent(language!));
-      }
-    });
-    uri.search = urlParams.toString();
-    window.location.href = uri.toString()
-  })
-
-  // Jump To API Line
-
   $(".cl-line-no-color").on("click", function (e: JQuery.ClickEvent) {
     e.preventDefault();
     const codeLine = $(this).closest(".code-line");

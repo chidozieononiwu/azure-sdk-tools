@@ -45,9 +45,9 @@
     min-width: 100px;
     height: calc(100vh - 220px);
     padding: 0px;
+    overflow: auto;
     background-color: var(--base-fg-color);
     scroll-behavior: smooth;
-    overflow: auto;
     contain: size layout paint;
 }
 
@@ -69,14 +69,6 @@
     max-height: calc(100vh - 190px);
     overflow-y: auto;
     margin-top: 150px;
-}
-
-#cross-lang-view {
-    height: 45vh;
-}
-
-.cross-lang-code-panel {
-    overflow: hidden;
 }
 
 div[class^='col cross-lang-panel-'] {
