@@ -81,6 +81,12 @@
         lineClass += " code-delta";
         isHeadingWithDelta = true;
     }
+
+    if (crossLanguageView.Any())
+    {
+        string cstClassName = "cst-" + PageModelHelpers.GetLanguageCssSafeName(Model.Language);
+        lineClass = RemoveMultipleSpaces($"{lineClass} {cstClassName} cst-shadow");    }
+
     var rowClass = RemoveMultipleSpaces($"code-line {headingClass} {codeLineClass} {lineClass} {codeLineDisplay} {documentationRow} {hiddenApiRow}");
     var cellContent = String.Empty;
     for (int i = 0; i < Model.CodeLine.Indent; i++)

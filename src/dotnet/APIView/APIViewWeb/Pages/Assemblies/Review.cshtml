@@ -250,7 +250,7 @@
         <ul class="list-group collapse mb-3@(crossLangReviewCollapseState)" id="crossLangReviewCollapse">
             @foreach (var language in LanguageServiceHelpers.SupportedLanguages.Where(l => l != Model.ReviewContent.Review.Language))
             {
-                var langs = new List<string>() { "Python", "TypeSpec" };
+                var langs = new List<string>() { "Python", "C#", "C++", "Java", "JavaScript", "Go" };
                 if (langs.Contains(language))
                 {
                     <li class="list-group-item">
@@ -655,7 +655,9 @@
                     var lang = Model.CrossLanguage.ElementAt(i);
                     @if (Model.ReviewContent.CrossLanguageViewContent.ContainsKey(lang))
                     {
-                        <div class="col cross-lang-panel-@(i) @reviewApprovedClass">
+                        var crossLanguageContent = Model.ReviewContent.CrossLanguageViewContent[lang];
+                        reviewApprovedClass = (crossLanguageContent.ActiveAPIRevision.Approvers.Count() > 0) ? "review-approved" : "border rounded-1";
+                        <div class="col cross-lang-panel-@(i) @reviewApprovedClass" data-review-id="@crossLanguageContent.Review.Id" data-revision-id="@crossLanguageContent.ActiveAPIRevision.Id" data-language="@crossLanguageContent.Review.Language">
                             <table class="code-window">
                                 <tbody>
                                     @foreach (var line in Model.ReviewContent.CrossLanguageViewContent[lang].codeLines)

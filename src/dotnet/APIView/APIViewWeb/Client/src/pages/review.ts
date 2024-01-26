@@ -333,4 +333,11 @@ $(() => {
       $(lines[i]).addClass("cl-active");
     }
   });
+
+  $("#cross-lang-nav li").on("click", function (e: JQuery.ClickEvent) {
+    e.preventDefault();
+    const position = $(this).index();
+    const langPanelClass = (position == 0) ? "cross-lang-panel-active" : `cross-lang-panel-${position - 1}`;
+    $(`.${langPanelClass}`)[0].scrollIntoView({ block: "center", inline: "center", behavior: 'smooth' });
+  });
 });

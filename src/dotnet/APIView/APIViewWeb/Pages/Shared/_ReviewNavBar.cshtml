@@ -26,18 +26,18 @@
             {
                 <li class="nav-item border-start ps-2 cross-lang-nav">
                     <nav style="--bs-breadcrumb-divider: '-';" aria-label="breadcrumb">
-                        <ol class="breadcrumb">
+                        <ol class="breadcrumb" id="cross-lang-nav">
                             @{
                                 string iconClassName = "icon-" + PageModelHelpers.GetLanguageCssSafeName(language);
                             }
                             <li class="breadcrumb-item">
-                                <span role="img" class="icon-language @iconClassName" aria-label="@language"></span>
+                                <span role="img" class="icon-language @iconClassName animate__animated animate__pulse" aria-label="@language"></span>
                             </li>
                             @foreach (var lang in crossLanguageView)
                             {
                                 iconClassName = "icon-" + PageModelHelpers.GetLanguageCssSafeName(lang);
                                 <li class="breadcrumb-item">
-                                    <span role="img" class="icon-language @iconClassName" aria-label="@lang"></span>
+                                    <span role="img" class="icon-language @iconClassName animate__animated animate__pulse" aria-label="@lang"></span>
                                 </li>
                             }
                         </ol>

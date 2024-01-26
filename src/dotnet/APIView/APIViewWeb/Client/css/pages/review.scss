@@ -2,7 +2,12 @@
 
 .cross-lang-nav .breadcrumb {
     margin-bottom: 0px;
-    margin-top: 3px;
+}
+
+.cross-lang-nav .icon-language {
+    min-height: 32px;
+    width: 32px;
+    cursor: pointer
 }
 
 #cross-lang-container {

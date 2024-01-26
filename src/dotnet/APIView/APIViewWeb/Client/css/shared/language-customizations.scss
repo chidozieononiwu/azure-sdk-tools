@@ -228,6 +228,11 @@
     background: url(/icons/swagger-original.svg) center center no-repeat;
 }
 
+.icon-typespec {
+    @extend .icon-language;
+    background: url(/icons/typespec-original.svg) center center no-repeat;
+}
+
 .icon-comments {
     cursor: pointer;
     position: absolute;
@@ -241,4 +246,124 @@
 
 .icon-chevron-up {
     background: url(/icons/chevron-up.svg) center center no-repeat;
+}
+
+.cst-csharp {
+    .cst-shadow {
+        box-shadow: 5px 0px 0px 0px #68217A;
+    }
+
+    .cst-border {
+        border-color: #68217A
+    }
+}
+
+.cst-javascript {
+    .cst-shadow {
+        box-shadow: 5px 0px 0px 0px #F0DB4F;
+    }
+
+    .cst-border {
+        border-color: #F0DB4F
+    }
+}
+
+.cst-python {
+    .cst-shadow {
+        box-shadow: 5px 0px 0px 0px #306998;
+    }
+
+    .cst-border {
+        border-color: #306998
+    }
+}
+
+.cst-c {
+    .cst-shadow {
+        box-shadow: 5px 0px 0px 0px #659AD3;
+    }
+
+    .cst-border {
+        border-color: #659AD3
+    }
+}
+
+.cst-cplusplus {
+    .cst-shadow {
+        box-shadow: 5px 0px 0px 0px #9C033A;
+    }
+
+    .cst-border {
+        border-color: #9C033A
+    }
+}
+
+.cst-go {
+    .cst-shadow {
+        box-shadow: 5px 0px 0px 0px #6AD7E5;
+    }
+
+    .cst-border {
+        border-color: #6AD7E5
+    }
+}
+
+.cst-java {
+    .cst-shadow {
+        box-shadow: 5px 0px 0px 0px #0074BD;
+    }
+
+    .cst-border {
+        border-color: #0074BD
+    }
+}
+
+.cst-swift {
+    .cst-shadow {
+        box-shadow: 5px 0px 0px 0px #f05138;
+    }
+
+    .cst-border {
+        border-color: #f05138
+    }
+}
+
+.cst-kotlin {
+    .cst-shadow {
+        box-shadow: 5px 0px 0px 0px #1c93c1;
+    }
+
+    .cst-border {
+        border-color: #1c93c1
+    }
+}
+
+.cst-json {
+    .cst-shadow {
+        box-shadow: 5px 0px 0px 0px #000000;
+    }
+
+    .cst-border {
+        border-color: #000000
+    }
+}
+
+.cst-swagger {
+    .cst-shadow {
+        box-shadow: 5px 0px 0px 0px #49A32B;
+    }
+
+    .cst-border {
+        border-color: #49A32B
+    }
+}
+
+.cst-typespec {
+    .cst-shadow {
+        box-shadow: 5px 0px 0px 0px #FE4858;
+    }
+
+    .cst-border {
+        border-color: #FE4858
+    }
 }

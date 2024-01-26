@@ -14,14 +14,37 @@ namespace APIViewWeb.Helpers
 
         public static string GetCorrespondingPackageName(string sourceLanguage, string targetlanguage, string packageName)
         {
-            if (packageName.Equals("widgetmanagerclient"))
+            var result = string.Empty;
+            switch (targetlanguage)
             {
-                return "Contoso.WidgetManager";
+                case "C#":
+                    result = "Azure.Identity";
+                    break;
+                case "C++":
+                    result = "azure-identity-cpp";
+                    break;
+                case "Go":
+                    result = "azidentity";
+                    break;
+                case "Java":
+                    result = "com.azure:azure-identity";
+                    break;
+                case "JavaScript":
+                    result = "@azure/identity";
+                    break;
+                case "Python":
+                    result = "azure-identity";
+                    break;
             }
-            else 
-            {
-                return "widgetmanagerclient";
-            }
+            return result;
+            //if (packageName.Equals("widgetmanagerclient"))
+            //{
+            //    return "Contoso.WidgetManager";
+            //}
+            //else 
+            //{
+            //    return "widgetmanagerclient";
+            //}
         }
 
         public static IEnumerable<string> MapLanguageAliases(IEnumerable<string> languages)
