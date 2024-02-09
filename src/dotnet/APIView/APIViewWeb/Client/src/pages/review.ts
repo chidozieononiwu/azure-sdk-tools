@@ -139,9 +139,6 @@ $(() => {
           rightContainer.addClass("col-12");
         }
       }
-      else {
-        $(".cross-lang-panel-nav").toggleClass("d-none");
-      }
     });
   });
 
@@ -316,28 +313,61 @@ $(() => {
     window.location.href = uri.toString()
   })
 
-
-  $(".cl-line-no-color").on("click", function (e: JQuery.ClickEvent) {
+  // Load Cross Language Panel
+  $(".cl-line-no").on("click", function (e: JQuery.ClickEvent) {
     e.preventDefault();
     const codeLine = $(this).closest(".code-line");
     const crossLangId = codeLine.data("cross-lang-id");
-    const lines = $(`[data-cross-lang-id='${crossLangId}']`);
+    const crossLangTables = $("#cross-language-code-lines > table");
+    const crossLangCodeLines = new Map()
+    const crossLangPanel = $("#cross-language-view-template > tbody").children().clone();
+    const rowSibling = codeLine.next();
+    let showPanel = false;
 
-    $(".code-line").removeClass("cl-active");
+    crossLangTables.each(function (index, value) {
+      const langId = $(value).attr("data-language");
+      const dataReviewId = $(value).attr("data-review-id");
+      const dataRevisionId = $(value).attr("data-revision-id");
+      const codeLines = $(value).find(`[data-cross-lang-id='${crossLangId}']`).clone();
+      crossLangPanel.find(".cross-language-pills-tab-content").attr("data-review-id", dataReviewId!);
+      crossLangPanel.find(".cross-language-pills-tab-content").attr("data-revision-id", dataRevisionId!);
+      crossLangCodeLines.set(langId, codeLines);
+    });
 
-    for (var i = lines.length - 1; i >= 0; i--) {
-      const codeWindow = $(lines[i]).closest("div[class^='col cross-lang-panel-']");
-      codeWindow[0].scroll({
-        top: lines[i].offsetTop, behavior: 'smooth'
+    if (rowSibling.hasClass("cross-language-panel")) {
+      rowSibling.toggleClass("d-none");
+    } else {
+      const clTabs = crossLangPanel.find('[id^="cross-lang-pills-tab"]');
+      const clPills = crossLangPanel.find('[id^="cross-lang-pills-content-"]');
+      const randomizer = Date.now().toString(36);
+
+      clTabs.each(function (index, value) {
+        const tbId = $(value).attr("id") + randomizer;
+        const tbTarget = $(value).attr("data-bs-target") + randomizer;
+        const tbAria = $(value).attr("aria-controls") + randomizer;
+        $(value).attr("id", tbId);
+        $(value).attr("data-bs-target", tbTarget);
+        $(value).attr("aria-controls", tbAria);
       });
-      $(lines[i]).addClass("cl-active");
-    }
-  });
 
-  $("#cross-lang-nav li").on("click", function (e: JQuery.ClickEvent) {
-    e.preventDefault();
-    const position = $(this).index();
-    const langPanelClass = (position == 0) ? "cross-lang-panel-active" : `cross-lang-panel-${position - 1}`;
-    $(`.${langPanelClass}`)[0].scrollIntoView({ block: "center", inline: "center", behavior: 'smooth' });
+      clPills.each(function (index, value) {
+        const pillId = $(value).attr("id");
+        const pillIdParts = pillId?.split('-');
+        const pillLang = pillIdParts![pillIdParts!.length - 1];
+        const pillLabel = $(value).attr("aria-labelledby") + randomizer;
+        const crossLangContent = crossLangCodeLines.get(pillLang);
+        $(value).attr("id", (pillId + randomizer));
+        $(value).attr("aria-labelledby", pillLabel);
+        if (crossLangContent && crossLangContent.length > 0) {
+          showPanel = true;
+          $(value).html(crossLangContent);
+        }
+      });
+
+      if (showPanel) {
+        codeLine.after(crossLangPanel);
+        rvM.addCrossLaguageCloseBtnHandler();
+      }
+    }
   });
 });

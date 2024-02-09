@@ -513,6 +513,19 @@ namespace APIViewWeb.Helpers
         }
 
         /// <summary>
+        /// Deside if the content of the API is the header or content
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public static bool IsAPIStubHeader(string content)
+        {
+            if (content.Contains(">model<") || content.Contains(">enum<") || content.Contains(">alias<"))
+            {
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
         /// Create DiffOnly Lines
         /// </summary>
         /// <param name="lines"></param>

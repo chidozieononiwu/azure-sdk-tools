@@ -14,37 +14,48 @@ namespace APIViewWeb.Helpers
 
         public static string GetCorrespondingPackageName(string sourceLanguage, string targetlanguage, string packageName)
         {
-            var result = string.Empty;
-            switch (targetlanguage)
+            if (packageName.Equals("widgetmanagerclient") || packageName.Equals("Contoso.WidgetManager") || packageName.Equals("com.azure:contoso-widgetmanager"))
             {
-                case "C#":
-                    result = "Azure.Identity";
-                    break;
-                case "C++":
-                    result = "azure-identity-cpp";
-                    break;
-                case "Go":
-                    result = "azidentity";
-                    break;
-                case "Java":
-                    result = "com.azure:azure-identity";
-                    break;
-                case "JavaScript":
-                    result = "@azure/identity";
-                    break;
-                case "Python":
-                    result = "azure-identity";
-                    break;
+                var result = string.Empty;
+                switch (targetlanguage)
+                {
+                    case "TypeSpec":
+                        result = "Contoso.WidgetManager";
+                        break;
+                    case "Java":
+                        result = "com.azure:contoso-widgetmanager";
+                        break;
+                    case "Python":
+                        result = "widgetmanagerclient";
+                        break;
+                }
+                return result;
             }
-            return result;
-            //if (packageName.Equals("widgetmanagerclient"))
-            //{
-            //    return "Contoso.WidgetManager";
-            //}
-            //else 
-            //{
-            //    return "widgetmanagerclient";
-            //}
+            else {
+                var result = string.Empty;
+                switch (targetlanguage)
+                {
+                    case "C#":
+                        result = "Azure.Identity";
+                        break;
+                    case "C++":
+                        result = "azure-identity-cpp";
+                        break;
+                    case "Go":
+                        result = "azidentity";
+                        break;
+                    case "Java":
+                        result = "com.azure:azure-identity";
+                        break;
+                    case "JavaScript":
+                        result = "@azure/identity";
+                        break;
+                    case "Python":
+                        result = "azure-identity";
+                        break;
+                }
+                return result;
+            }
         }
 
         public static IEnumerable<string> MapLanguageAliases(IEnumerable<string> languages)

@@ -137,8 +137,29 @@
     width: auto;
 }
 
-.cl-line-no-color {
-    color: maroon;
+.cl-line-no {
+    color: goldenrod;
+}
+
+.cross-language-panel .nav-link {
+    text-align: right;
+    color: var(--link-color);
+}
+
+.cross-language-pills-tab-content {
+    width: 55dvw;
+    margin-right: 5px;
+    max-height: 25dvh;
+    overflow: auto;
+}
+
+.cl-custom-popover {
+    --bs-popover-max-width: 200px;
+    --bs-popover-border-color: var(--bd-violet-bg);
+    --bs-popover-header-bg: var(--bd-violet-bg);
+    --bs-popover-header-color: var(--bs-white);
+    --bs-popover-body-padding-x: 1rem;
+    --bs-popover-body-padding-y: .5rem;
 }
 
 .line-comment-button:hover {

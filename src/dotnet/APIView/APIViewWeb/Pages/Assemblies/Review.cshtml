@@ -193,14 +193,13 @@
                 var anyChecked = false;
             }
             <form asp-resource="@Model.ReviewContent.ActiveAPIRevision" asp-page-handler="RequestReviewers" method="post">
-                <input type="hidden" name="apiRevisionId" value="@Model.ReviewContent.ActiveAPIRevision.Id" />
                 <li class="list-group-item">
                         <ul class="list-group list-group-flush">
                             @foreach (var approver in Model.ReviewContent.PreferredApprovers)
                             {
                                 <li class="list-group-item">
                                     <div class="form-check">
-                                    @if (Model.ReviewContent.ActiveAPIRevision.AssignedReviewers != null && Model.ReviewContent.ActiveAPIRevision.AssignedReviewers.Where(a => a.AssingedTo == approver).Any())
+                                    @if (Model.ReviewContent.Review.AssignedReviewers != null && Model.ReviewContent.Review.AssignedReviewers.Where(a => a.AssingedTo == approver).Any())
                                         {
                                             <input class="form-check-input selectReviewerForRequest" type="checkbox" name="reviewers" value="@approver" id="@(approver)CheckBox" checked>
                                             <label class="form-check-label" for="@(approver)CheckBox">
@@ -211,7 +210,7 @@
                                         }
                                         else
                                         {
-                                            <input class="form-check-input selectReviewerForRequest" type="checkbox" name="reviewers" value="@approver" id="@(approver)CheckBox">
+                                    <input class="form-check-input selectReviewerForRequest" type="checkbox" name="reviewers" value="@approver" id="@(approver)CheckBox">
                                             <label class="form-check-label" for="@(approver)CheckBox">
                                                 <img username="@approver" size="28" width="28" class="comment-icon align-self-start mr-2" />
                                                 @approver
@@ -611,107 +610,62 @@
         mainContainerClass = String.Empty;
 }
 <div class="container-fluid pt-3@(mainContainerClass)" id="review-main-container">
-    @if (Model.CrossLanguage.Any())
-    {
-        @if (!string.IsNullOrEmpty(Model.NotificationMessage))
-        {
-            <div class="alert alert-warning alert-dismissible fade show m-1" role="alert">
-                @Model.NotificationMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+    <div class="row mx-3 g-2" data-review-id="@Model.ReviewContent.Review.Id" data-revision-id="@Model.ReviewContent.ActiveAPIRevision.Id" data-language="@Model.ReviewContent.Review.Language">
+        @{
+            var reviewLeftDisplay = String.Empty;
+            var reviewRightSize = "10";
+            if (userPreference.HideLeftNavigation == true)
+            {
+                reviewLeftDisplay = "d-none";
+                reviewRightSize = "12";
+            }
+            var reviewApprovedClass = (Model.ReviewContent.ActiveAPIRevision.Approvers.Count() > 0) ? "review-approved" : "border rounded-1";
         }
-        <div id="cross-lang-container">
-            <div id="cross-lang-carousel" class="row mx-1 g-2">
-                @{
-                    var navDisplay = String.Empty;
-                    if (userPreference.HideLeftNavigation == true)
+        <div id="review-left" class="col-2 @reviewApprovedClass @reviewLeftDisplay">
+            <div>
+                <div class="namespace-view">
+                    @if (Model.ReviewContent.Navigation != null)
                     {
-                        navDisplay = "d-none";
+                        <partial name="Shared/Navigation" model="Model.ReviewContent.Navigation" />
                     }
-                    var reviewApprovedClass = (Model.ReviewContent.ActiveAPIRevision.Approvers.Count() > 0) ? "review-approved" : "border rounded-1";
-                }
-                <div class="col cross-lang-panel-nav @reviewApprovedClass @navDisplay">
-                    <div>
-                        <div class="namespace-view">
-                            @if (Model.ReviewContent.Navigation != null)
-                            {
-                                <partial name="Shared/Navigation" model="Model.ReviewContent.Navigation" />
-                            }
-                        </div>
-                    </div>
                 </div>
-                <div class="col cross-lang-panel-active @reviewApprovedClass">
-                    <table class="code-window">
-                        <tbody>
-                            @foreach (var line in Model.ReviewContent.codeLines)
-                            {
-                                <partial name="_CodeLine" model="@line" />
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                @for (int i = 0; i < Model.CrossLanguage.Count(); i++)
-                {
-                    var lang = Model.CrossLanguage.ElementAt(i);
-                    @if (Model.ReviewContent.CrossLanguageViewContent.ContainsKey(lang))
-                    {
-                        var crossLanguageContent = Model.ReviewContent.CrossLanguageViewContent[lang];
-                        reviewApprovedClass = (crossLanguageContent.ActiveAPIRevision.Approvers.Count() > 0) ? "review-approved" : "border rounded-1";
-                        <div class="col cross-lang-panel-@(i) @reviewApprovedClass" data-review-id="@crossLanguageContent.Review.Id" data-revision-id="@crossLanguageContent.ActiveAPIRevision.Id" data-language="@crossLanguageContent.Review.Language">
-                            <table class="code-window">
-                                <tbody>
-                                    @foreach (var line in Model.ReviewContent.CrossLanguageViewContent[lang].codeLines)
-                                    {
-                                        <partial name="_CodeLine" model="@line" />
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                }
             </div>
         </div>
-    }
-    else
-    {
-        <div class="row mx-3 g-2" data-review-id="@Model.ReviewContent.Review.Id" data-revision-id="@Model.ReviewContent.ActiveAPIRevision.Id" data-language="@Model.ReviewContent.Review.Language">
-            @{
-                var reviewLeftDisplay = String.Empty;
-                var reviewRightSize = "10";
-                if (userPreference.HideLeftNavigation == true)
-                {
-                    reviewLeftDisplay = "d-none";
-                    reviewRightSize = "12";
-                }
-                var reviewApprovedClass = (Model.ReviewContent.ActiveAPIRevision.Approvers.Count() > 0) ? "review-approved" : "border rounded-1";
-            }
-            <div id="review-left" class="col-2 @reviewApprovedClass @reviewLeftDisplay">
-                <div>
-                    <div class="namespace-view">
-                        @if (Model.ReviewContent.Navigation != null)
-                        {
-                            <partial name="Shared/Navigation" model="Model.ReviewContent.Navigation" />
-                        }
-                    </div>
+        <div id="review-right" class="col-@reviewRightSize @reviewApprovedClass ">
+            @if (!string.IsNullOrEmpty(Model.NotificationMessage))
+            {
+                <div class="alert alert-warning alert-dismissible fade show m-1" role="alert">
+                    @Model.NotificationMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            </div>
-            <div id="review-right" class="col-@reviewRightSize @reviewApprovedClass ">
-                @if (!string.IsNullOrEmpty(Model.NotificationMessage))
-                {
-                    <div class="alert alert-warning alert-dismissible fade show m-1" role="alert">
-                        @Model.NotificationMessage
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                }
-                <table class="code-window">
+            }
+            <table class="code-window">
+                <tbody>
+                    @foreach (var line in Model.ReviewContent.codeLines)
+                    {
+                        <partial name="_CodeLine" model="@line" />
+                    }
+                </tbody>
+            </table>
+            <partial name="_CrossLanguageViewPartial" model="@Model.CrossLanguage" />
+        </div>
+    </div>
+    @if (Model.CrossLanguage.Any())
+    {
+        <div class="row d-none" id="cross-language-code-lines">
+            @foreach(var language in Model.CrossLanguage)
+            {
+                var reviewcontent = Model.ReviewContent.CrossLanguageViewContent[language];
+                var langId = PageModelHelpers.GetLanguageCssSafeName(language);
+                <table data-language="@langId" data-review-id="@reviewcontent.Review.Id" data-revision-id="@reviewcontent.ActiveAPIRevision.Id">
                     <tbody>
-                        @foreach (var line in Model.ReviewContent.codeLines)
+                        @foreach (var line in reviewcontent.codeLines)
                         {
                             <partial name="_CodeLine" model="@line" />
                         }
                     </tbody>
                 </table>
-            </div>
+            }
         </div>
     }
 

@@ -82,11 +82,6 @@
         isHeadingWithDelta = true;
     }
 
-    if (crossLanguageView.Any())
-    {
-        string cstClassName = "cst-" + PageModelHelpers.GetLanguageCssSafeName(Model.Language);
-        lineClass = RemoveMultipleSpaces($"{lineClass} {cstClassName} cst-shadow");    }
-
     var rowClass = RemoveMultipleSpaces($"code-line {headingClass} {codeLineClass} {lineClass} {codeLineDisplay} {documentationRow} {hiddenApiRow}");
     var cellContent = String.Empty;
     for (int i = 0; i < Model.CodeLine.Indent; i++)
@@ -119,9 +114,9 @@
                 else
                 {
                     var lineNumberClass = $"line-number";
-                    @if (!String.IsNullOrEmpty(Model.CodeLine.CrossLanguageDefinitionId) && crossLanguageView.Any())
+                    @if (crossLanguageView.Any() && !String.IsNullOrEmpty(Model.CodeLine.CrossLanguageDefinitionId) && PageModelHelpers.IsAPIStubHeader(Model.CodeLine.DisplayString))
                     {
-                        lineNumberClass = $"{lineNumberClass} cl-line-no-color";                     }
+                        lineNumberClass = $"{lineNumberClass} cl-line-no";                     }
 
                     if (Model.CodeLine.IsDocumentation)
                     {
