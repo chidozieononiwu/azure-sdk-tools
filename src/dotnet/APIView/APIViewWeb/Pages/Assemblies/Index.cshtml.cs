@@ -61,23 +61,25 @@ namespace APIViewWeb.Pages.Assemblies
         {
             var userPreference = await _preferenceCache.GetUserPreferences(User);
             var spaUrl = "https://spa." + Request.Host.ToString();
-            if (userPreference.UseBetaIndexPage == true)
-            {
-                return Redirect(spaUrl);
-            }
+            return Redirect(spaUrl);
 
-            if (!search.Any() && !languages.Any() && !state.Any() && !status.Any())
-            {
-                languages = userPreference.Language;
-                state = userPreference.State;
-                status = userPreference.Status;
-                await RunGetRequest(search, languages, state, status, pageNo, pageSize, sortField, false);
-            }
-            else 
-            {
-                await RunGetRequest(search, languages, state, status, pageNo, pageSize, sortField);
-            }
-            return Page();
+            //if (userPreference.UseBetaIndexPage == true)
+            //{
+            //    return Redirect(spaUrl);
+            //}
+            //
+            //if (!search.Any() && !languages.Any() && !state.Any() && !status.Any())
+            //{
+            //    languages = userPreference.Language;
+            //    state = userPreference.State;
+            //    status = userPreference.Status;
+            //    await RunGetRequest(search, languages, state, status, pageNo, pageSize, sortField, false);
+            //}
+            //else 
+            //{
+            //    await RunGetRequest(search, languages, state, status, pageNo, pageSize, sortField);
+            //}
+            //return Page();
         }
 
         public async Task<PartialViewResult> OnGetReviewsPartialAsync(

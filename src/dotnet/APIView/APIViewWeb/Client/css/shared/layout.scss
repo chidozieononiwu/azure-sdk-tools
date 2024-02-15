@@ -52,6 +52,11 @@ form.comment {
     @include app-footer;
 }
 
+.navbar-brand {
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+}
+
 .rounded-1 {
     border-radius: 3px !important;
 }

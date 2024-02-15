@@ -510,6 +510,7 @@ namespace APIViewWeb.Helpers
         /// Upload API Revision
         /// </summary>
         /// <param name="apiRevisionsManager"></param>
+        /// <param name="user"></param>
         /// <param name="id"></param>
         /// <param name="upload"></param>
         /// <param name="label"></param>
