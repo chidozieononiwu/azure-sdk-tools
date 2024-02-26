@@ -3,6 +3,7 @@ import { rightOffCanvasNavToggle } from "../shared/off-canvas";
 
 import * as rvM from "./review.module"
 import * as hp from "../shared/helpers";
+import * as cm from "../shared/comments.module";
 
 $(() => {  
   const SHOW_DOC_CHECKBOX = ".show-documentation-checkbox";
@@ -43,6 +44,9 @@ $(() => {
         rvM.findTargetAnchorWithinSections(targetAnchorId);
       }
     }
+
+    // Enable cross Language Comments Indicator
+    cm.crossLanguageViewCommentIndicator();
   });
 
   /* ADD FUNCTIONS TO LEFT NAVIGATION
@@ -361,6 +365,10 @@ $(() => {
         if (crossLangContent && crossLangContent.length > 0) {
           showPanel = true;
           $(value).html(crossLangContent);
+          const comments = crossLangContent.find(".review-comment");
+          if (comments.length > 0) {
+            crossLangPanel.find(`#cross-lang-pills-tab-${pillLang}${randomizer}`)[0].innerHTML += `<span class="badge rounded-pill text-bg-danger">${comments.length}</span>`;
+          }
         }
       });
 

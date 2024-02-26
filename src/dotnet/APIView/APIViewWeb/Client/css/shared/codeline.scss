@@ -141,15 +141,32 @@
     color: goldenrod;
 }
 
-.cross-language-panel .nav-link {
-    text-align: right;
-    color: var(--link-color);
+.cross-language-panel {
+    .nav-link {
+        color: var(--link-color);
+    }
+
+    .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+        background-color: transparent;
+        box-shadow: var(--box-shadow-left);
+    }
+
+    .nav-pills .nav-link {
+        border-radius: 0;
+    }
+
+    .badge {
+        background-color: var(--link-color);
+        border-color: var(--link-color);
+        color: var(--primary-btn-color);
+    }
 }
+
 
 .cross-language-pills-tab-content {
     width: 55dvw;
     margin-right: 5px;
-    max-height: 25dvh;
+    max-height: 35dvh;
     overflow: auto;
 }
 

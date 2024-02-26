@@ -10,7 +10,10 @@
                         {
                             var activeClass = (Model.ElementAt(0) == language) ? "active" : "";
                             var lang = PageModelHelpers.GetLanguageCssSafeName(language);
-                            <button class="nav-link @activeClass" id="cross-lang-pills-tab-@(lang)" data-bs-toggle="pill" data-bs-target="#cross-lang-pills-content-@(lang)" type="button" role="tab" aria-controls="cross-lang-pills-content-@(lang)" aria-selected="false">@language</button>
+                            string iconClassName = "icon-" + lang;
+                            <a class="nav-link @activeClass" id="cross-lang-pills-tab-@(lang)" data-bs-toggle="pill" data-bs-target="#cross-lang-pills-content-@(lang)" type="button" role="tab" aria-controls="cross-lang-pills-content-@(lang)" aria-selected="false">
+                                <span role="img" class="icon-language @iconClassName" aria-label="@lang"></span>
+                            </a>
                         }
                     </div>
                     <div class="tab-content border rounded cross-language-pills-tab-content">

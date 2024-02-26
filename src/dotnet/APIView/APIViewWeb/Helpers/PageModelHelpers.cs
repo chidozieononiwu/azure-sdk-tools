@@ -270,7 +270,7 @@ namespace APIViewWeb.Helpers
             if (activeRevision == null)
             {
                 reviewPageContent.Directive = ReviewContentModelDirective.ErrorDueToInvalidAPIRevisonRedirectToIndexPage;
-                reviewPageContent.NotificationMessage = $"Review with ID {reviewId} has no valid APIRevisons";
+                reviewPageContent.NotificationMessage = $"Review with ID {review.Id} has no valid APIRevisons";
                 return reviewPageContent;
             }
 
@@ -282,12 +282,12 @@ namespace APIViewWeb.Helpers
                 }
                 else
                 {
-                    reviewPageContent.NotificationMessage = $"A revision with ID {revisionId} does not exist for review with id {reviewId}";
+                    reviewPageContent.NotificationMessage = $"A revision with ID {revisionId} does not exist for review with id {review.Id}";
                     reviewPageContent.Directive = ReviewContentModelDirective.ErrorDueToInvalidAPIRevisonRedirectToIndexPage;
                     return reviewPageContent;
                 }
             } 
-            var comments = await commentManager.GetReviewCommentsAsync(reviewId);
+            var comments = await commentManager.GetReviewCommentsAsync(review.Id);
 
             var activeRevisionRenderableCodeFile = await codeFileRepository.GetCodeFileAsync(activeRevision.Id, activeRevision.Files[0].FileId);
             var activeRevisionReviewCodeFile = activeRevisionRenderableCodeFile.CodeFile;
