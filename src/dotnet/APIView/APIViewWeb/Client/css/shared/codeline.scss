@@ -22,6 +22,8 @@
     display: table-row;
     font-family: Consolas, monospace;
     line-height: 20px;
+    content-visibility: auto;
+    contain-intrinsic-size: 20px;
 }
 
 .code-line:hover .line-details-button-cell .line-comment-button {
