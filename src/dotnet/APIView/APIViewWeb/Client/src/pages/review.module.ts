@@ -3,10 +3,10 @@ import * as hp from "../shared/helpers";
 
 /* Hide some of the option switched (checkbox) when not needed */
 export function hideCheckboxesIfNotApplicable() {
-    if ($(".documentation").length == 0) {
+    if ($(".documentation").first().length == 0) {
         $("#show-documentation-component").hide();
     }
-    if ($(".hidden-api-toggleable").length == 0) {
+    if ($(".hidden-api-toggleable").first().length == 0) {
         $("#show-hidden-api-component").hide();
     }
 }
@@ -18,18 +18,18 @@ export function splitReviewPageContent() {
 
     if (rl.length && rr.length) {
         Split(['#review-left', '#review-right'], {
-        direction: 'horizontal',
-        sizes: [17, 83],
-        elementStyle: (dimension, size, gutterSize) => {
-            return {
-                'flex-basis': `calc(${size}% - ${gutterSize}px`
+            direction: 'horizontal',
+            sizes: [17, 83],
+            elementStyle: (dimension, size, gutterSize) => {
+                return {
+                    'flex-basis': `calc(${size}% - ${gutterSize}px`
+                }
+            },
+            gutterStyle: (dimension, gutterSize) => {
+                return {
+                    'flex-basis': `${gutterSize}px`
+                }
             }
-        },
-        gutterStyle: (dimension, gutterSize) => {
-            return {
-                'flex-basis': `${gutterSize}px`
-            }
-        }
         });
     }
 }
