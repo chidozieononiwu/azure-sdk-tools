@@ -15,32 +15,28 @@ $(() => {
   const SHOW_HIDDEN_CHECKBOX = "#show-hidden-api-checkbox";
 
   rvM.hideCheckboxesIfNotApplicable();
+  // Update codeLine Section state after page refresh
+  const shownSectionHeadingLineNumbers = sessionStorage.getItem("shownSectionHeadingLineNumbers");
 
-  // Run when document is ready
-  $(function() {
-    // Update codeLine Section state after page refresh
-    const shownSectionHeadingLineNumbers = sessionStorage.getItem("shownSectionHeadingLineNumbers");
+  if (shownSectionHeadingLineNumbers != null)
+  {
+    rvM.loadPreviouslyShownSections();
+  }
 
-    if (shownSectionHeadingLineNumbers != null)
-    {
-      rvM.loadPreviouslyShownSections();
+  // Scroll ids into view for Ids hidden in collapsed sections
+  const uriHash = location.hash;
+  if (uriHash) {
+    let targetAnchorId = uriHash.replace('#', '');
+    targetAnchorId = decodeURIComponent(targetAnchorId);
+    const targetAnchor = $(`[id="${targetAnchorId}"]`);
+    if (targetAnchor.length == 0) {
+      console.log(`Target anchor not found, calling findTargetAnchorWithinSections`);
+      rvM.findTargetAnchorWithinSections(targetAnchorId);
     }
+  }
 
-    // Scroll ids into view for Ids hidden in collapsed sections
-    const uriHash = location.hash;
-    if (uriHash) {
-      let targetAnchorId = uriHash.replace('#', '');
-      targetAnchorId = decodeURIComponent(targetAnchorId);
-      const targetAnchor = $(`[id="${targetAnchorId}"]`);
-      if (targetAnchor.length == 0) {
-        console.log(`Target anchor not found, calling findTargetAnchorWithinSections`);
-        rvM.findTargetAnchorWithinSections(targetAnchorId);
-      }
-    }
-
-    // Enable cross Language Comments Indicator
-    cm.crossLanguageViewCommentIndicator();
-  });
+  // Enable cross Language Comments Indicator
+  cm.crossLanguageViewCommentIndicator();
 
   /* ADD FUNCTIONS TO LEFT NAVIGATION
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/

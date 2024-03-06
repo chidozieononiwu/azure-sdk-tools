@@ -1,3 +1,5 @@
+import { scheduler } from "timers/promises";
+
 /**
 * Call APIView controller endpoint (/userprofile/updatereviewpagesettings)
 * to update various page settings
@@ -384,4 +386,19 @@ export function updateAIReviewGenerationStatus(notification: any) {
     $("#generateAIReviewButton").prop("disabled", false);
   }
   addToastNotification(notification);
+}
+
+/**
+ * Yeild function for Page Perfoemance
+ */
+function yieldToMain () {
+  // Use scheduler.yield if it exists:
+  if ('scheduler' in window && 'yield' in scheduler) {
+    return scheduler.yield();
+  }
+
+  // Fall back to setTimeout:
+  return new Promise(resolve => {
+    setTimeout(resolve, 0);
+  });
 }
