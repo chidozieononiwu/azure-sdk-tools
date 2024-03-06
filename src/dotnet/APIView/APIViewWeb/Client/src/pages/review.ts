@@ -5,7 +5,10 @@ import * as rvM from "./review.module"
 import * as hp from "../shared/helpers";
 import * as cm from "../shared/comments.module";
 
-$(() => {  
+$(() => {
+  let startTime = performance.now();
+  let endTime = performance.now();
+
   const SHOW_DOC_CHECKBOX = ".show-documentation-checkbox";
   const SHOW_DOC_HREF = ".show-documentation-switch";
   const SHOW_DIFFONLY_CHECKBOX = ".show-diffonly-checkbox";
@@ -18,10 +21,18 @@ $(() => {
   // Update codeLine Section state after page refresh
   const shownSectionHeadingLineNumbers = sessionStorage.getItem("shownSectionHeadingLineNumbers");
 
+  endTime = performance.now();
+  console.log(`After hideCheckboxesIfNotApplicable: ${endTime - startTime}ms`);
+  startTime = performance.now();
+
   if (shownSectionHeadingLineNumbers != null)
   {
     rvM.loadPreviouslyShownSections();
   }
+
+  endTime = performance.now();
+  console.log(`After loadPreviouslyShownSections: ${endTime - startTime}ms`);
+  startTime = performance.now();
 
   // Scroll ids into view for Ids hidden in collapsed sections
   const uriHash = location.hash;
@@ -37,6 +48,9 @@ $(() => {
 
   // Enable cross Language Comments Indicator
   cm.crossLanguageViewCommentIndicator();
+  endTime = performance.now();
+  console.log(`After Scroll ids into view : ${endTime - startTime}ms`);
+  startTime = performance.now();
 
   /* ADD FUNCTIONS TO LEFT NAVIGATION
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -59,6 +73,10 @@ $(() => {
     }
   });
 
+  endTime = performance.now();
+  console.log(`After enable expand/collapse : ${endTime - startTime}ms`);
+  startTime = performance.now();
+
   /* SPLIT REVIEW PAGE CONTENT
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
   /* 992px matches bootstrap col-lg min-width */
@@ -68,6 +86,10 @@ $(() => {
     // Only Add Split gutter if left navigation is not hidden
     rvM.splitReviewPageContent();
   }
+
+  endTime = performance.now();
+  console.log(`After splitReviewPageContent : ${endTime - startTime}ms`);
+  startTime = performance.now();
 
   /* TOGGLE PAGE OPTIONS
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -114,6 +136,10 @@ $(() => {
     });
   });
 
+  endTime = performance.now();
+  console.log(`After TOGGLE PAGE OPTIONS : ${endTime - startTime}ms`);
+  startTime = performance.now();
+
   /* TOGGLE DOCUMENTATION DROPDOWN
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
   $(TOGGLE_DOCUMENTATION).on("click", function(e){
@@ -137,7 +163,10 @@ $(() => {
     $(this).get(0).scrollIntoView({ block: "center"});
   });
 
-  
+  endTime = performance.now();
+  console.log(`After TOGGLE DOCUMENTATION DROPDOWN : ${endTime - startTime}ms`);
+  startTime = performance.now();
+
   /* BUTTON FOR REQUEST REVIEW (CHANGES BETWEEN REQUEST ALL AND REQUEST SELECTED IN THE REQUEST APPROVAL SECTION)
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
   $('.selectReviewerForRequest').on("click", function () {
@@ -172,13 +201,21 @@ $(() => {
     }
   });
 
+  endTime = performance.now();
+  console.log(`After selectReviewerForRequest : ${endTime - startTime}ms`);
+  startTime = performance.now();
+
   /* COLLAPSIBLE CODE LINES (EXPAND AND COLLAPSE FEATURE)
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
   rvM.addCodeLineToggleEventHandlers();
 
+  endTime = performance.now();
+  console.log(`After COLLAPSIBLE CODE LINES (EXPAND AND COLLAPSE FEATURE) : ${endTime - startTime}ms`);
+  startTime = performance.now();
+
   /* RIGHT OFFCANVAS OPERATIONS
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
-   // Open / Close right Offcanvas Menu
+  // Open / Close right Offcanvas Menu
   $("#review-right-offcanvas-toggle").on('click', function () {
     hp.updatePageSettings(function () {
       rightOffCanvasNavToggle("review-main-container");
@@ -205,6 +242,10 @@ $(() => {
       document.cookie = `${id}=shown; max-age=${7 * 24 * 60 * 60}`;
     });
   });
+
+  endTime = performance.now();
+  console.log(`After RIGHT OFFCANVAS OPERATIONS : ${endTime - startTime}ms`);
+  startTime = performance.now();
 
   /* GENERATE AI REVIEW
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -318,4 +359,6 @@ $(() => {
       }
     }
   });
+  endTime = performance.now();
+  console.log(`Time taken to load review page: ${endTime - startTime}ms`);
 });

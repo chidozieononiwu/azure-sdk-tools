@@ -1,5 +1,3 @@
-import { scheduler } from "timers/promises";
-
 /**
 * Call APIView controller endpoint (/userprofile/updatereviewpagesettings)
 * to update various page settings
@@ -391,13 +389,7 @@ export function updateAIReviewGenerationStatus(notification: any) {
 /**
  * Yeild function for Page Perfoemance
  */
-function yieldToMain () {
-  // Use scheduler.yield if it exists:
-  if ('scheduler' in window && 'yield' in scheduler) {
-    return scheduler.yield();
-  }
-
-  // Fall back to setTimeout:
+export function yieldToMain () {
   return new Promise(resolve => {
     setTimeout(resolve, 0);
   });
