@@ -11,25 +11,22 @@
 }
 
 #review-left {
-    max-width: none;
-    min-width: 10px;
-    height: calc(100vh - 120px);
-    overflow: auto;
-    max-height: 100vh;
+    @include review-panel;
+    width: 10%;
     padding: 5px 0px 5px 10px;
     background-color: var(--base-fg-color);
 }
 
 #review-main-container {
     @include main-content-container;
+    display: flex;
+    position: fixed;
 }
 
 #review-right {
-    max-width: 100%;
-    min-width: 100px;
-    height: calc(100vh - 120px);
+    @include review-panel;
+    width: 84%;
     padding: 0px;
-    overflow: auto;
     background-color: var(--base-fg-color);
     scroll-behavior: smooth;
     contain: size layout paint;
@@ -38,6 +35,12 @@
 .review-approved {
     @include review-approval-border;
     border-radius: 3px;
+}
+
+#review-resizer {
+    cursor: ew-resize;
+    width: 6px;
+    height: 100vh;
 }
 
 .show-diffonly-switch, .show-documentation-switch {

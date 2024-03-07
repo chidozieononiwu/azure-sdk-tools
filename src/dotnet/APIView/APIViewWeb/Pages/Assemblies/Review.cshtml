@@ -36,7 +36,8 @@
                     <span class="position-absolute start translate-middle badge rounded-pill bg-danger" id="jump-to-first-comment">
                         @count
                         <span class="visually-hidden">unread messages</span>
-                    </span>                }
+                    </span>
+                }
             </a>
             <a type="button" class="btn btn-lg btn-link mb-2" asp-page="Samples" asp-route-id="@Model.ReviewContent.Review.Id"><i class="bi bi-puzzle" data-bs-toggle="tooltip" data-bs-placement="right" title="Samples"></i></a>
         </div>
@@ -485,48 +486,43 @@
     </div>
 </div>
 
-<div class="container-fluid pt-2@(mainContainerClass)" id="review-main-container">
-    <div class="row g-2" data-review-id="@Model.ReviewContent.Review.Id" data-revision-id="@Model.ReviewContent.ActiveAPIRevision.Id" data-language="@Model.ReviewContent.Review.Language">
-        @{
-            var reviewLeftDisplay = String.Empty;
-            var reviewRightSize = "10";
-            if (Model.UserPreference.HideLeftNavigation == true)
-            {
-                reviewLeftDisplay = "d-none";
-                reviewRightSize = "12";
-            }
-
-            var reviewApprovedClass = (Model.ReviewContent.ActiveAPIRevision.Approvers.Count() > 0) ? "review-approved" : "border rounded-1";
+<div class="p-2@(mainContainerClass)" id="review-main-container" data-review-id="@Model.ReviewContent.Review.Id" data-revision-id="@Model.ReviewContent.ActiveAPIRevision.Id" data-language="@Model.ReviewContent.Review.Language">
+    @{
+        var reviewLeftDisplay = String.Empty;
+        var reviewRightSize = "10";
+        if (userPreference.HideLeftNavigation == true)
+        {
+            reviewLeftDisplay = "d-none";
+            reviewRightSize = "12";
         }
-        <div id="review-left" class="col-2 @reviewApprovedClass @reviewLeftDisplay">
-            <div>
-                <div class="namespace-view">
-                    @if (Model.ReviewContent.Navigation != null)
-                    {
-                        <partial name="Shared/Navigation" model="Model.ReviewContent.Navigation" />
-                    }
-                </div>
-            </div>
-        </div>
-
-        <div id="review-right" class="col-@reviewRightSize @reviewApprovedClass">
-            @if (!string.IsNullOrEmpty(Model.NotificationMessage))
+        var reviewApprovedClass = (Model.ReviewContent.ActiveAPIRevision.Approvers.Count() > 0) ? "review-approved" : "border rounded-1";
+    }
+    <div id="review-left" class="@reviewApprovedClass @reviewLeftDisplay">
+        <div class="namespace-view">
+            @if (Model.ReviewContent.Navigation != null)
             {
-                <div class="alert alert-warning alert-dismissible fade show m-1" role="alert">
-                    @Model.NotificationMessage
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+                <partial name="Shared/Navigation" model="Model.ReviewContent.Navigation" />
             }
-            <table class="code-window">
-                <tbody>
-                    @foreach (var line in Model.ReviewContent.codeLines)
-                    {
-                        <partial name="_CodeLine" model="@line" />
-                    }
-                </tbody>
-            </table>
-            <partial name="_CrossLanguageViewPartial" model="@Model.ReviewContent.CrossLanguageViewContent" />
         </div>
+    </div>
+    <div id="review-resizer">
+    </div>
+    <div id="review-right" class="@reviewApprovedClass">
+        @if (!string.IsNullOrEmpty(Model.NotificationMessage))
+        {
+            <div class="alert alert-warning alert-dismissible fade show m-1" role="alert">
+                @Model.NotificationMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        <table class="code-window">
+            <tbody>
+                @foreach (var line in Model.ReviewContent.codeLines)
+                {
+                    <partial name="_CodeLine" model="@line" />
+                }
+            </tbody>
+        </table>
     </div>
     @if (Model.ReviewContent.CrossLanguageViewContent.Any())
     {

@@ -23,6 +23,7 @@ $(() => {
   });
 
   $(document).on("click", ".line-comment-button", e => {
+    let startTime = performance.now();
     let id = hp.getElementId(e.target);
     let crossLangId = hp.getElementId(e.target, "data-cross-lang-id");
     if (id) {
@@ -33,8 +34,10 @@ $(() => {
       else {
         hp.showCommentBox(id, rowSectionClasses);
       }
-  }
-  e.preventDefault();
+    }
+    e.preventDefault();
+    let endTime = performance.now();
+    console.log("Comment button click time: " + (endTime - startTime) + "ms");
   });
 
   $(document).on("click", ".comment-cancel-button", e => {

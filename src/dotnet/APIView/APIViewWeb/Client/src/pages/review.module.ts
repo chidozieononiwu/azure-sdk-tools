@@ -1,4 +1,3 @@
-import Split from "split.js";
 import * as hp from "../shared/helpers";
 
 /* Hide some of the option switched (checkbox) when not needed */
@@ -13,25 +12,38 @@ export function hideCheckboxesIfNotApplicable() {
 
 /* Split left and right review panes using split.js */
 export function splitReviewPageContent() {
-    const rl = $('#review-left');
-    const rr = $('#review-right');
+  const resizer = document.getElementById("review-resizer");
+  let isReviewPageResizing = false;
 
-    if (rl.length && rr.length) {
-        Split(['#review-left', '#review-right'], {
-            direction: 'horizontal',
-            sizes: [17, 83],
-            elementStyle: (dimension, size, gutterSize) => {
-                return {
-                    'flex-basis': `calc(${size}% - ${gutterSize}px`
-                }
-            },
-            gutterStyle: (dimension, gutterSize) => {
-                return {
-                    'flex-basis': `${gutterSize}px`
-                }
-            }
-        });
-    }
+  resizer?.addEventListener('mousedown', function (e) {
+    e.preventDefault();
+    isReviewPageResizing = true;
+  });
+
+  document.addEventListener('mousemove', function (e) {
+    if (!isReviewPageResizing)
+      return;
+
+    handleReviewResizerMouseMove(e);
+  });
+
+  document.addEventListener('mouseup', function (e) {
+    isReviewPageResizing = false;
+    stopReviewPanelResize();
+  });
+}
+
+function handleReviewResizerMouseMove(e) {
+  const container = document.getElementById("review-main-container");
+  const leftPanel = document.getElementById("review-left");
+  const containerRect = container?.getBoundingClientRect();
+  const newLeftPanelWidth = e.clientX - containerRect!.left;
+  leftPanel!.style.width = newLeftPanelWidth + 'px';
+}
+
+function stopReviewPanelResize() {
+  document.removeEventListener('mousemove', (e) => handleReviewResizerMouseMove(e)); 
+  document.removeEventListener('mouseup', stopReviewPanelResize);
 }
 
 //-------------------------------------------------------------------------------------------------

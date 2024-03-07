@@ -24,7 +24,7 @@
 
 @mixin main-content-container {
     transition: margin-right .5s;
-    width: auto;
+    width: -webkit-fill-available;
 }
 
 @mixin review-offcanvas-menu-content {
@@ -48,6 +48,14 @@
     width: 30dvw;
     background-color: var(--base-bg-color);
 }
+
+@mixin review-panel {
+    flex-grow: 1;
+    overflow: auto;
+    height: calc(100vh - 120px);
+    position: relative;
+}
+
 
 @mixin placeholder {
     ::-webkit-input-placeholder {
