@@ -49,19 +49,19 @@ $(() => {
      * solution: send to all users AND the group and raise flag
      */
   let alreadyRefreshedComment = false;
-  connection.on("ReceiveCommentSelf", (reviewId, elementId, commentThreadHTML) => {
-    cM.updateCommentThreadInReviewPageDOM(reviewId, elementId, commentThreadHTML);
+  connection.on("ReceiveCommentSelf", async (reviewId, elementId, commentThreadHTML) => {
+    await cM.updateCommentThreadInReviewPageDOM(reviewId, elementId, commentThreadHTML);
     alreadyRefreshedComment = true;
   });
 
-  connection.on("ReceiveComment", (reviewId: string, elementId: string, commentThreadHTML: string) => {
+  connection.on("ReceiveComment", async (reviewId: string, elementId: string, commentThreadHTML: string) => {
     if (alreadyRefreshedComment == true) {
       alreadyRefreshedComment = false;
       return;
     }
 
     let commentThreadString = (commentThreadHTML && commentThreadHTML != '\r\n') ? cM.updateCommentThreadUserContext(commentThreadHTML) : commentThreadHTML;
-    cM.updateCommentThreadInReviewPageDOM(reviewId, elementId, commentThreadString);
+    await cM.updateCommentThreadInReviewPageDOM(reviewId, elementId, commentThreadString);
   });
 
   let approvalPendingText = "Current Revision Approval Pending";

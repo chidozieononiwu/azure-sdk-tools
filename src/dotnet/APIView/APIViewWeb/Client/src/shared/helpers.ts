@@ -41,7 +41,7 @@ export function updatePageSettings(callBack) {
 * @param { string } row id
 */
 export function getCodeRow(id: string) {
-  return $(`.code-line[data-line-id='${id}']`);
+  return document.querySelector(`.code-line[data-line-id='${id}']`) as HTMLElement;
 }
 
 /**
@@ -52,7 +52,7 @@ export function getCodeRowSectionClasses(id: string) {
   var codeRow = getCodeRow(id);
   var rowSectionClasses = "";
   if (codeRow) {
-    rowSectionClasses = getRowSectionClasses(codeRow[0].classList);
+    rowSectionClasses = getRowSectionClasses(codeRow.classList);
   }
   return rowSectionClasses;
 }
@@ -77,7 +77,15 @@ export function getRowSectionClasses(classList: DOMTokenList) {
 * @param { boolean } show
 */
 export function toggleCommentIcon(id: string, show: boolean) {
-  getCodeRow(id).find(".icon-comments").toggleClass("invisible", !show);
+  const codeRow = getCodeRow(id);
+  const commentIcon = codeRow.querySelector(".icon-comments");
+  if (commentIcon) {
+    if (show) {
+      commentIcon.classList.remove("invisible");
+    } else {
+      commentIcon.classList.add("invisible");
+    }
+  }
 }
 
 /**
@@ -165,7 +173,7 @@ export function updateCommentThread(commentBox, commentThreadHTML) {
  */
 export function removeCommentIconIfEmptyCommentBox(id) {
   var commentRows = getCommentsRow(id);
-  if (commentRows.length == 0 && !($("#show-comments-checkbox").prop("checked"))) {
+  if (commentRows && !($("#show-comments-checkbox").prop("checked"))) {
     toggleCommentIcon(id, false);
   }
 }
@@ -260,59 +268,73 @@ export function getReviewAndRevisionIdFromUrl(uri) {
   return result;
 }
 
-export function getCommentsRow(id: string) {
-  return $(`.comment-row[data-line-id='${id}']`);
+export function getCommentsRow(id: string) : HTMLElement {
+  return (document.querySelector(`.comment-row[data-line-id='${id}']`) as HTMLElement);
 }
 
 // side effect: creates a comment row if it doesn't already exist
-export function showCommentBox(id: string, classes: string = '', crossLangId: string = '',  moveFocus: boolean = true) {
-  let commentForm;
-  let commentsRow = getCommentsRow(id);
+export async function showCommentBox(id: string, classes: string = '', crossLangId: string = '', moveFocus: boolean = true) {
+  let commentForm: HTMLElement = createCommentForm();
+  let commentsRow: HTMLElement = getCommentsRow(id);
   let commentRowClasses = "comment-row";
   if (classes) {
     commentRowClasses = `${commentRowClasses} ${classes}`;
   }
 
-  if (commentsRow.length === 0) {
-    commentForm = createCommentForm();
-    commentsRow =
-      $(`<tr class="${commentRowClasses}" data-line-id="${id}" data-cross-lang-id="${crossLangId}">`)
-        .append($("<td colspan=\"3\">")
-          .append(commentForm));
+  let diagnosticsRow = getDiagnosticsRow(id);
+  let codeRow = getCodeRow(id);
 
-    commentsRow.insertAfter(getDiagnosticsRow(id).get(0) || getCodeRow(id).get(0));
+  if (!commentsRow) {
+    let trElement = document.createElement('tr');
+    trElement.className = commentRowClasses;
+    trElement.dataset.lineId = id;
+
+    let tdElement = document.createElement('td');
+    tdElement.colSpan = 3;
+    tdElement.appendChild(commentForm);
+
+    trElement.appendChild(tdElement);
+    commentsRow = trElement;
+
+    (diagnosticsRow || codeRow)?.insertAdjacentElement('afterend', commentsRow);
   }
   else {
     // there is one or more comment rows - insert form
-    let replyArea = $(commentsRow).find(".review-thread-reply");
-
-    commentForm = $(replyArea).next();
-    if (!commentForm.hasClass("comment-form")) {
-      commentForm = $(createCommentForm()).insertAfter(replyArea);
+    let replyArea = commentsRow.querySelector(".review-thread-reply") as HTMLElement;
+    commentForm = replyArea?.nextElementSibling! as HTMLElement;
+    if (!commentForm.classList.contains("comment-form")) {
+      commentForm = createCommentForm();
+      replyArea?.insertAdjacentElement('afterend', commentForm);
     }
-    replyArea.hide();
-    commentForm.show();
-    commentsRow.show(); // ensure that entire comment row isn't being hidden
+    replyArea.style.display = 'none';
+    commentForm.style.display = 'block';
+    commentForm.style.display = 'block'; // ensure that entire comment row isn't being hidden
   }
 
-  $(getDiagnosticsRow(id)).show(); // ensure that any code diagnostic for this row is shown in case it was previously hidden
+  await yieldToMain();
+
+  if (diagnosticsRow) {
+    diagnosticsRow.style.display = 'block'; // ensure that any code diagnostic for this row is shown in case it was previously hidden
+  }
 
   // If comment checkbox is unchecked, show the icon for new comment
-  if (!($("#show-comments-checkbox").prop("checked"))) {
+  let showCommentsCheckbox = document.getElementById("show-comments-checkbox") as HTMLInputElement;
+  if (!showCommentsCheckbox.checked) {
     toggleCommentIcon(id, true);
   }
 
   if (moveFocus) {
-    commentForm.find(".new-thread-comment-text").focus();
+    (commentForm.querySelector(".new-thread-comment-text") as HTMLElement).focus();
   }
 }
 
-export function createCommentForm() {
-  return $("#js-comment-form-template").children().clone();
+export function createCommentForm() : HTMLElement {
+  const commentFormTemplate = document.getElementById("js-comment-form-template");
+  return (commentFormTemplate?.firstChild?.cloneNode(true) as HTMLElement)
 }
 
 export function getDiagnosticsRow(id: string) {
-  return $(`.code-diagnostics[data-line-id='${id}']`);
+  return (document.querySelector(`.code-diagnostics[data-line-id='${id}']`) as HTMLElement);
 }
 
 export function getElementId(element: HTMLElement, idName: string = "data-line-id") {

@@ -16,28 +16,25 @@ $(() => {
   // simple github username match	
   const githubLoginTagMatch = /(\s|^)@([a-zA-Z\d-]+)/g;
 
-  $(document).on("click", ".commentable", e => {
+  $(document).on("click", ".commentable", async e => {
     var rowSectionClasses = hp.getCodeRowSectionClasses(e.target.id);
-    hp.showCommentBox(e.target.id, rowSectionClasses);
+    await hp.showCommentBox(e.target.id, rowSectionClasses);
     e.preventDefault();
   });
 
-  $(document).on("click", ".line-comment-button", e => {
-    let startTime = performance.now();
+  $(document).on("click", ".line-comment-button", async e => {
     let id = hp.getElementId(e.target);
     let crossLangId = hp.getElementId(e.target, "data-cross-lang-id");
     if (id) {
       var rowSectionClasses = hp.getCodeRowSectionClasses(id);
       if (crossLangId) {
-        hp.showCommentBox(id, rowSectionClasses, crossLangId);
+        await hp.showCommentBox(id, rowSectionClasses, crossLangId);
       }
       else {
-        hp.showCommentBox(id, rowSectionClasses);
+        await hp.showCommentBox(id, rowSectionClasses);
       }
     }
     e.preventDefault();
-    let endTime = performance.now();
-    console.log("Comment button click time: " + (endTime - startTime) + "ms");
   });
 
   $(document).on("click", ".comment-cancel-button", e => {
@@ -46,8 +43,8 @@ $(() => {
       hideCommentBox(id);
       // if a comment was added and then cancelled, and there are no other
       // comments for the thread, we should remove the comments icon.
-      if (hp.getCommentsRow(id).find(SEL_COMMENT_CELL).length === 0) {
-        hp.getCodeRow(id).find(SEL_COMMENT_ICON).addClass(INVISIBLE);
+      if (hp.getCommentsRow(id)?.querySelector(SEL_COMMENT_CELL)) {
+        hp.getCodeRow(id)?.querySelector(SEL_COMMENT_ICON)?.classList.add(INVISIBLE);
       }
     }
     e.preventDefault();
@@ -141,10 +138,10 @@ $(() => {
     e.preventDefault();
   });
 
-  $(document).on("click", ".review-thread-reply-button", e => {
+  $(document).on("click", ".review-thread-reply-button", async (e) => {
     let lineId = hp.getElementId(e.target);
     if (lineId) {
-        hp.showCommentBox(lineId);
+      await hp.showCommentBox(lineId);
     }
     e.preventDefault();
   });
@@ -390,10 +387,10 @@ $(() => {
 
   function highlightCurrentRow(rowElement: JQuery<HTMLElement> = $(), isInlineRow: boolean = false) {
     if (location.hash.length < 1 && !isInlineRow) return;
-    var row = (rowElement.length > 0) ? rowElement : hp.getCodeRow(location.hash.substring(1));
-    row.addClass("active");
-    row.on("animationend", () => {
-        row.removeClass("active");
+    var row = (rowElement.length > 0) ? rowElement[0] : hp.getCodeRow(location.hash.substring(1));
+    row.classList.add("active");
+    row.addEventListener("animationend", () => {
+      row.classList.remove("active");
     });
   }
 
@@ -435,7 +432,7 @@ $(() => {
     commentElement.replaceWith(template);
   }
 
-  function deleteComment(commentId: string, lineId: string, commentRow: JQuery<HTMLElement>) {
+  function deleteComment(commentId: string, lineId: string, commentRow: HTMLElement) {
     const reviewId = hp.getReviewAndRevisionIdFromUrl(document.location.href)["reviewId"];
     const elementId = hp.getElementId(getCommentElement(commentId)[0]);
     const url = location.origin + `/comments/delete?reviewid=${reviewId}&commentid=${commentId}&elementid=${elementId}`;
@@ -456,10 +453,10 @@ $(() => {
 
   function hideCommentBox(id: string) {
     let commentsRow = hp.getCommentsRow(id);
-    let replyDiv = commentsRow.find(".review-thread-reply");
-    if (replyDiv.length > 0) {
-      replyDiv.show();
-      commentsRow.find(".comment-form").hide();
+    let replyDiv: HTMLElement | null = commentsRow.querySelector(".review-thread-reply");
+    if (replyDiv) {
+      replyDiv.style.display = "block";
+      (commentsRow.querySelector(".comment-form") as HTMLElement).style.display = "none";
     }
     else {
       commentsRow.remove();
@@ -477,7 +474,7 @@ $(() => {
     $(SEL_COMMENT_CELL).each(function () {
       const id = hp.getElementId(this);
       if (id) {
-        const tbRow = hp.getCommentsRow(id);
+        const tbRow = $(hp.getCommentsRow(id));
         const prevRow = tbRow.prev(".code-line");
         const nextRow = tbRow.next(".code-line");
         if ((prevRow != undefined && prevRow.hasClass("d-none")) && (nextRow != undefined && nextRow.hasClass("d-none")))
@@ -493,7 +490,7 @@ $(() => {
     $(SEL_CODE_DIAG).each(function () {
       const id = hp.getElementId(this);
       if (id) {
-        const tbRow = hp.getDiagnosticsRow(id);
+        const tbRow = $(hp.getDiagnosticsRow(id));
         const prevRow = tbRow.prev(".code-line");
         const nextRow = tbRow.next(".code-line");
         if ((prevRow != undefined && prevRow.hasClass("d-none")) && (nextRow != undefined && nextRow.hasClass("d-none")))
@@ -506,12 +503,12 @@ $(() => {
   }
 
   function toggleSingleCommentAndDiagnostics(id: string) {
-    hp.getCommentsRow(id).toggleClass("d-none");
-    hp.getDiagnosticsRow(id).toggleClass("d-none");
+    hp.getCommentsRow(id).classList.toggle("d-none");
+    hp.getDiagnosticsRow(id).classList.toggle("d-none");
   }
 
   function getSingleCommentAndDiagnosticsDisplayStatus(id: string) {
-    return !(hp.getCommentsRow(id).hasClass("d-none") || hp.getDiagnosticsRow(id).hasClass("d-none"));
+    return !(hp.getCommentsRow(id).classList.contains("d-none") || hp.getDiagnosticsRow(id).classList.contains("d-none"));
   }
 
   function toggleSingleResolvedComment(id: string) {

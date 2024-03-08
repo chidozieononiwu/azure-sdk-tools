@@ -55,20 +55,20 @@ export function updateCommentThreadUserContext(commentThreadHTML: string) {
  * @param elementId
  * @param commentThreadHTML
  */
-export function updateCommentThreadInReviewPageDOM(reviewId: any, elementId: any, commentThreadHTML: any) {
+export async function updateCommentThreadInReviewPageDOM(reviewId: any, elementId: any, commentThreadHTML: any) {
   if (hp.checkReviewRevisionIdAgainstCurrent(reviewId, null, false)) {
     var rowSectionClasses = hp.getCodeRowSectionClasses(elementId);
-    hp.showCommentBox(elementId, rowSectionClasses, undefined, false);
+    await hp.showCommentBox(elementId, rowSectionClasses, false);
 
     let commentsRow = hp.getCommentsRow(elementId);
-    const replyText = commentsRow.find(".new-thread-comment-text-mirror").text();
+    const replyText = commentsRow.querySelector(".new-thread-comment-text-mirror")?.textContent;
     hp.updateCommentThread(commentsRow, commentThreadHTML);
     hp.updateUserIcon();
     if (replyText) {
       commentsRow = hp.getCommentsRow(elementId);
-      commentsRow.find(".review-thread-reply-button").click();
-      commentsRow.find(".new-thread-comment-text-mirror").text(replyText)
-      commentsRow.find(".new-thread-comment-text").html(replyText);
+      (commentsRow.querySelector(".review-thread-reply-button") as HTMLElement).click();
+      commentsRow.querySelector(".new-thread-comment-text-mirror")!.textContent = replyText;
+      commentsRow.querySelector(".new-thread-comment-text")!.innerHTML = replyText;
     }
     hp.addCommentThreadNavigation();
     hp.removeCommentIconIfEmptyCommentBox(elementId);
