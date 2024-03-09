@@ -1,3 +1,4 @@
+
 import { rightOffCanvasNavToggle } from "../shared/off-canvas";
 
 import * as rvM from "./review.module"
@@ -18,6 +19,12 @@ $(() => {
 
   // Run when document is ready
   $(function() {
+    // Enable SumoSelect
+    (<any>$("#revision-select")).SumoSelect({ search: true, searchText: 'Search Revisions...' });
+    (<any>$("#diff-select")).SumoSelect({ search: true, searchText: 'Search Revisons for Diff...' });
+    (<any>$("#revision-type-select")).SumoSelect();
+    (<any>$("#diff-revision-type-select")).SumoSelect();
+
     // Update codeLine Section state after page refresh
     const shownSectionHeadingLineNumbers = sessionStorage.getItem("shownSectionHeadingLineNumbers");
 
@@ -162,6 +169,7 @@ $(() => {
     $(this).get(0).scrollIntoView({ block: "center"});
   });
 
+  
   /* BUTTON FOR REQUEST REVIEW (CHANGES BETWEEN REQUEST ALL AND REQUEST SELECTED IN THE REQUEST APPROVAL SECTION)
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
   $('.selectReviewerForRequest').on("click", function () {
@@ -255,6 +263,22 @@ $(() => {
 
   /* CROSS LANGUAGE VIEW
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
+  $("#load-cross-language-view").on("click", function (e: JQuery.ClickEvent) {
+    const crossLangusges = $(".cross-lang-view-switch");
+    const uri = new URL(window.location.href);
+    const urlParams = new URLSearchParams(uri.search);
+    urlParams.delete("crossLanguage");
+    crossLangusges.each(function (index, value) {
+      const language = value.querySelector("label")?.textContent;
+      const isChecked = value.querySelector("input")?.checked;
+      if (isChecked) {
+        urlParams.append("crossLanguage", encodeURIComponent(language!));
+      }
+    });
+    uri.search = urlParams.toString();
+    window.location.href = uri.toString()
+  })
+
   // Load Cross Language Panel
   $(".cl-line-no").on("click", function (e: JQuery.ClickEvent) {
     e.preventDefault();
@@ -282,30 +306,56 @@ $(() => {
       const clTabs = crossLangPanel.find('[id^="cross-lang-pills-tab"]');
       const clPills = crossLangPanel.find('[id^="cross-lang-pills-content-"]');
       const randomizer = Date.now().toString(36);
+      const activeLanguage = sessionStorage.getItem("activeCrossLanguageTab") ?? "";
+
+      console.log("activeLanguage o%", activeLanguage);
 
       clTabs.each(function (index, value) {
-        const tbId = $(value).attr("id") + randomizer;
-        const tbTarget = $(value).attr("data-bs-target") + randomizer;
-        const tbAria = $(value).attr("aria-controls") + randomizer;
-        $(value).attr("id", tbId);
-        $(value).attr("data-bs-target", tbTarget);
-        $(value).attr("aria-controls", tbAria);
+        let tbId = $(value).attr("id")!;
+        const tbTarget = $(value).attr("data-bs-target")!;
+        const tbAria = $(value).attr("aria-controls")!;
+
+        if (activeLanguage){
+          if (tbId.includes(activeLanguage)){
+            $(value).addClass("active");
+          }
+        }
+        else if (index == 0) {
+          $(value).addClass("active");
+        }
+        $(value).attr("id", `${tbId}-${randomizer}`);
+        $(value).attr("data-bs-target", `${tbTarget}-${randomizer}`);
+        $(value).attr("aria-controls", `${tbAria}-${randomizer}`);
+        $(value).on('shown.bs.tab', event => {
+          let activeLanguage = $(this).attr("id")!.split('-').at(-2)!;
+          sessionStorage.setItem("activeCrossLanguageTab", activeLanguage);
+        })
       });
 
       clPills.each(function (index, value) {
-        const pillId = $(value).attr("id");
+        const pillId = $(value).attr("id")!;
         const pillIdParts = pillId?.split('-');
         const pillLang = pillIdParts![pillIdParts!.length - 1];
-        const pillLabel = $(value).attr("aria-labelledby") + randomizer;
+        const pillLabel = $(value).attr("aria-labelledby");
         const crossLangContent = crossLangCodeLines.get(pillLang);
-        $(value).attr("id", (pillId + randomizer));
-        $(value).attr("aria-labelledby", pillLabel);
+
+        if (activeLanguage){
+          if (pillId.includes(activeLanguage)){
+            $(value).addClass("active");
+          }
+        }
+        else if (index == 0) {
+          $(value).addClass("active");
+        }
+
+        $(value).attr("id", `${pillId}-${randomizer}`);
+        $(value).attr("aria-labelledby", `${pillLabel}-${randomizer}`);
         if (crossLangContent && crossLangContent.length > 0) {
           showPanel = true;
-          $(value).html(crossLangContent);
+          $(value).find("div").html(crossLangContent);
           const comments = crossLangContent.find(".review-comment");
           if (comments.length > 0) {
-            crossLangPanel.find(`#cross-lang-pills-tab-${pillLang}${randomizer}`)[0].innerHTML += `<span class="badge rounded-pill text-bg-danger">${comments.length}</span>`;
+            crossLangPanel.find(`#cross-lang-pills-tab-${pillLang}-${randomizer}`)[0].innerHTML += `<span class="badge rounded-pill text-bg-danger">${comments.length}</span>`;
           }
         }
       });
