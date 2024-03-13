@@ -103,32 +103,35 @@ $(() => {
   });
 
   $(document).on("submit", "form[data-post-update='comments']", e => {
-    $(e.target).find('button').prop("disabled", true);
-    const form = <HTMLFormElement><any>$(e.target);
-    let lineId = hp.getElementId(e.target);
-    let crossLangId = hp.getElementId(e.target, "data-cross-lang-id");
-
+    let form = e.target as HTMLFormElement;
+    (form.querySelector('button') as HTMLButtonElement).disabled = true;
+    
+    let lineId = hp.getElementId(form);
+    let crossLangId = hp.getElementId(form, "data-cross-lang-id");
+      
     if (lineId) {
       let commentRow = hp.getCommentsRow(lineId);
-      let reviewId = getReviewId(e.target);
-      let revisionId = getRevisionId(e.target);
-      let rowSectionClasses = hp.getRowSectionClasses(commentRow[0].classList);
-      let serializedForm = form.serializeArray();
-      serializedForm.push({ name: "elementId", value: lineId });
-      serializedForm.push({ name: "reviewId", value: reviewId });
-      serializedForm.push({ name: "revisionId", value: revisionId });
-      serializedForm.push({ name: "sectionClass", value: rowSectionClasses });
-      serializedForm.push({ name: "taggedUsers", value: getTaggedUsers(e.target) });
-      
+      let reviewId = getReviewId(form);
+      let revisionId = getRevisionId(form);
+
+      let rowSectionClasses = hp.getRowSectionClasses(commentRow.classList);
+      let formData = new FormData(form);
+      formData.append("elementId", lineId);
+      formData.append("reviewId", reviewId as string); // Type assertion added here
+      formData.append("revisionId", revisionId as string);
+      formData.append("sectionClass", rowSectionClasses);
+      formData.append("taggedUsers", getTaggedUsers(form).join(", "));
+
       if (crossLangId) {
-        serializedForm.push({ name: "crossLangId", value: crossLangId });
+        formData.append("crossLangId", crossLangId);
       }
-      
-      $.ajax({
-        type: "POST",
-        url: $(form).prop("action"),
-        data: $.param(serializedForm)
-      }).done(partialViewResult => {
+
+      fetch(form.action, {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.text())
+      .then(partialViewResult => {
         hp.updateCommentThread(commentRow, partialViewResult);
         hp.addCommentThreadNavigation();
         hp.removeCommentIconIfEmptyCommentBox(lineId);

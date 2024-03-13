@@ -124,6 +124,8 @@
 
 .line-number {
     white-space: nowrap;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .cl-line-no {
@@ -171,8 +173,6 @@
 .line-comment-button:hover {
     transform: scale(1);
     text-decoration: none;
-    padding-left: 5px;
-    padding-right: 5px;
 }
 
 .line-comment-button {

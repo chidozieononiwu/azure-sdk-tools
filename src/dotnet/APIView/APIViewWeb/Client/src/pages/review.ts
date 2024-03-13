@@ -37,9 +37,6 @@ $(() => {
 
   // Enable cross Language Comments Indicator
   cm.crossLanguageViewCommentIndicator();
-  endTime = performance.now();
-  console.log(`After Scroll ids into view : ${endTime - startTime}ms`);
-  startTime = performance.now();
 
   /* ADD FUNCTIONS TO LEFT NAVIGATION
   --------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -302,6 +299,4 @@ $(() => {
       }
     }
   });
-  endTime = performance.now();
-  console.log(`Time taken to load review page: ${endTime - startTime}ms`);
 });

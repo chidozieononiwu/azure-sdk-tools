@@ -58,8 +58,8 @@ export function updateCommentThreadUserContext(commentThreadHTML: string) {
 export async function updateCommentThreadInReviewPageDOM(reviewId: any, elementId: any, commentThreadHTML: any) {
   if (hp.checkReviewRevisionIdAgainstCurrent(reviewId, null, false)) {
     var rowSectionClasses = hp.getCodeRowSectionClasses(elementId);
-    await hp.showCommentBox(elementId, rowSectionClasses, false);
-
+    await hp.showCommentBox(elementId, rowSectionClasses, '', false);
+""
     let commentsRow = hp.getCommentsRow(elementId);
     const replyText = commentsRow.querySelector(".new-thread-comment-text-mirror")?.textContent;
     hp.updateCommentThread(commentsRow, commentThreadHTML);
