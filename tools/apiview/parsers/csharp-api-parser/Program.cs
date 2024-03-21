@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Xml.Linq;
 using ApiView;
+using Newtonsoft.Json;
 
 var inputOption = new Option<FileInfo>("--packageFilePath", "C# Package (.nupkg) file").ExistingOnly();
 inputOption.IsRequired = true;
@@ -36,10 +37,10 @@ rootCommand.SetHandler((FileInfo packageFilePath, DirectoryInfo OutputDirectory,
 return rootCommand.InvokeAsync(args).Result;
 
 
-static void HandlePackageFileParsing(Stream stream, FileInfo packageFilePath, DirectoryInfo OutputDirectory, bool runAnalysis)
+static async void HandlePackageFileParsing(Stream stream, FileInfo packageFilePath, DirectoryInfo OutputDirectory, bool runAnalysis)
 {
     ZipArchive? zipArchive = null;
-    Stream? dllStream = null;
+    Stream? dllStream = stream;
     Stream? docStream = null;
     List<DependencyInfo>? dependencies = null;
 
@@ -91,13 +92,22 @@ static void HandlePackageFileParsing(Stream stream, FileInfo packageFilePath, Di
             }
         }
 
-        var assemblySymbol = CompilationFactory.GetCompilation(stream, docStream);
+        var assemblySymbol = CompilationFactory.GetCompilation(dllStream, docStream);
         if (assemblySymbol == null)
         {
             Console.Error.WriteLine($"PackageFile {packageFilePath.FullName} contains no Assembly Symbol.");
             return;
         }
-        var codeFile = new csharp_api_parser.TreeToken.CodeFileBuilder().Build(assemblySymbol, runAnalysis, dependencies);
+        var treeTokenCodeFile = new csharp_api_parser.TreeToken.CodeFileBuilder().Build(assemblySymbol, runAnalysis, dependencies);
+        var tokenFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}.json");
+
+        using (StreamWriter fileWriter = File.CreateText(tokenFilePath))
+        {
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.Serialize(fileWriter, treeTokenCodeFile);
+        }
+        Console.WriteLine($"TokenCodeFile File {tokenFilePath} Generated Successfully.");
+        Console.WriteLine();
     }
     catch (Exception ex)
     {

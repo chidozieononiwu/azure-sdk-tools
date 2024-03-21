@@ -1,0 +1,147 @@
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+
+namespace csharp_api_parser.TreeToken
+{
+    public enum StructuredTokenKind
+    {
+        LineBreak = 0,
+        NoneBreakingSpace = 1,
+        ParameterSeparator = 2,
+        Content = 3,
+    }
+
+
+    public class StructuredToken
+    {
+        public string Value { get; set; }
+        public string Id { get; set; }
+        public StructuredTokenKind Kind { get; set; }
+        public Dictionary<string, string> Properties { get; } = new Dictionary<string, string>();
+        public HashSet<string> RenderClasses { get; } = new HashSet<string>();
+
+        public StructuredToken(string value)
+        {
+            Value = value;
+            Kind = StructuredTokenKind.Content;
+        }
+
+        public static StructuredToken CreateLineBreakToken()
+        {
+            var token = new StructuredToken("\n");
+            token.Kind = StructuredTokenKind.LineBreak;
+            return token;
+        }
+
+        public static StructuredToken CreateSpaceToken()
+        {
+            var token = new StructuredToken("\u0020");
+            token.Kind = StructuredTokenKind.NoneBreakingSpace;
+            return token;
+        }
+
+        public static StructuredToken CreateTextToken(string value)
+        {
+            var token = new StructuredToken(value);
+            token.RenderClasses.Add("csText");
+            return token;
+        }
+
+        public static StructuredToken CreateKeywordToken(string value)
+        {
+            var token = new StructuredToken(value);
+            token.RenderClasses.Add("csKeyword");
+            return token;
+        }
+
+        public static StructuredToken CreateKeywordToken(SyntaxKind syntaxKind)
+        {
+            return CreateKeywordToken(SyntaxFacts.GetText(syntaxKind));
+        }
+
+        public static StructuredToken CreateKeywordToken(Accessibility accessibility)
+        {
+            return CreateKeywordToken(SyntaxFacts.GetText(accessibility));
+        }
+
+        public static StructuredToken CreatePunctuationToken(string value)
+        {
+            var token = new StructuredToken(value);
+            token.RenderClasses.Add("csPunctuation");
+            return token;
+        }
+
+        public static StructuredToken CreatePunctuationToken(SyntaxKind syntaxKind)
+        {
+            return CreatePunctuationToken(SyntaxFacts.GetText(syntaxKind));
+        }
+
+        public static StructuredToken CreateTypeNameToken(string value)
+        {
+            var token = new StructuredToken(value);
+            token.RenderClasses.Add("csTypeName");
+            return token;
+        }
+
+        public static StructuredToken CreateMemberNameToken(string value)
+        {
+            var token = new StructuredToken(value);
+            token.RenderClasses.Add("csMemberName");
+            return token;
+        }
+
+        public static StructuredToken CreateLiteralToken(string value)
+        {
+            var token = new StructuredToken(value);
+            token.RenderClasses.Add("csLiteral");
+            return token;
+        }
+
+        public static StructuredToken CreateStringLiteralToken(string value)
+        {
+            var token = new StructuredToken(value);
+            token.RenderClasses.Add("csStringLiteral");
+            return token;
+        }
+
+        public static StructuredToken CreateParameterSeparatorToken()
+        {
+            var token = new StructuredToken("\u0020");
+            token.Kind = StructuredTokenKind.ParameterSeparator;
+            return token;
+        }
+    }
+
+    public class APITreeNode
+    {
+        public string Name { get; set; }
+        public string Id { get; set; }
+        public string Kind { get; set; }
+        public HashSet<string> Tags = new HashSet<string>();
+        public Dictionary<string, string> Properties { get; } = new Dictionary<string, string>();
+        public List<StructuredToken> TopTokens { get; } = new List<StructuredToken>();
+        public List<StructuredToken> BottomTokens { get; } = new List<StructuredToken>();
+        public List<APITreeNode> Children { get; } = new List<APITreeNode>();
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            hash = hash * 23 + (Name != null ? Name.GetHashCode() : 0);
+            hash = hash * 23 + (Id != null ? Id.GetHashCode() : 0);
+            hash = hash * 23 + (Kind != null ? Kind.GetHashCode() : 0);
+            return hash;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            var other = (APITreeNode)obj;
+            return Name == other.Name && Id == other.Id && Kind == other.Kind;
+        }
+    }
+}
