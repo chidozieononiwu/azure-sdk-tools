@@ -6,20 +6,27 @@ namespace csharp_api_parser.TreeToken
 {
     public enum StructuredTokenKind
     {
-        LineBreak = 0,
-        NoneBreakingSpace = 1,
-        ParameterSeparator = 2,
-        Content = 3,
+        Content = 0,
+        LineBreak = 1,
+        NoneBreakingSpace = 2,
+        TabSpace = 3,
+        ParameterSeparator = 4,
+        Url = 5
     }
 
 
     public class StructuredToken
     {
-        public string Value { get; set; }
+        public string Value { get; set; } = string.Empty;
         public string Id { get; set; }
         public StructuredTokenKind Kind { get; set; }
         public Dictionary<string, string> Properties { get; } = new Dictionary<string, string>();
         public HashSet<string> RenderClasses { get; } = new HashSet<string>();
+
+        public StructuredToken()
+        {
+            new StructuredToken(string.Empty);
+        }
 
         public StructuredToken(string value)
         {
@@ -29,29 +36,43 @@ namespace csharp_api_parser.TreeToken
 
         public static StructuredToken CreateLineBreakToken()
         {
-            var token = new StructuredToken("\n");
+            var token = new StructuredToken();
             token.Kind = StructuredTokenKind.LineBreak;
+            return token;
+        }
+
+        public static StructuredToken CreateEmptyToken()
+        {
+            var token = new StructuredToken();
+            token.Kind = StructuredTokenKind.Content;
             return token;
         }
 
         public static StructuredToken CreateSpaceToken()
         {
-            var token = new StructuredToken("\u0020");
+            var token = new StructuredToken();
             token.Kind = StructuredTokenKind.NoneBreakingSpace;
+            return token;
+        }
+
+        public static StructuredToken CreateParameterSeparatorToken()
+        {
+            var token = new StructuredToken();
+            token.Kind = StructuredTokenKind.ParameterSeparator;
             return token;
         }
 
         public static StructuredToken CreateTextToken(string value)
         {
             var token = new StructuredToken(value);
-            token.RenderClasses.Add("csText");
+            token.RenderClasses.Add("text");
             return token;
         }
 
         public static StructuredToken CreateKeywordToken(string value)
         {
             var token = new StructuredToken(value);
-            token.RenderClasses.Add("csKeyword");
+            token.RenderClasses.Add("keyword");
             return token;
         }
 
@@ -68,7 +89,7 @@ namespace csharp_api_parser.TreeToken
         public static StructuredToken CreatePunctuationToken(string value)
         {
             var token = new StructuredToken(value);
-            token.RenderClasses.Add("csPunctuation");
+            token.RenderClasses.Add("punctuation");
             return token;
         }
 
@@ -80,35 +101,28 @@ namespace csharp_api_parser.TreeToken
         public static StructuredToken CreateTypeNameToken(string value)
         {
             var token = new StructuredToken(value);
-            token.RenderClasses.Add("csTypeName");
+            token.RenderClasses.Add("type-name");
             return token;
         }
 
         public static StructuredToken CreateMemberNameToken(string value)
         {
             var token = new StructuredToken(value);
-            token.RenderClasses.Add("csMemberName");
+            token.RenderClasses.Add("member-name");
             return token;
         }
 
         public static StructuredToken CreateLiteralToken(string value)
         {
             var token = new StructuredToken(value);
-            token.RenderClasses.Add("csLiteral");
+            token.RenderClasses.Add("literal");
             return token;
         }
 
         public static StructuredToken CreateStringLiteralToken(string value)
         {
             var token = new StructuredToken(value);
-            token.RenderClasses.Add("csStringLiteral");
-            return token;
-        }
-
-        public static StructuredToken CreateParameterSeparatorToken()
-        {
-            var token = new StructuredToken("\u0020");
-            token.Kind = StructuredTokenKind.ParameterSeparator;
+            token.RenderClasses.Add("string-literal");
             return token;
         }
     }

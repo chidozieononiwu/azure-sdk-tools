@@ -3,14 +3,11 @@
 
 using ApiView;
 using APIView.Analysis;
-using APIView.Model;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.SymbolDisplay;
 using System.Collections.Immutable;
 using System.ComponentModel;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace csharp_api_parser.TreeToken
 {
@@ -151,6 +148,7 @@ namespace csharp_api_parser.TreeToken
                         }
                     }
                 }
+                apiTreeNode.BottomTokens.Add(StructuredToken.CreateEmptyToken());
                 apiTreeNode.BottomTokens.Add(StructuredToken.CreateLineBreakToken());
                 apiTree.Add(apiTreeNode);
             }
@@ -173,6 +171,7 @@ namespace csharp_api_parser.TreeToken
                     apiTreeNode.TopTokens.Add(StructuredToken.CreateTextToken(value: $"-{dependency.Version}"));
                     apiTreeNode.TopTokens.Add(StructuredToken.CreateLineBreakToken());
                 }
+                apiTreeNode.BottomTokens.Add(StructuredToken.CreateEmptyToken());
                 apiTreeNode.BottomTokens.Add(StructuredToken.CreateLineBreakToken());
                 apiTree.Add(apiTreeNode);
             }
@@ -204,7 +203,9 @@ namespace csharp_api_parser.TreeToken
             }
 
             apiTreeNode.BottomTokens.Add(StructuredToken.CreatePunctuationToken(SyntaxKind.CloseBraceToken));
-            apiTreeNode.BottomTokens.Add(StructuredToken.CreateSpaceToken());
+            apiTreeNode.BottomTokens.Add(StructuredToken.CreateLineBreakToken());
+            apiTreeNode.BottomTokens.Add(StructuredToken.CreateEmptyToken());
+
             apiTree.Add(apiTreeNode);
         }
 
@@ -314,7 +315,9 @@ namespace csharp_api_parser.TreeToken
                 BuildMember(apiTreeNode.Children, member, inHiddenScope);
             }
             apiTreeNode.BottomTokens.Add(StructuredToken.CreatePunctuationToken(SyntaxKind.CloseBraceToken));
-            apiTreeNode.BottomTokens.Add(StructuredToken.CreateSpaceToken());
+            apiTreeNode.BottomTokens.Add(StructuredToken.CreateLineBreakToken());
+            apiTreeNode.BottomTokens.Add(StructuredToken.CreateEmptyToken());
+
             apiTree.Add(apiTreeNode);
         }
 
@@ -331,7 +334,7 @@ namespace csharp_api_parser.TreeToken
                 foreach (var line in lines)
                 {
                     var docToken = new StructuredToken("// " + line.Trim());
-                    docToken.RenderClasses.Add("csComment");
+                    docToken.RenderClasses.Add("comment");
                     docToken.Properties.Add("GroupId", "documentation");
                     tokenList.Add(docToken);
                     tokenList.Add(StructuredToken.CreateLineBreakToken());
