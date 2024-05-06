@@ -41,9 +41,13 @@ namespace csharp_api_parser.TreeToken
             return token;
         }
 
-        public static StructuredToken CreateEmptyToken()
+        public static StructuredToken CreateEmptyToken(string id = null)
         {
             var token = new StructuredToken();
+            if (!string.IsNullOrEmpty(id))
+            {
+                token.Id = id;
+            }
             token.Kind = StructuredTokenKind.Content;
             return token;
         }
@@ -62,9 +66,13 @@ namespace csharp_api_parser.TreeToken
             return token;
         }
 
-        public static StructuredToken CreateTextToken(string value)
+        public static StructuredToken CreateTextToken(string value, string id = null)
         {
             var token = new StructuredToken(value);
+            if (!string.IsNullOrEmpty(id))
+            {
+                token.Id = id;
+            }
             token.RenderClasses.Add("text");
             return token;
         }

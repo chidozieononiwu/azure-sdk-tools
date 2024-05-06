@@ -144,7 +144,7 @@ namespace csharp_api_parser.TreeToken
                         {
                             var firstComma = param?.IndexOf(',');
                             param = firstComma > 0 ? param?[..(int)firstComma] : param;
-                            apiTreeNode.TopTokens.Add(StructuredToken.CreateTextToken(value: param));
+                            apiTreeNode.TopTokens.Add(StructuredToken.CreateTextToken(value: param, id: attribute.AttributeClass?.Name));
                         }
                     }
                 }
@@ -167,7 +167,7 @@ namespace csharp_api_parser.TreeToken
 
                 foreach (DependencyInfo dependency in dependencies)
                 {
-                    apiTreeNode.TopTokens.Add(StructuredToken.CreateTextToken(value: dependency.Name));
+                    apiTreeNode.TopTokens.Add(StructuredToken.CreateTextToken(value: dependency.Name, id: dependency.Name));
                     apiTreeNode.TopTokens.Add(StructuredToken.CreateTextToken(value: $"-{dependency.Version}"));
                     apiTreeNode.TopTokens.Add(StructuredToken.CreateLineBreakToken());
                 }
@@ -410,6 +410,7 @@ namespace csharp_api_parser.TreeToken
             apiTreeNode.Properties.Add("SubKind", member.Kind.ToString());
             apiTreeNode.Id = ConvertToValidCssId(member.GetId());
             apiTreeNode.Name = member.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+            apiTreeNode.Tags.Add("HideFromNavigation");
 
             if (isHidden && !inHiddenScope)
             {
@@ -593,6 +594,7 @@ namespace csharp_api_parser.TreeToken
 
         private void DisplayName(List<StructuredToken> tokenList, ISymbol symbol, ISymbol? definedSymbol = null)
         {
+            tokenList.Add(StructuredToken.CreateEmptyToken(id: symbol.GetId()));
             if (NeedsAccessibility(symbol))
             {
                 tokenList.Add(StructuredToken.CreateKeywordToken(ToEffectiveAccessibility(symbol.DeclaredAccessibility)));
