@@ -106,6 +106,9 @@ namespace csharp_api_parser.TreeToken
                 diagnostics.TargetId = ConvertToValidCssId(diagnostics.TargetId);
             }
 
+            // Sort API Tree by name
+            apiTreeNode.SortChildren();
+
             var treeTokenCodeFile = new TreeTokenCodeFile()
             {
                 Name = $"{assemblySymbol.Name} ({assemblySymbol.Identity.Version})",
@@ -409,7 +412,7 @@ namespace csharp_api_parser.TreeToken
             apiTreeNode.Kind = "Member";
             apiTreeNode.Properties.Add("SubKind", member.Kind.ToString());
             apiTreeNode.Id = ConvertToValidCssId(member.GetId());
-            apiTreeNode.Name = member.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+            apiTreeNode.Name = member.ToDisplayString();
             apiTreeNode.Tags.Add("HideFromNavigation");
 
             if (isHidden && !inHiddenScope)

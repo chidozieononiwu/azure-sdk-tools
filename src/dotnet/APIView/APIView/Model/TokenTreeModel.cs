@@ -165,5 +165,17 @@ namespace csharp_api_parser.TreeToken
             var other = (APITreeNode)obj;
             return Name == other.Name && Id == other.Id && Kind == other.Kind;
         }
+
+        public void SortChildren()
+        {
+            if (Kind.Equals("Namespace") || Kind.Equals("Type") || Kind.Equals("Member"))
+            {
+                Children.Sort((x, y) => x.Name.CompareTo(y.Name));
+            }
+            foreach (var child in Children)
+            {
+                child.SortChildren();
+            }
+        }
     }
 }
