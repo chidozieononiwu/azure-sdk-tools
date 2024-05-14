@@ -77,7 +77,7 @@ namespace csharp_api_parser.TreeToken
 
             var apiTreeNode = new APITreeNode();
             apiTreeNode.Kind = "Assembly";
-            apiTreeNode.Id = ConvertToValidCssId(assemblySymbol.Name);
+            apiTreeNode.Id = assemblySymbol.Name;
             apiTreeNode.Name = assemblySymbol.Name + ".dll";
             
             if (dependencies != null)
@@ -99,11 +99,6 @@ namespace csharp_api_parser.TreeToken
                 {
                     BuildNamespace(apiTreeNode.Children, namespaceSymbol);
                 }
-            }
-
-            foreach (var diagnostics in analyzer.Results)
-            {
-                diagnostics.TargetId = ConvertToValidCssId(diagnostics.TargetId);
             }
 
             // Sort API Tree by name
@@ -134,7 +129,7 @@ namespace csharp_api_parser.TreeToken
             if (assemblyAttributes != null && assemblyAttributes.Any())
             {
                 var apiTreeNode = new APITreeNode();
-                apiTreeNode.Kind = "InternalsVisibleTo";
+                apiTreeNode.Kind = apiTreeNode.Name = apiTreeNode.Id = "InternalsVisibleTo";
                 apiTreeNode.TopTokens.Add(StructuredToken.CreateTextToken(value: "Exposes internals to:"));
                 apiTreeNode.TopTokens.Add(StructuredToken.CreateLineBreakToken());
 
@@ -162,7 +157,7 @@ namespace csharp_api_parser.TreeToken
             if (dependencies != null && dependencies.Any())
             {
                 var apiTreeNode = new APITreeNode();
-                apiTreeNode.Kind = "Dependencies";
+                apiTreeNode.Kind = apiTreeNode.Name = apiTreeNode.Id = "Dependencies";
 
                 apiTreeNode.TopTokens.Add(StructuredToken.CreateLineBreakToken());
                 apiTreeNode.TopTokens.Add(StructuredToken.CreateTextToken(value: "Dependencies:"));
@@ -185,7 +180,7 @@ namespace csharp_api_parser.TreeToken
             bool isHidden = HasOnlyHiddenTypes(namespaceSymbol);
 
             var apiTreeNode = new APITreeNode();
-            apiTreeNode.Id = ConvertToValidCssId(namespaceSymbol.GetId());
+            apiTreeNode.Id = namespaceSymbol.GetId();
             apiTreeNode.Name = namespaceSymbol.ToDisplayString();
             apiTreeNode.Kind = "Namespace";
 
@@ -244,7 +239,7 @@ namespace csharp_api_parser.TreeToken
             var apiTreeNode = new APITreeNode();
             apiTreeNode.Kind = "Type";
             apiTreeNode.Properties.Add("SubKind", namedType.TypeKind.ToString().ToLowerInvariant());
-            apiTreeNode.Id = ConvertToValidCssId(namedType.GetId());
+            apiTreeNode.Id = namedType.GetId();
             apiTreeNode.Name = namedType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
 
             if (isHidden && !inHiddenScope)
@@ -411,7 +406,7 @@ namespace csharp_api_parser.TreeToken
             var apiTreeNode = new APITreeNode();
             apiTreeNode.Kind = "Member";
             apiTreeNode.Properties.Add("SubKind", member.Kind.ToString());
-            apiTreeNode.Id = ConvertToValidCssId(member.GetId());
+            apiTreeNode.Id = member.GetId();
             apiTreeNode.Name = member.ToDisplayString();
             apiTreeNode.Tags.Add("HideFromNavigation");
 
@@ -747,16 +742,6 @@ namespace csharp_api_parser.TreeToken
                 IPropertySymbol propertySymbol => propertySymbol.ExplicitInterfaceImplementations.Any(i => IsAccessible(i.ContainingType)),
                 _ => false
             };
-        }
-
-        private string ConvertToValidCssId(string str)
-        {
-            var id = System.Text.RegularExpressions.Regex.Replace(str, @"\W+", "_").ToLower();
-            if (!char.IsLetter(id[0]))
-            {
-                id = "id_" + id;
-            }
-            return id.Trim('_');
         }
 
         internal class CodeFileBuilderEnumFormatter : AbstractSymbolDisplayVisitor
