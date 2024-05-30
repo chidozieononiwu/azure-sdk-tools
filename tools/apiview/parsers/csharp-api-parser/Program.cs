@@ -1,8 +1,9 @@
 using System.CommandLine;
-using System.IO;
 using System.IO.Compression;
 using System.Xml.Linq;
 using ApiView;
+using MessagePack;
+using MessagePack.Resolvers;
 using Newtonsoft.Json;
 
 var inputOption = new Option<FileInfo>("--packageFilePath", "C# Package (.nupkg) file").ExistingOnly();
@@ -99,14 +100,24 @@ static async void HandlePackageFileParsing(Stream stream, FileInfo packageFilePa
             return;
         }
         var treeTokenCodeFile = new csharp_api_parser.TreeToken.CodeFileBuilder().Build(assemblySymbol, runAnalysis, dependencies);
-        var tokenFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}.json");
+        var jsonTokenFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}.json");
+        var messagePackTokenFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}.msgpack");
 
-        using (StreamWriter fileWriter = File.CreateText(tokenFilePath))
+        using (StreamWriter fileWriter = File.CreateText(jsonTokenFilePath))
         {
             JsonSerializer serializer = new JsonSerializer();
             serializer.Serialize(fileWriter, treeTokenCodeFile);
         }
-        Console.WriteLine($"TokenCodeFile File {tokenFilePath} Generated Successfully.");
+        Console.WriteLine($"TokenCodeFile File {jsonTokenFilePath} Generated Successfully.");
+
+
+        using (var fileStream = File.OpenWrite(messagePackTokenFilePath))
+        {
+            var options = MessagePackSerializerOptions.Standard.WithResolver(ContractlessStandardResolver.Instance);
+            var bytes = MessagePackSerializer.Serialize(treeTokenCodeFile, options);
+            fileStream.Write(bytes, 0, bytes.Length);
+        }
+        Console.WriteLine($"TokenCodeFile File {messagePackTokenFilePath} Generated Successfully.");
         Console.WriteLine();
     }
     catch (Exception ex)

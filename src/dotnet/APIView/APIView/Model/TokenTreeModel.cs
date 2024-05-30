@@ -140,11 +140,11 @@ namespace csharp_api_parser.TreeToken
         public string Name { get; set; }
         public string Id { get; set; }
         public string Kind { get; set; }
-        public HashSet<string> Tags = new HashSet<string>();
-        public Dictionary<string, string> Properties { get; } = new Dictionary<string, string>();
-        public List<StructuredToken> TopTokens { get; } = new List<StructuredToken>();
-        public List<StructuredToken> BottomTokens { get; } = new List<StructuredToken>();
-        public List<APITreeNode> Children { get; } = new List<APITreeNode>();
+        public HashSet<string> Tags { get; set; } = new HashSet<string>();
+        public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
+        public List<StructuredToken> TopTokens { get; set; } = new List<StructuredToken>();
+        public List<StructuredToken> BottomTokens { get; set; } = new List<StructuredToken>();
+        public List<APITreeNode> Children { get; set; } = new List<APITreeNode>();
 
         public override int GetHashCode()
         {
