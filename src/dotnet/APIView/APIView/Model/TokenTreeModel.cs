@@ -20,8 +20,9 @@ namespace csharp_api_parser.TreeToken
         public string Value { get; set; } = string.Empty;
         public string Id { get; set; }
         public StructuredTokenKind Kind { get; set; }
-        public Dictionary<string, string> Properties { get; } = new Dictionary<string, string>();
-        public HashSet<string> RenderClasses { get; } = new HashSet<string>();
+        public HashSet<string> Tags { get; set; } = new HashSet<string>();
+        public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
+        public HashSet<string> RenderClasses { get; set; } = new HashSet<string>();
 
         public StructuredToken()
         {
