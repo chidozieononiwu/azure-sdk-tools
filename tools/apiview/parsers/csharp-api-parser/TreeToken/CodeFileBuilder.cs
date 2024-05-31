@@ -333,7 +333,7 @@ namespace csharp_api_parser.TreeToken
                 {
                     var docToken = new StructuredToken("// " + line.Trim());
                     docToken.RenderClasses.Add("comment");
-                    docToken.Properties.Add("GroupId", "documentation");
+                    docToken.Properties.Add("GroupId", "doc");
                     tokenList.Add(docToken);
                     tokenList.Add(StructuredToken.CreateLineBreakToken());
                 }
@@ -408,7 +408,7 @@ namespace csharp_api_parser.TreeToken
             apiTreeNode.Properties.Add("SubKind", member.Kind.ToString());
             apiTreeNode.Id = member.GetId();
             apiTreeNode.Name = member.ToDisplayString();
-            apiTreeNode.Tags.Add("HideFromNavigation");
+            apiTreeNode.Tags.Add("HideFromNav");
 
             if (isHidden && !inHiddenScope)
             {

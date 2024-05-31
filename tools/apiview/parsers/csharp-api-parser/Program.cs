@@ -38,7 +38,7 @@ rootCommand.SetHandler((FileInfo packageFilePath, DirectoryInfo OutputDirectory,
 return rootCommand.InvokeAsync(args).Result;
 
 
-static async void HandlePackageFileParsing(Stream stream, FileInfo packageFilePath, DirectoryInfo OutputDirectory, bool runAnalysis)
+static void HandlePackageFileParsing(Stream stream, FileInfo packageFilePath, DirectoryInfo OutputDirectory, bool runAnalysis)
 {
     ZipArchive? zipArchive = null;
     Stream? dllStream = stream;
@@ -100,24 +100,20 @@ static async void HandlePackageFileParsing(Stream stream, FileInfo packageFilePa
             return;
         }
         var treeTokenCodeFile = new csharp_api_parser.TreeToken.CodeFileBuilder().Build(assemblySymbol, runAnalysis, dependencies);
-        var jsonTokenFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}.json");
-        var messagePackTokenFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}.msgpack");
+        var jsonTokenFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}");
+
+        var settings = new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Ignore
+        };
 
         using (StreamWriter fileWriter = File.CreateText(jsonTokenFilePath))
         {
-            JsonSerializer serializer = new JsonSerializer();
-            serializer.Serialize(fileWriter, treeTokenCodeFile);
+            var serialized = JsonConvert.SerializeObject(treeTokenCodeFile, settings);
+            fileWriter.Write(serialized);
         }
         Console.WriteLine($"TokenCodeFile File {jsonTokenFilePath} Generated Successfully.");
-
-
-        using (var fileStream = File.OpenWrite(messagePackTokenFilePath))
-        {
-            var options = MessagePackSerializerOptions.Standard.WithResolver(ContractlessStandardResolver.Instance);
-            var bytes = MessagePackSerializer.Serialize(treeTokenCodeFile, options);
-            fileStream.Write(bytes, 0, bytes.Length);
-        }
-        Console.WriteLine($"TokenCodeFile File {messagePackTokenFilePath} Generated Successfully.");
         Console.WriteLine();
     }
     catch (Exception ex)
