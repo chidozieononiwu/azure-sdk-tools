@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace csharp_api_parser.TreeToken
 {
@@ -19,6 +20,28 @@ namespace csharp_api_parser.TreeToken
     [JsonObject("st")]
     public class StructuredToken
     {
+        [JsonProperty("t")]
+        private HashSet<string> _tagsForSerializer
+        {
+            get { return Tags.Count > 0 ? Tags : null; }
+            set { Tags = value ?? new HashSet<string>(); }
+        }
+
+        [JsonProperty("p")]
+        private Dictionary<string, string> _propertiesForSerializer
+        {
+            get { return Properties.Count > 0 ? Properties : null; }
+            set { Properties = value ?? new Dictionary<string, string>(); }
+        }
+
+        [JsonProperty("rc")]
+        private HashSet<string> _renderClassesForSerializer
+        {
+            get { return RenderClasses.Count > 0 ? RenderClasses : null; }
+            set { RenderClasses = value ?? new HashSet<string>(); }
+        }
+
+
         [JsonProperty("v")]
         public string Value { get; set; } = string.Empty;
         [JsonProperty("i")]
@@ -27,16 +50,10 @@ namespace csharp_api_parser.TreeToken
         public StructuredTokenKind Kind { get; set; }
         [JsonIgnore]
         public HashSet<string> Tags { get; set; } = new HashSet<string>();
-        [JsonProperty("t")]
-        public HashSet<string> TagsSerialized => Tags.Count > 0 ? Tags : null;
         [JsonIgnore]
         public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
-        [JsonProperty("p")]
-        public Dictionary<string, string> PropertiesSerialized => Properties.Count > 0 ? Properties : null;
         [JsonIgnore]
         public HashSet<string> RenderClasses { get; set; } = new HashSet<string>();
-        [JsonProperty("rc")]
-        public HashSet<string> RenderClassesSerialized => RenderClasses.Count > 0 ? RenderClasses : null;
 
         public StructuredToken()
         {
@@ -153,6 +170,42 @@ namespace csharp_api_parser.TreeToken
     [JsonObject("at")]
     public class APITreeNode
     {
+        [JsonProperty("t")]
+        private HashSet<string> _tagsForSerializer
+        {
+            get { return Tags.Count > 0 ? Tags : null; }
+            set { Tags = value ?? new HashSet<string>(); }
+        }
+
+        [JsonProperty("p")]
+        private Dictionary<string, string> _propertiesForSerializer
+        {
+            get { return Properties.Count > 0 ? Properties : null; }
+            set { Properties = value ?? new Dictionary<string, string>(); }
+        }
+
+        [JsonProperty("tt")]
+        private List<StructuredToken> _topTokensForSerializer
+        {
+            get { return TopTokens.Count > 0 ? TopTokens : null; }
+            set { TopTokens = value ?? new List<StructuredToken>(); }
+        }
+
+        [JsonProperty("bt")]
+        private List<StructuredToken> _bottomTokensForSerializer
+        {
+            get { return BottomTokens.Count > 0 ? BottomTokens : null; }
+            set { BottomTokens = value ?? new List<StructuredToken>(); }
+        }
+
+        [JsonProperty("c")]
+        private List<APITreeNode> _childrenForSerializer
+        {
+            get { return Children.Count > 0 ? Children : null; }
+            set { Children = value ?? new List<APITreeNode>(); }
+        }
+
+
         [JsonProperty("n")]
         public string Name { get; set; }
         [JsonProperty("i")]
@@ -161,24 +214,14 @@ namespace csharp_api_parser.TreeToken
         public string Kind { get; set; }
         [JsonIgnore]
         public HashSet<string> Tags { get; set; } = new HashSet<string>();
-        [JsonProperty("t")]
-        public HashSet<string> TagsSerialized => Tags.Count > 0 ? Tags : null;
         [JsonIgnore]
         public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
-        [JsonProperty("p")]
-        public Dictionary<string, string> PropertiesSerialized => Properties.Count > 0 ? Properties : null;
         [JsonIgnore]
         public List<StructuredToken> TopTokens { get; set; } = new List<StructuredToken>();
-        [JsonProperty("tt")]
-        public List<StructuredToken> TopTokensSerialized => TopTokens.Count > 0 ? TopTokens : null;
         [JsonIgnore]
         public List<StructuredToken> BottomTokens { get; set; } = new List<StructuredToken>();
-        [JsonProperty("bt")]
-        public List<StructuredToken> BottomTokensSerialized => BottomTokens.Count > 0 ? BottomTokens : null;
         [JsonIgnore]
         public List<APITreeNode> Children { get; set; } = new List<APITreeNode>();
-        [JsonProperty("c")]
-        public List<APITreeNode> ChildrenSerialized => Children.Count > 0 ? Children : null;
 
         public override int GetHashCode()
         {
