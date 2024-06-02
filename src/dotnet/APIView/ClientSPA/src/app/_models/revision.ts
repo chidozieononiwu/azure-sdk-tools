@@ -1,4 +1,5 @@
 import { CodeDiagnostic, CommentItemModel } from "./review"
+import { JsonObject, JsonProperty } from 'json2typescript';
 
 export enum ReviewPageWorkerMessageDirective {
   CreatePageNavigation,
@@ -68,50 +69,86 @@ export interface APITreeNode {
   diffKind: string;
 }
 
-export interface CodePanelRowData {
-  type: CodePanelRowDatatype
-  lineNumber?: number
-  rowOfTokens?: StructuredToken[]
-  nodeId: string
-  nodeIdHashed: string
-  rowOfTokensPosition: string
-  rowClasses: Set<string>
-  indent?: number
-  diffKind?: string
-  rowSize: number
-  toggleDocumentationClasses?: string
-  toggleCommentsClasses?: string
-  diagnostics?: CodeDiagnostic
-  comments?: CommentItemModel[]
+@JsonObject('cprd')
+export class CodePanelRowData {
+  @JsonProperty('t')
+  type: CodePanelRowDatatype = CodePanelRowDatatype.CodeLine
+  @JsonProperty('ln')
+  lineNumber?: number = 0
+  @JsonProperty('rot')
+  rowOfTokens?: StructuredToken[] = []
+  @JsonProperty('ni')
+  nodeId: string = ''
+  @JsonProperty('nih')
+  nodeIdHashed: string = ''
+  @JsonProperty('rotp')
+  rowOfTokensPosition: string  = ''
+  @JsonProperty('rc')
+  rowClasses: Set<string> = new Set<string>()
+  @JsonProperty('i')
+  indent?: number = 0
+  @JsonProperty('dk')
+  diffKind?: string = ''
+  @JsonProperty('rs')
+  rowSize: number = 0
+  @JsonProperty('tdc')
+  toggleDocumentationClasses?: string = ''
+  @JsonProperty('tcc')
+  toggleCommentsClasses?: string = ''
+  @JsonProperty('d')
+  diagnostics?: CodeDiagnostic = undefined;
+  @JsonProperty('c')
+  comments?: CommentItemModel[] = []
 }
 
-export interface CodePanelNodeMetaData {
-  documentation: CodePanelRowData[];
-  diagnostics: CodePanelRowData[];
-  codeLines: CodePanelRowData[];
-  commentThread: CodePanelRowData[];
-  navigationTreeNode: NavigationTreeNode;
-  parentNodeIdHashed: string;
-  childrenNodeIdsInOrder: { [key: number]: string };
-  isNodeWithDiff: boolean;
-  isNodeWithDiffInDescendants: boolean;
-  bottomTokenNodeIdHash: string;
+@JsonObject('cprmd')
+export class CodePanelNodeMetaData {
+  @JsonProperty('doc')
+  documentation: CodePanelRowData[] = [];
+  @JsonProperty('d')
+  diagnostics: CodePanelRowData[] =[];
+  @JsonProperty('cl')
+  codeLines: CodePanelRowData[] = [];
+  @JsonProperty('ct')
+  commentThread: CodePanelRowData[] = [];
+  @JsonProperty('ntn')
+  navigationTreeNode: NavigationTreeNode = new NavigationTreeNode();
+  @JsonProperty('pnih')
+  parentNodeIdHashed: string = '';
+  @JsonProperty('cniio')
+  childrenNodeIdsInOrder: { [key: number]: string } = {};
+  @JsonProperty('inwd')
+  isNodeWithDiff: boolean = false;
+  @JsonProperty('inwdid')
+  isNodeWithDiffInDescendants: boolean = false;
+  @JsonProperty('btnih')
+  bottomTokenNodeIdHash: string = '';
 }
 
-export interface CodePanelData {
-  nodeMetaData: { [key: string]: CodePanelNodeMetaData };
+@JsonObject('cpd')
+export class CodePanelData {
+  @JsonProperty('nmd')
+  nodeMetaData: { [key: string]: CodePanelNodeMetaData } = {}
 }
 
-export interface NavigationTreeNodeData {
-  kind: string;
-  icon: string;
+@JsonObject('ntnd')
+export class NavigationTreeNodeData {
+  @JsonProperty('k')
+  kind?: string = '';
+  @JsonProperty('i')
+  icon?: string = '';
 }
 
-export interface NavigationTreeNode {
-  label: string;
-  data: NavigationTreeNodeData;
-  expanded: boolean;
-  children: NavigationTreeNode [];
+@JsonObject('ntnd')
+export class NavigationTreeNode {
+  @JsonProperty('l')
+  label: string = '';
+  @JsonProperty('d')
+  data?: NavigationTreeNodeData = undefined;
+  @JsonProperty('r')
+  expanded: boolean = false;
+  @JsonProperty('c')
+  children: NavigationTreeNode [] = [];
 }
 
 export interface InsertCodePanelRowDataMessage {

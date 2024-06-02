@@ -168,8 +168,9 @@ namespace APIViewWeb.LeanModels
     {
         [JsonProperty("l")]
         public string Label { get; set; }
-        public NavigationTreeNodeData Data { get; set; }
         [JsonProperty("d")]
+        public NavigationTreeNodeData Data { get; set; }
+        [JsonProperty("e")]
         public bool Expanded { get; set; }
         [JsonIgnore]
         public List<NavigationTreeNode> Children { get; set; } = new List<NavigationTreeNode>();
