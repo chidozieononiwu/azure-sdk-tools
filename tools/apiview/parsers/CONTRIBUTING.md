@@ -39,25 +39,31 @@ Each tree node has top tokens which should be used to capture the main tokens on
     Url
   ```
 ### APITreeNode
-- `Name` : The name of the tree node which will be used for API navigation.
-- `Id` : Id of the node, which should be unique at the node level. i.e. unique among its siblings
-- `Kind` : What kind of node is it. (namespace, class, module, method e.t.c)
-- `Tags` : Use this for opt in or opt out boolean properties e.g. `Deprecated`, `Hidden`, `HideFromNavigation`
-- `Properties` : Use this for other properties of the node. If the node needs more specification e.g. Use `SubKind` entry to make the node kind more specific. 
-- `TopTokens` : The main data of the node.
-- `BottomToken` : Data that closes out the node.
-- `Children` : Node immediate descendant
+- `Name (n)`  : The name of the tree node which will be used for API navigation.
+- `Id (i)` : Id of the node, which should be unique at the node level. i.e. unique among its siblings
+- `Kind (k)` : What kind of node is it. (namespace, class, module, method e.t.c)
+- `Tags (t)` : Use this for opt in or opt out boolean properties e.g. `Deprecated`, `Hidden`, `HideFromNavigation`
+- `Properties (p)` : Use this for other properties of the node. If the node needs more specification e.g. Use `SubKind` entry to make the node kind more specific. 
+- `TopTokens (tt)` : The main data of the node.
+- `BottomToken (bt)` : Data that closes out the node.
+- `Children (c)` : Node immediate descendant
 
 ### StructuredToken
-- `Value` : The token value which will be dispalyed.
-- `Id` : Which will be used to navigate and find token on page.
-- `Kind` : Could be `Content` `LineBreak` `NoneBreakingSpace` `TabSpace` `ParameterSeparator` `Url`
+- `Value (v)` : The token value which will be dispalyed.
+- `Id (i)` : Which will be used to navigate and find token on page.
+- `Kind (k)` : Could be `Content` `LineBreak` `NoneBreakingSpace` `TabSpace` `ParameterSeparator` `Url`
   All tokens should be content except for spacing tokens and url. ParameterSeparator should be used between method or function parameters. Spacing token dont need to have value.
-- `Tags` : Use this for opt in or opt out boolean properties e.g. `SkippDiff`
-- `Properties` : Capture any other interesting data here. e.g Use `GroupId` : `documentation` to group consecutive comment tokens.
-- `RenderClasses` : Add css classes for how the tokens will be rendred. Classes currently being used are `text` `keyword` `punctuation` `type-name` `member-name` `literal` `string-literal` `comment` Feel free to add your own custom class. Whatever custom classes you use please provide us the appriopriate css for the class so we can update APIView.
+- `Tags (t)` : Use this for opt in or opt out boolean properties e.g. `SkippDiff`
+- `Properties (p)` : Capture any other interesting data here. e.g Use `GroupId` : `doc` to group consecutive comment tokens.
+- `RenderClasses (rc)` : Add css classes for how the tokens will be rendred. Classes currently being used are `text` `keyword` `punctuation` `type-name` `member-name` `literal` `string-literal` `comment` Feel free to add your own custom class. Whatever custom classes you use please provide us the appriopriate css for the class so we can update APIView.
 
-Each module of the API (namespace, class, method) should be its own node.
+Json property names are show in brackets.
+
+Each module of the API (namespace, class, method) should be its own node. 
+
+Sort each node at each level of the tree by your desired property, this is to ensure that difference in node order does not result in diff.
+
+Ensure each node must have an Id. The combination of `Id`, `Kind` and `SubKind` should make the node unique among its siblings. This is very important.
 
 If you want to have space between the API nodes add an empty token and lineBreak at the end of bottom tokens to simulate one empty line.
 
@@ -66,17 +72,17 @@ Dont worry about indentation that will be handeled by the tree structure, unless
 If your packages contains multiple assemblies then you will have multiple trees with multiple roots.
 Assign the final parsed value to `APIForest` property of the `CodeFile`.
 
-Serialize the generated code file to JSON `.json` and MessagePack `.msgpack`. MessagePack will be used by APIView as it has way better download / deserilization performance. We will revert to JSON if you don`t provide MessagePack.
+Serialize the generated code file to JSON. Try to make the json as small as possible by ignoring null values and empty collections, and using the abbreviated names of theproperties as the Json property name
 
 ## How to handle commons Scenarios
 - TEXT, KEYWORD, COMMENT : Add `text`, `keyword`, `comment` to RenderClasses of the token
 - NEW_LINE : Create a token with `Kind = LineBreak`
 - WHITE_SPACE :  Create token with `Kind = NoneBreakingSpace`
 - PUNCTUATION : Create a token with `Kind = Content` and the `Value = the punctuation`
-- DOCUMENTATION : Add `GroupId = documentation` in the properties of the token. This identifies a range of consecutive tokens as belonging to a group.
+- DOCUMENTATION : Add `GroupId = doc` in the properties of the token. This identifies a range of consecutive tokens as belonging to a group.
 - SKIP_DIFF :  Add `SkipDiff` to the Tag to indicate that node or token should not be included in diff computation
 - LINE_ID_MARKER : You can add a empty token. `Kind = Content` and `Value = ""` then give it an `Id` to make it commentable.
 - EXTERNAL_LINK : Create a single token set `Kind = Url`, `Value = link` then add the link text as a properties `LinkText`;
-- Common Tags: `Deprecated`, `Hidden`, `HideFromNavigation`, `SkipDiff`
+- Common Tags: `Deprecated`, `Hidden`, `HideFromNav`, `SkipDiff`
 
 Please reach out at [APIView Teams Channel](https://teams.microsoft.com/l/channel/19%3A3adeba4aa1164f1c889e148b1b3e3ddd%40thread.skype/APIView?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) if you need more infomation.
