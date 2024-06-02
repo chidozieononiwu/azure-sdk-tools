@@ -65,7 +65,7 @@ namespace csharp_api_parser.TreeToken
             }
         }
 
-        public TreeTokenCodeFile Build(IAssemblySymbol assemblySymbol, bool runAnalysis, List<DependencyInfo>? dependencies)
+        public CodeFile Build(IAssemblySymbol assemblySymbol, bool runAnalysis, List<DependencyInfo>? dependencies)
         {
             _assembly = assemblySymbol;
             var analyzer = new Analyzer();
@@ -104,7 +104,7 @@ namespace csharp_api_parser.TreeToken
             // Sort API Tree by name
             apiTreeNode.SortChildren();
 
-            var treeTokenCodeFile = new TreeTokenCodeFile()
+            var treeTokenCodeFile = new CodeFile()
             {
                 Name = $"{assemblySymbol.Name} ({assemblySymbol.Identity.Version})",
                 Language = "C#",

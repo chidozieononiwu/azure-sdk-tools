@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using APIView;
+using csharp_api_parser.TreeToken;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,6 +52,8 @@ namespace ApiView
         public string CrossLanguagePackageId { get; set; }
 
         public CodeFileToken[] Tokens { get; set; } = Array.Empty<CodeFileToken>();
+        public List<APITreeNode> APIForest { get; set; } = new List<APITreeNode>();
+
 
         public List<CodeFileToken[]> LeafSections { get; set; }
 

@@ -84,5 +84,6 @@ Serialize the generated code file to JSON. Try to make the json as small as poss
 - LINE_ID_MARKER : You can add a empty token. `Kind = Content` and `Value = ""` then give it an `Id` to make it commentable.
 - EXTERNAL_LINK : Create a single token set `Kind = Url`, `Value = link` then add the link text as a properties `LinkText`;
 - Common Tags: `Deprecated`, `Hidden`, `HideFromNav`, `SkipDiff`
+- Cross Language Id: Use `CrossLangId` as key with value in the node properties.
 
 Please reach out at [APIView Teams Channel](https://teams.microsoft.com/l/channel/19%3A3adeba4aa1164f1c889e148b1b3e3ddd%40thread.skype/APIView?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47) if you need more infomation.

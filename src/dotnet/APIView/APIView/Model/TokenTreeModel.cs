@@ -17,6 +17,9 @@ namespace csharp_api_parser.TreeToken
         Url = 5
     }
 
+    /// <summary>
+    /// Used to represent a APIView token its properties and tags for APIView parsers.
+    /// </summary>
     [JsonObject("st")]
     public class StructuredToken
     {
@@ -76,10 +79,7 @@ namespace csharp_api_parser.TreeToken
         public static StructuredToken CreateEmptyToken(string id = null)
         {
             var token = new StructuredToken();
-            if (!string.IsNullOrEmpty(id))
-            {
-                token.Id = id;
-            }
+            token.Id = id;
             token.Kind = StructuredTokenKind.Content;
             return token;
         }
