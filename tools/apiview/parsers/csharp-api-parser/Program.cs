@@ -2,8 +2,6 @@ using System.CommandLine;
 using System.IO.Compression;
 using System.Xml.Linq;
 using ApiView;
-using MessagePack;
-using MessagePack.Resolvers;
 using Newtonsoft.Json;
 
 var inputOption = new Option<FileInfo>("--packageFilePath", "C# Package (.nupkg) file").ExistingOnly();

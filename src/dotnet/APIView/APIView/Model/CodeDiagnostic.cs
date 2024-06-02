@@ -1,5 +1,7 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
+
+using Newtonsoft.Json;
 
 namespace APIView
 {
@@ -17,15 +19,10 @@ namespace APIView
             HelpLinkUri = helpLinkUri;
             Level = level;
         }
-
         public string DiagnosticId { get; set; }
-
         public string Text { get; set; }
-
         public string HelpLinkUri { get; set; }
-
         public string TargetId { get; set; }
-
         public CodeDiagnosticLevel Level { get; set; }
     }
 }
