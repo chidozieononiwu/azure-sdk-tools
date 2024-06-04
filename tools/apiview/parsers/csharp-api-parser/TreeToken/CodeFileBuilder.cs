@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.SymbolDisplay;
 using System.Collections.Immutable;
 using System.ComponentModel;
 
-namespace csharp_api_parser.TreeToken
+namespace CSharpAPIParser.TreeToken
 {
     internal class CodeFileBuilder
     {
