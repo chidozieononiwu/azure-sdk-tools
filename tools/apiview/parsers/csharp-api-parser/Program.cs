@@ -2,6 +2,8 @@ using System.CommandLine;
 using System.IO.Compression;
 using System.Xml.Linq;
 using ApiView;
+using MessagePack;
+using MessagePack.Resolvers;
 using Newtonsoft.Json;
 
 var inputOption = new Option<FileInfo>("--packageFilePath", "C# Package (.nupkg) file").ExistingOnly();
@@ -97,8 +99,10 @@ static void HandlePackageFileParsing(Stream stream, FileInfo packageFilePath, Di
             Console.Error.WriteLine($"PackageFile {packageFilePath.FullName} contains no Assembly Symbol.");
             return;
         }
-        var treeTokenCodeFile = new csharp_api_parser.TreeToken.CodeFileBuilder().Build(assemblySymbol, runAnalysis, dependencies);
-        var jsonTokenFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}");
+        var treeTokenCodeFile = new CSharpAPIParser.TreeToken.CodeFileBuilder().Build(assemblySymbol, runAnalysis, dependencies);
+        var jsonTokenFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}.json");
+        var msgPackFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}.msgpack");
+
 
         var settings = new JsonSerializerSettings
         {
@@ -112,6 +116,15 @@ static void HandlePackageFileParsing(Stream stream, FileInfo packageFilePath, Di
             fileWriter.Write(serialized);
         }
         Console.WriteLine($"TokenCodeFile File {jsonTokenFilePath} Generated Successfully.");
+
+        var msgPackOptions = MessagePackSerializerOptions.Standard.WithResolver(CompositeResolver.Create(
+            StandardResolverAllowPrivate.Instance, ContractlessStandardResolver.Instance))
+            .WithCompression(MessagePackCompression.None);
+
+        byte[] data = MessagePackSerializer.Serialize(treeTokenCodeFile, msgPackOptions);
+        File.WriteAllBytes(msgPackFilePath, data);
+        Console.WriteLine($"TokenCodeFile File {msgPackFilePath} Generated Successfully.");
+
         Console.WriteLine();
     }
     catch (Exception ex)

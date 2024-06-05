@@ -8,7 +8,7 @@ The main idea is to capture the hierachy of the API using a tree data structure,
 
 ![APITree](APITree.svg)
 
-Each tree node has top tokens which should be used to capture the main tokens on the node. If your language requires it use the bottom tokens to capture tokens that closes out the node.
+Each tree node has top tokens which should be used to capture the main tokens on the node, these can span multiple lines. If the language requires it use the bottom tokens to capture tokens that closes out the node, this is usually just the closing bracket and/or empty lines.
 
 - Here are the models needed
   ```
@@ -38,6 +38,16 @@ Each tree node has top tokens which should be used to capture the main tokens on
     ParameterSeparator
     Url
   ```
+Each module of the API (namespace, class, method) should be its own node. Members of a module (methods, in a class), (classes in a namespace) should be added as child nodes of its parent module.
+
+Sort each node at each level of the tree by your desired property, this is to ensure that difference in node order does not result in diff.
+
+Ensure each node must have an Id. The combination of `Id`, `Kind` and `SubKind` should make the node unique among its siblings. This is very important.
+
+
+
+
+
 ### APITreeNode
 - `Name (n)`  : The name of the tree node which will be used for API navigation.
 - `Id (i)` : Id of the node, which should be unique at the node level. i.e. unique among its siblings
@@ -59,11 +69,10 @@ Each tree node has top tokens which should be used to capture the main tokens on
 
 Json property names are show in brackets.
 
-Each module of the API (namespace, class, method) should be its own node. 
 
-Sort each node at each level of the tree by your desired property, this is to ensure that difference in node order does not result in diff.
 
-Ensure each node must have an Id. The combination of `Id`, `Kind` and `SubKind` should make the node unique among its siblings. This is very important.
+
+
 
 If you want to have space between the API nodes add an empty token and lineBreak at the end of bottom tokens to simulate one empty line.
 

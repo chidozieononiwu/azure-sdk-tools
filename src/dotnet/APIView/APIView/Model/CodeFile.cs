@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 using APIView;
-using csharp_api_parser.TreeToken;
+using APIView.TreeToken;
 using System;
 using System.Collections.Generic;
 using System.IO;
