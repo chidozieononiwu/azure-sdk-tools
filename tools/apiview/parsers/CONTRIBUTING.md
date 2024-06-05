@@ -38,19 +38,15 @@ Each tree node has top tokens which should be used to capture the main tokens on
     ParameterSeparator
     Url
   ```
+### APITreeNode
 Each module of the API (namespace, class, method) should be its own node. Members of a module (methods, in a class), (classes in a namespace) should be added as child nodes of its parent module.
 
 Sort each node at each level of the tree by your desired property, this is to ensure that difference in node order does not result in diff.
 
-Ensure each node must have an Id. The combination of `Id`, `Kind` and `SubKind` should make the node unique among its siblings. This is very important.
+Ensure each node has an Id. The combination of `Id`, `Kind` and `SubKind` should make the node unique across all nodes. This is very important. For example a class and a method can potentally have the same Id, but the kind should diffrentiate them from each other.
 
-
-
-
-
-### APITreeNode
-- `Name (n)`  : The name of the tree node which will be used for API navigation.
-- `Id (i)` : Id of the node, which should be unique at the node level. i.e. unique among its siblings
+- `Name (n)`  : The name of the tree node which will be used as label for the API Navigation. Generally use the name of the module (class, method)
+- `Id (i)` : Id of the node, which should be unique at the node level. i.e. unique among its siblings. generally use whatever existing parser is assigning to NavigationId.
 - `Kind (k)` : What kind of node is it. (namespace, class, module, method e.t.c)
 - `Tags (t)` : Use this for opt in or opt out boolean properties e.g. `Deprecated`, `Hidden`, `HideFromNavigation`
 - `Properties (p)` : Use this for other properties of the node. If the node needs more specification e.g. Use `SubKind` entry to make the node kind more specific. 

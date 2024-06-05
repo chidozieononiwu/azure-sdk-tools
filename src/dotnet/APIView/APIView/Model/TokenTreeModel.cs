@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using MessagePack;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace APIView.TreeToken
 {
@@ -20,48 +19,37 @@ namespace APIView.TreeToken
     /// <summary>
     /// Used to represent a APIView token its properties and tags for APIView parsers.
     /// </summary>
-    [MessagePackObject]
-    [JsonObject("st")]
+
     public class StructuredToken
     {
-        [Key(3)]
-        [JsonProperty("t")]
-        private HashSet<string> _tagsForSerializer
+        [JsonPropertyName("t")]
+        public HashSet<string> _tagsForSerializer
         {
             get { return Tags.Count > 0 ? Tags : null; }
             set { Tags = value ?? new HashSet<string>(); }
         }
-        [Key(4)]
-        [JsonProperty("p")]
-        private Dictionary<string, string> _propertiesForSerializer
+        [JsonPropertyName("p")]
+        public Dictionary<string, string> _propertiesForSerializer
         {
             get { return Properties.Count > 0 ? Properties : null; }
             set { Properties = value ?? new Dictionary<string, string>(); }
         }
-        [Key(5)]
-        [JsonProperty("rc")]
-        private HashSet<string> _renderClassesForSerializer
+        [JsonPropertyName("rc")]
+        public HashSet<string> _renderClassesForSerializer
         {
             get { return RenderClasses.Count > 0 ? RenderClasses : null; }
             set { RenderClasses = value ?? new HashSet<string>(); }
         }
-
-        [Key(0)]
-        [JsonProperty("v")]
+        [JsonPropertyName("v")]
         public string Value { get; set; } = string.Empty;
-        [Key(1)]
-        [JsonProperty("i")]
+        [JsonPropertyName("i")]
         public string Id { get; set; }
-        [Key(2)]
-        [JsonProperty("k")]
+        [JsonPropertyName("k")]
         public StructuredTokenKind Kind { get; set; }
-        [IgnoreMember]
         [JsonIgnore]
         public HashSet<string> Tags { get; set; } = new HashSet<string>();
-        [IgnoreMember]
         [JsonIgnore]
         public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
-        [IgnoreMember]
         [JsonIgnore]
         public HashSet<string> RenderClasses { get; set; } = new HashSet<string>();
 
@@ -173,71 +161,57 @@ namespace APIView.TreeToken
             return token;
         }
     }
-    [MessagePackObject]
-    [JsonObject("at")]
+
     public class APITreeNode
     {
-        [Key(3)]
-        [JsonProperty("t")]
-        private HashSet<string> _tagsForSerializer
+        [JsonPropertyName("t")]
+        public HashSet<string> _tagsForSerializer
         {
             get { return Tags.Count > 0 ? Tags : null; }
             set { Tags = value ?? new HashSet<string>(); }
         }
-        [Key(4)]
-        [JsonProperty("p")]
-        private Dictionary<string, string> _propertiesForSerializer
+        [JsonPropertyName("p")]
+        public Dictionary<string, string> _propertiesForSerializer
         {
             get { return Properties.Count > 0 ? Properties : null; }
             set { Properties = value ?? new Dictionary<string, string>(); }
         }
-        [Key(5)]
-        [JsonProperty("tt")]
-        private List<StructuredToken> _topTokensForSerializer
+        [JsonPropertyName("tt")]
+        public List<StructuredToken> _topTokensForSerializer
         {
             get { return TopTokens.Count > 0 ? TopTokens : null; }
             set { TopTokens = value ?? new List<StructuredToken>(); }
         }
-        [Key(6)]
-        [JsonProperty("bt")]
-        private List<StructuredToken> _bottomTokensForSerializer
+        [JsonPropertyName("bt")]
+        public List<StructuredToken> _bottomTokensForSerializer
         {
             get { return BottomTokens.Count > 0 ? BottomTokens : null; }
             set { BottomTokens = value ?? new List<StructuredToken>(); }
         }
-        [Key(7)]
-        [JsonProperty("c")]
-        private List<APITreeNode> _childrenForSerializer
+        [JsonPropertyName("c")]
+        public List<APITreeNode> _childrenForSerializer
         {
             get { return Children.Count > 0 ? Children : null; }
             set { Children = value ?? new List<APITreeNode>(); }
         }
 
-        [Key(0)]
-        [JsonProperty("n")]
+        [JsonPropertyName("n")]
         public string Name { get; set; }
-        [Key(1)]
-        [JsonProperty("i")]
+        [JsonPropertyName("i")]
         public string Id { get; set; }
-        [Key(2)]
-        [JsonProperty("k")]
+        [JsonPropertyName("k")]
         public string Kind { get; set; }
-        [IgnoreMember]
         [JsonIgnore]
         public HashSet<string> Tags { get; set; } = new HashSet<string>();
-        [IgnoreMember]
         [JsonIgnore]
         public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
-        [IgnoreMember]
         [JsonIgnore]
         public List<StructuredToken> TopTokens { get; set; } = new List<StructuredToken>();
-        [IgnoreMember]
         [JsonIgnore]
         public List<StructuredToken> BottomTokens { get; set; } = new List<StructuredToken>();
-        [IgnoreMember]
         [JsonIgnore]
         public List<APITreeNode> Children { get; set; } = new List<APITreeNode>();
-
+         
         public override int GetHashCode()
         {
             int hash = 17;

@@ -1,10 +1,9 @@
 using System.CommandLine;
 using System.IO.Compression;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Xml.Linq;
 using ApiView;
-using MessagePack;
-using MessagePack.Resolvers;
-using Newtonsoft.Json;
 
 var inputOption = new Option<FileInfo>("--packageFilePath", "C# Package (.nupkg) file").ExistingOnly();
 inputOption.IsRequired = true;
@@ -100,31 +99,20 @@ static void HandlePackageFileParsing(Stream stream, FileInfo packageFilePath, Di
             return;
         }
         var treeTokenCodeFile = new CSharpAPIParser.TreeToken.CodeFileBuilder().Build(assemblySymbol, runAnalysis, dependencies);
-        var jsonTokenFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}.json");
-        var msgPackFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}.msgpack");
+        var jsonTokenFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}");
 
 
-        var settings = new JsonSerializerSettings
+        var options = new JsonSerializerOptions()
         {
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Ignore
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };
 
-        using (StreamWriter fileWriter = File.CreateText(jsonTokenFilePath))
         {
-            var serialized = JsonConvert.SerializeObject(treeTokenCodeFile, settings);
-            fileWriter.Write(serialized);
+            using FileStream fileStream = new FileStream(jsonTokenFilePath, FileMode.Create, FileAccess.Write);
+            JsonSerializer.Serialize(fileStream, treeTokenCodeFile, options);
         }
-        Console.WriteLine($"TokenCodeFile File {jsonTokenFilePath} Generated Successfully.");
-
-        var msgPackOptions = MessagePackSerializerOptions.Standard.WithResolver(CompositeResolver.Create(
-            StandardResolverAllowPrivate.Instance, ContractlessStandardResolver.Instance))
-            .WithCompression(MessagePackCompression.None);
-
-        byte[] data = MessagePackSerializer.Serialize(treeTokenCodeFile, msgPackOptions);
-        File.WriteAllBytes(msgPackFilePath, data);
-        Console.WriteLine($"TokenCodeFile File {msgPackFilePath} Generated Successfully.");
-
+        
+        Console.WriteLine($"TokenCodeFile File {jsonTokenFilePath} Generated Successfully.");  
         Console.WriteLine();
     }
     catch (Exception ex)
