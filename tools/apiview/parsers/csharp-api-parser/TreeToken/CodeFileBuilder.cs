@@ -699,9 +699,14 @@ namespace CSharpAPIParser.TreeToken
                     break;
             }
 
-            if (!String.IsNullOrEmpty(definitionId))
+            if (!String.IsNullOrWhiteSpace(definitionId))
             {
                 token.Id = definitionId!;
+            }
+
+            if (!String.IsNullOrWhiteSpace(navigateToId))
+            {
+                token.Properties.Add("NavigateToId", navigateToId!);
             }
             
             return token;
