@@ -43,39 +43,48 @@ Each module of the API (namespace, class, method) should be its own node. Member
 
 Sort each node at each level of the tree by your desired property, this is to ensure that difference in node order does not result in diff.
 
-Ensure each node has an Id. The combination of `Id`, `Kind` and `SubKind` should make the node unique across all nodes. This is very important. For example a class and a method can potentally have the same Id, but the kind should diffrentiate them from each other.
+Ensure each node has an Id. The combination of `Id`, `Kind` and `SubKind` should make the node unique across all nodes in the tree. This is very important. For example a class and a method can potentally have the same Id, but the kind should diffrentiate them from each other.
 
 - `Name (n)`  : The name of the tree node which will be used as label for the API Navigation. Generally use the name of the module (class, method)
-- `Id (i)` : Id of the node, which should be unique at the node level. i.e. unique among its siblings. generally use whatever existing parser is assigning to NavigationId.
-- `Kind (k)` : What kind of node is it. (namespace, class, module, method e.t.c)
-- `Tags (t)` : Use this for opt in or opt out boolean properties e.g. `Deprecated`, `Hidden`, `HideFromNavigation`
-- `Properties (p)` : Use this for other properties of the node. If the node needs more specification e.g. Use `SubKind` entry to make the node kind more specific. 
-- `TopTokens (tt)` : The main data of the node.
-- `BottomToken (bt)` : Data that closes out the node.
-- `Children (c)` : Node immediate descendant
+- `Id (i)` : Id of the node, which should be unique at the node level. i.e. unique among its siblings. Use whatever existing parser is assigning to DefinitionId for the main Token of the node. Each node must have an Id.
+- `Kind (k)` : What kind of node is it. Please ensure you set a Kind for each node. Using any of the following `assembly`, `class`, `delegate`, `enum`, `interface`, `method` , `namespace`, `package`, `struct`, `type` will get you the corresponding default icons for the page navigation but feel free to use something language specific.
+- `Tags (t)` : Use this for opt in or opt out boolean properties. The currently supported tags are
+  - `Deprecated` Mark a node as deprecated
+  - `Hidden`  Mark a node as Hidden
+  - `HideFromNavigation` Indicate that anode should be hidden from the page navigation.
+  - `SkipDiff` Indicate that a node should not be used in computatation of diff.
+  - `CrossLandDefId` The cross language definitionId for the node.
+- `Properties (p)` : Use this for other properties of the node. The currently supported tags
+  - `SubKind` Similar to kind, use this to make the node more specific. e.g.   `Kind = 'Type'`, and `SubKind = 'class'` or somethign specific to you language. We also use this to make the navigation icon it will overide kind.
+  - `IconName` Use this only if you are looking to add a custom icon different from language wide defaults.
+- `TopTokens (tt)` : The main data of the node. This is all the tokens that actually define the node. e.g. For a class this would include the access modifier, the class name, any attributes or decorators e.t.c. For a method this would include the return type, method name, parameters e.t.c. See StructureTokesn description below for more info.
+- `BottomToken (bt)` : Data that closes out the node. Depending on the language this would include the closing curly brace and/or empty lines. You can simulate an empty line by adding an empty token (content token with no value) and a lineBreak token.
+- `Children (c)` : The nodes immediate children. For a namespace this would be classes, for a class this would be the class constructors and methods.
 
 ### StructuredToken
-- `Value (v)` : The token value which will be dispalyed.
-- `Id (i)` : Which will be used to navigate and find token on page.
-- `Kind (k)` : Could be `Content` `LineBreak` `NoneBreakingSpace` `TabSpace` `ParameterSeparator` `Url`
-  All tokens should be content except for spacing tokens and url. ParameterSeparator should be used between method or function parameters. Spacing token dont need to have value.
-- `Tags (t)` : Use this for opt in or opt out boolean properties e.g. `SkippDiff`
-- `Properties (p)` : Capture any other interesting data here. e.g Use `GroupId` : `doc` to group consecutive comment tokens.
-- `RenderClasses (rc)` : Add css classes for how the tokens will be rendred. Classes currently being used are `text` `keyword` `punctuation` `type-name` `member-name` `literal` `string-literal` `comment` Feel free to add your own custom class. Whatever custom classes you use please provide us the appriopriate css for the class so we can update APIView.
+- `Value (v)` : The token value which will be dispalyed. Can be null.  Spacing tokens don't need to have value.
+- `Id (i)` : This is essentially whatever existing parser was asigning to the token DefinitionId. You dont have to assign a tokenId.
+- `Kind (k)` : An enum
+  - `Content` Specifies that the token is content
+  - `LineBreak` Space token indicating switch to new line.
+  - `NoneBreakingSpace` Regular single space
+  - `TabSpace` 4 NoneBreakingSpaces
+  - `ParameterSeparator` Use this between method parameters. Depending on user setting this would result in a singlespace or new line
+  - `Url` A url token should have `LinkText` property and the url/link should be the token value.
+  All tokens should be content except for spacing tokens and url. ParameterSeparator should be used between method or function parameters. 
+- `Tags (t)` : Use this for opt in or opt out boolean properties.The currently supported tags are 
+  - `SkippDiff`  Indicate that a token should not be used in computatation of diff.
+  - `Deprecated` Mark a token as deprecated
+- `Properties (p)` : Properties of the token.
+  - `GroupId` : `doc` to group consecutive comment tokens as documentation.
+  - `NavigateToId` Id for navigating to where the node where the token is defined. Should match the definitionId of the node.
+- `RenderClasses (rc)` : Add css classes for how the tokens will be rendred. Classes currently being used are `text` `keyword` `punc` `tname` `mname` `literal` `sliteral` `comment` Feel free to add your own custom class. Whatever custom classes you use please provide us the appriopriate css for the class so we can update APIView.
 
-Json property names are show in brackets.
-
-
-
-
-
-
-If you want to have space between the API nodes add an empty token and lineBreak at the end of bottom tokens to simulate one empty line.
+Json property names for each property is shown in brackets.
 
 Dont worry about indentation that will be handeled by the tree structure, unless you want to have indentation between the tokens then use `TabSpace` token kind.
 
-If your packages contains multiple assemblies then you will have multiple trees with multiple roots.
-Assign the final parsed value to `APIForest` property of the `CodeFile`.
+If your packages contains multiple assemblies then you will have multiple trees with multiple roots. Assign the final parsed value to a `List<APITreeNode> APIForest` property of the `CodeFile`.
 
 Serialize the generated code file to JSON. Try to make the json as small as possible by ignoring null values and empty collections, and using the abbreviated names of theproperties as the Json property name
 
