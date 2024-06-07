@@ -3,7 +3,7 @@ pr: none
 
 variables:
   ParserProject: 'tools/apiview/parsers/csharp-api-parser/CSharpAPIParser.csproj'
-  ScriptProject: 'tools/apiview/parsers/ConvertTokensToTreeStructure/ConvertTokensToTreeStructure/ConvertFlatToTreeTokens.csproj' 
+  ScriptDirectory: 'tools/apiview/parsers/ConvertTokensToTreeStructure/ConvertTokensToTreeStructure'
   NugetSecurityAnalysisWarningLevel: 'none'
 
 stages:
@@ -26,16 +26,16 @@ stages:
           - script: 'dotnet tool install --global --add-source $(Build.BinariesDirectory) --version 1.0.0-dev.20240607.1 CSharpAPIParser'
             displayName: 'Install Parser'
 
-          - script: 'dotnet build $(ScriptProject)'
+          - script: 'dotnet build $(ScriptDirectory)'
             displayName: 'Build Migration Script'
             env:
               DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
               DOTNET_CLI_TELEMETRY_OPTOUT: 1
               DOTNET_MULTILEVEL_LOOKUP: 0
 
-          - script: 'dotnet run $(ScriptProject)'
+          - script: 'dotnet run'
             displayName: 'Run Migration Script'
-            workingDirectory: $(ProjectDirectory)
+            workingDirectory: $(ScriptDirectory)
             env:
               DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
               DOTNET_CLI_TELEMETRY_OPTOUT: 1
