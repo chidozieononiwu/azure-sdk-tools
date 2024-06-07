@@ -17,7 +17,7 @@ var codefilesContainer = new BlobContainerClient(config["BlobConnectionString"],
 
 async Task<List<APIRevisionListItemModel>> GetCodeFilesIds(string language)
 {
-    var query = $"SELECT * FROM c WHERE c.Language = '{language}' AND c.id = '50b35d90ff6548a7b09e95b1db7d6c65'";
+    var query = $"SELECT * FROM c WHERE c.Language = '{language}' AND c.id = 'cfa75d944a3645f5b315498ca020a8db'";
     QueryDefinition queryDefinition = new QueryDefinition(query);
     using FeedIterator<APIRevisionListItemModel> feedIterator = apiRevisionContainer.GetItemQueryIterator<APIRevisionListItemModel>(queryDefinition);
     var result = new List<APIRevisionListItemModel>();
@@ -31,6 +31,10 @@ async Task<List<APIRevisionListItemModel>> GetCodeFilesIds(string language)
 }
 
 var apiRevisions = await GetCodeFilesIds("C#");
+Console.WriteLine($"##[command] {apiRevisions} Total APIRevisions");
+
+int processed = 0;
+int remaining = apiRevisions.Count;
 
 foreach (var apiRevision in apiRevisions)
 {
@@ -39,52 +43,60 @@ foreach (var apiRevision in apiRevisions)
         BlobClient originalBlobClient = orginalsContainer.GetBlobClient(apiRevision.Files[0].FileId);
         BlobClient codeFileBlobClient = codefilesContainer.GetBlobClient(apiRevision.Id + "/" + apiRevision.Files[0].FileId);
 
-        var originalsBlob = await originalBlobClient.DownloadAsync();
-
-        string tempNugetFile = apiRevision.Files[0].FileId + ".nupkg";
-        string tempNugetFilePath = Path.Combine(Path.GetTempPath(), tempNugetFile);
-
-        string tempDirectoryPath = Path.GetTempPath();
-
-        using (FileStream fileStream = File.Create(tempNugetFilePath))
+        if (await originalBlobClient.ExistsAsync())
         {
-            originalsBlob.Value.Content.CopyTo(fileStream);
-        }
+            var originalsBlob = await originalBlobClient.DownloadAsync();
 
-        Process process = new Process();
-        process.StartInfo.FileName = "CSharpAPIParserForAPIView";
-        process.StartInfo.Arguments = $"--packageFilePath {tempNugetFilePath} --outputDirectoryPath {tempDirectoryPath} --outputFileName {apiRevision.Files[0].FileId}";
-        process.Start();
-        process.WaitForExit();
+            string tempNugetFile = apiRevision.Files[0].FileId + ".nupkg";
+            string tempNugetFilePath = Path.Combine(Path.GetTempPath(), tempNugetFile);
 
-        string tempCodeFilePath = Path.Combine(tempDirectoryPath, apiRevision.Files[0].FileId);
+            string tempDirectoryPath = Path.GetTempPath();
 
-        if (File.Exists(tempCodeFilePath))
-        {
-            try 
+            using (FileStream fileStream = File.Create(tempNugetFilePath))
             {
-                using (FileStream uploadFileStream = File.OpenRead(tempCodeFilePath))
+                originalsBlob.Value.Content.CopyTo(fileStream);
+            }
+
+            Process process = new Process();
+            process.StartInfo.FileName = "CSharpAPIParserForAPIView";
+            process.StartInfo.Arguments = $"--packageFilePath {tempNugetFilePath} --outputDirectoryPath {tempDirectoryPath} --outputFileName {apiRevision.Files[0].FileId}";
+            process.Start();
+            process.WaitForExit();
+
+            string tempCodeFilePath = Path.Combine(tempDirectoryPath, apiRevision.Files[0].FileId + ".json.tgz");
+
+            if (File.Exists(tempCodeFilePath))
+            {
+                try
                 {
-                    codeFileBlobClient.Upload(uploadFileStream, true);
+                    using (FileStream uploadFileStream = File.OpenRead(tempCodeFilePath))
+                    {
+                        codeFileBlobClient.Upload(uploadFileStream, true);
+                    }
+
+                    apiRevision.Files[0].VersionString = "27";
+                    apiRevision.Files[0].ParserStyle = "Tree";
+                    await apiRevisionContainer.UpsertItemAsync(apiRevision, new PartitionKey(apiRevision.ReviewId));
+
+                    processed++;
+                    remaining--;
+
+                    File.Delete(tempCodeFilePath);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"##[command]Successfully Generated TreeToken at {apiRevision.Id} / {apiRevision.Files[0].FileId}");
+                    Console.WriteLine($"##[command] processed: {processed}");
+                    Console.WriteLine($"##[command] remaining: {remaining}");
                 }
-
-                apiRevision.Files[0].VersionString = "27";
-                apiRevision.Files[0].ParserStyle = "Tree";
-                await apiRevisionContainer.UpsertItemAsync(apiRevision, new PartitionKey(apiRevision.ReviewId));
-
-                File.Delete(tempCodeFilePath);
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Successfully Generated TreeToken at {apiRevision.Id} / {apiRevision.Files[0].FileId}");
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"##[error]Failed to upload TreeToken at {apiRevision.Id} / {apiRevision.Files[0].FileId}");
+                    Console.WriteLine(ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"Failed to upload TreeToken at {apiRevision.Id} / {apiRevision.Files[0].FileId}");
-                Console.WriteLine(ex.Message);
-            }
+
+            File.Delete(tempNugetFilePath);
         }
-
-        File.Delete(tempNugetFilePath);
     }
 
 }
