@@ -8,36 +8,38 @@ using ApiView;
 var inputOption = new Option<FileInfo>("--packageFilePath", "C# Package (.nupkg) file").ExistingOnly();
 inputOption.IsRequired = true;
 
-var outputOption = new Option<DirectoryInfo>("--outputPath", "Directory for the output Token File").ExistingOnly();
+var outputOption1 = new Option<DirectoryInfo>("--outputDirectoryPath", "Directory for the output Token File").ExistingOnly();
+var outputOption2 = new Option<string>("--outputFileName", "Output File Name");
 var runAnalysis = new Argument<bool>("runAnalysis", "Run Analysis on the package");
 runAnalysis.SetDefaultValue(true);
 
 var rootCommand = new RootCommand("Parse C# Package (.nupkg) to APIView Tokens")
 {
     inputOption,
-    outputOption,
+    outputOption1,
+    outputOption2,
     runAnalysis
 };
 
-rootCommand.SetHandler((FileInfo packageFilePath, DirectoryInfo OutputDirectory, bool runAnalysis) =>
+rootCommand.SetHandler((FileInfo packageFilePath, DirectoryInfo outputDirectory, string outputFileName, bool runAnalysis) =>
 {
     try
     {
         using (var stream = packageFilePath.OpenRead())
         {
-            HandlePackageFileParsing(stream, packageFilePath, OutputDirectory, runAnalysis);
+            HandlePackageFileParsing(stream, packageFilePath, outputDirectory, outputFileName, runAnalysis);
         }
     }
     catch (Exception ex)
     {
         Console.Error.WriteLine($"Error Reading PackageFile : {ex.Message}");
     }
-}, inputOption, outputOption, runAnalysis);
+}, inputOption, outputOption1,outputOption2, runAnalysis);
 
 return rootCommand.InvokeAsync(args).Result;
 
 
-static void HandlePackageFileParsing(Stream stream, FileInfo packageFilePath, DirectoryInfo OutputDirectory, bool runAnalysis)
+static void HandlePackageFileParsing(Stream stream, FileInfo packageFilePath, DirectoryInfo OutputDirectory, string outputFileName, bool runAnalysis)
 {
     ZipArchive? zipArchive = null;
     Stream? dllStream = stream;
@@ -98,8 +100,9 @@ static void HandlePackageFileParsing(Stream stream, FileInfo packageFilePath, Di
             Console.Error.WriteLine($"PackageFile {packageFilePath.FullName} contains no Assembly Symbol.");
             return;
         }
+        var parsedFileName = string.IsNullOrEmpty(outputFileName) ? assemblySymbol.Name : outputFileName;
         var treeTokenCodeFile = new CSharpAPIParser.TreeToken.CodeFileBuilder().Build(assemblySymbol, runAnalysis, dependencies);
-        var jsonTokenFilePath = Path.Combine(OutputDirectory.FullName, $"{assemblySymbol.Name}");
+        var jsonTokenFilePath = Path.Combine(OutputDirectory.FullName, $"{parsedFileName}");
 
 
         var options = new JsonSerializerOptions()
