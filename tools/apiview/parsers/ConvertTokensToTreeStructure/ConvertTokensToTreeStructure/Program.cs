@@ -70,7 +70,7 @@ foreach (var apiRevision in apiRevisions)
 
                 apiRevision.Files[0].VersionString = "27";
                 apiRevision.Files[0].ParserStyle = "Tree";
-                await apiRevisionContainer.UpsertItemAsync(apiRevision);
+                await apiRevisionContainer.UpsertItemAsync(apiRevision, new PartitionKey(apiRevision.ReviewId));
 
                 File.Delete(tempCodeFilePath);
                 Console.ForegroundColor = ConsoleColor.Green;
