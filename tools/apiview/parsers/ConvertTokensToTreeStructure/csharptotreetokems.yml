@@ -13,9 +13,8 @@ stages:
         timeoutInMinutes: 360
 
         pool:
-          name: azsdk-pool-mms-win-2022-general
-          vmImage: windows-2022
-
+          vmImage: 'windows-latest'
+          
         steps:
           - script: 'dotnet pack $(ParserProject) -o $(Build.BinariesDirectory)'
             displayName: 'Create C# Parser Tool'
