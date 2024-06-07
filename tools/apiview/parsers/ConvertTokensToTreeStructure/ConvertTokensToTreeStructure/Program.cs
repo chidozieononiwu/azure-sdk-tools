@@ -1,4 +1,4 @@
-﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs;
 using ConvertFlatToTreeTokens;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
@@ -6,17 +6,18 @@ using System.Diagnostics;
 
 
 var config = new ConfigurationBuilder()
+    .AddEnvironmentVariables()
     .AddUserSecrets(typeof(Program).Assembly)
     .Build();
 
 var cosmosClient = new CosmosClient(config["CosmosConnectionString"]);
 var apiRevisionContainer = cosmosClient.GetContainer("APIViewV2", "APIRevisions");
-var orginalsContainer = new BlobContainerClient(config["Blob:ConnectionString"], "originals");
-var codefilesContainer = new BlobContainerClient(config["Blob:ConnectionString"], "codefiles");
+var orginalsContainer = new BlobContainerClient(config["BlobConnectionString"], "originals");
+var codefilesContainer = new BlobContainerClient(config["BlobConnectionString"], "codefiles");
 
 async Task<List<APIRevisionListItemModel>> GetCodeFilesIds(string language)
 {
-    var query = $"SELECT * FROM c WHERE c.Language = '{language}'";
+    var query = $"SELECT * FROM c WHERE c.Language = '{language}' AND c.id = '50b35d90ff6548a7b09e95b1db7d6c65'";
     QueryDefinition queryDefinition = new QueryDefinition(query);
     using FeedIterator<APIRevisionListItemModel> feedIterator = apiRevisionContainer.GetItemQueryIterator<APIRevisionListItemModel>(queryDefinition);
     var result = new List<APIRevisionListItemModel>();

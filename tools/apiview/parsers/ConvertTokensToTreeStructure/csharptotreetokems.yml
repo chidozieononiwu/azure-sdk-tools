@@ -23,18 +23,22 @@ stages:
           - script: 'ls $(Build.BinariesDirectory)'
             displayName: 'View Output'
 
-          #- script: 'dotnet build $(ProjectDirectory)'
-          #  displayName: 'Build'
-          #  env:
-          #    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-          #    DOTNET_CLI_TELEMETRY_OPTOUT: 1
-          #    DOTNET_MULTILEVEL_LOOKUP: 0
-#
-          #- script: 'dotnet run ${{ parameters.ReviewId }}'
-          #  displayName: 'Run Migration'
-          #  workingDirectory: $(ProjectDirectory)
-          #  env:
-          #    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-          #    DOTNET_CLI_TELEMETRY_OPTOUT: 1
-          #    DOTNET_MULTILEVEL_LOOKUP: 0
-          #    APIVIEW_CosmosConnectionString: $(APIView-Cosmos-ConnectionString)
+          - script: 'dotnet tool install --global --add-source $(Build.BinariesDirectory) --version 1.0.0-dev.20240607.1 CSharpAPIParser'
+            displayName: 'Install Parser'
+
+          - script: 'dotnet build $(ScriptProject)'
+            displayName: 'Build Migration Script'
+            env:
+              DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+              DOTNET_CLI_TELEMETRY_OPTOUT: 1
+              DOTNET_MULTILEVEL_LOOKUP: 0
+
+          - script: 'dotnet run $(ScriptProject)'
+            displayName: 'Run Migration Script'
+            workingDirectory: $(ProjectDirectory)
+            env:
+              DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+              DOTNET_CLI_TELEMETRY_OPTOUT: 1
+              DOTNET_MULTILEVEL_LOOKUP: 0
+              BlobConnectionString: $(BlobConnectionString)
+              CosmosConnectionString: $(CosmosConnectionString)
