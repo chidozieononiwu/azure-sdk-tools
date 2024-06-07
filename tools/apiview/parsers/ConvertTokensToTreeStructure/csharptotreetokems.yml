@@ -1,0 +1,40 @@
+trigger: none
+pr: none
+
+variables:
+  ParserProject: 'tools/apiview/parsers/csharp-api-parser/CSharpAPIParser.csproj'
+  ScriptProject: 'tools/apiview/parsers/ConvertTokensToTreeStructure/ConvertTokensToTreeStructure/ConvertFlatToTreeTokens.csproj' 
+  NugetSecurityAnalysisWarningLevel: 'none'
+
+stages:
+  - stage: 'CSharpToTreeTokens'
+    jobs:
+      - job: 'Run'
+        timeoutInMinutes: 360
+
+        pool:
+          name: azsdk-pool-mms-win-2022-general
+          vmImage: windows-2022
+
+        steps:
+          - script: 'dotnet pack $(ParserProject) -o $(Build.BinariesDirectory)'
+            displayName: 'Create C# Parser Tool'
+          
+          - script: 'ls $(Build.BinariesDirectory)'
+            displayName: 'View Output'
+
+          #- script: 'dotnet build $(ProjectDirectory)'
+          #  displayName: 'Build'
+          #  env:
+          #    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+          #    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+          #    DOTNET_MULTILEVEL_LOOKUP: 0
+#
+          #- script: 'dotnet run ${{ parameters.ReviewId }}'
+          #  displayName: 'Run Migration'
+          #  workingDirectory: $(ProjectDirectory)
+          #  env:
+          #    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+          #    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+          #    DOTNET_MULTILEVEL_LOOKUP: 0
+          #    APIVIEW_CosmosConnectionString: $(APIView-Cosmos-ConnectionString)
