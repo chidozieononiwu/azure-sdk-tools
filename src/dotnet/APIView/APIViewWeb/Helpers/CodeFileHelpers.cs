@@ -529,6 +529,7 @@ namespace APIViewWeb.Helpers
 
                     if (diffTokenRowResult.HasDiff)
                     {
+                        codePanelData.HasDiff = true;
                         codePanelData.NodeMetaDataObj[nodeIdHashed].IsNodeWithDiff = true;
                         var parentNodeIdHashed = codePanelData.NodeMetaDataObj[nodeIdHashed].ParentNodeIdHashed;
                         while (parentNodeIdHashed != "root" && codePanelData.NodeMetaDataObj.ContainsKey(parentNodeIdHashed))

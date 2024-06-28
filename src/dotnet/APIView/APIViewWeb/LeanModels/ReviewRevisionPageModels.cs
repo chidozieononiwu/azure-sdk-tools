@@ -124,6 +124,7 @@ namespace APIViewWeb.LeanModels
         [JsonIgnore]
         public ConcurrentDictionary<string, CodePanelNodeMetaData> NodeMetaDataObj { get; set; } = new ConcurrentDictionary<string, CodePanelNodeMetaData>();
         public ConcurrentDictionary<string, CodePanelNodeMetaData> NodeMetaData => NodeMetaDataObj.Count > 0 ? NodeMetaDataObj : null;
+        public bool HasDiff { get; set; } = false;
     }
 
     public class NavigationTreeNodeData
