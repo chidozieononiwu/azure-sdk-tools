@@ -134,13 +134,14 @@ function buildCodePanelRows(nodeIdHashed: string, navigationTree: NavigationTree
   }
 
   if (buildNode && node.commentThread && apiTreeBuilderData?.showComments) {
-    node.commentThread.forEach((comment, index) => {
+    Object.keys(node.commentThread).map(Number).forEach((key) => {
+      const comment: CodePanelRowData = node.commentThread[key];
       if (shouldAppendIfRowIsHiddenAPI(comment)) {
         comment.rowClasses = new Set<string>(comment.rowClasses); // Ensure that the rowClasses is a Set
         codePanelRowData.push(comment);
       }
     });
-;  }
+  }
   
   if (buildChildren) {
     let orderIndex = 0;

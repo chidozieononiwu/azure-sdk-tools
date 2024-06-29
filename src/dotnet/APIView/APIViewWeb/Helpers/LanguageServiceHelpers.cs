@@ -52,6 +52,8 @@ namespace APIViewWeb.Helpers
             {
                 case "Python":
                     return true;
+                case "C#":
+                    return true;
                 default:
                     return false;
             }

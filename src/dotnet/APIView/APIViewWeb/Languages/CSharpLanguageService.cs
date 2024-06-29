@@ -14,7 +14,7 @@ namespace APIViewWeb
         private static Regex _packageNameParser = new Regex("([A-Za-z.]*[a-z]).([\\S]*)", RegexOptions.Compiled);
         public override string Name { get; } = "C#";
         public override string[] Extensions { get; } = { ".dll" };
-        public override string ProcessName { get; } = $"{Environment.GetEnvironmentVariable("USERPROFILE")}\\.dotnet\\tools\\CSharpAPIParserForAPIView";
+        public override string ProcessName { get; } = $"{Environment.GetEnvironmentVariable("USERPROFILE")}\\.dotnet\\tools\\CSharpAPIParserForAPIView.exe";
         public override string VersionString { get; } = "27";
 
         public override string GetProcessorArguments(string originalName, string tempDirectory, string jsonPath)

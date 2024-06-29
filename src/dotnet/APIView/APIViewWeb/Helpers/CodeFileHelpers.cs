@@ -1,4 +1,5 @@
 
+using Amazon.Runtime.Internal.Transform;
 using APIView.TreeToken;
 using APIViewWeb.Extensions;
 using APIViewWeb.LeanModels;
@@ -689,11 +690,13 @@ namespace APIViewWeb.Helpers
             {
                 if (codePanelData.NodeMetaDataObj.ContainsKey(nodeIdHashed))
                 {
+                    rowData.RowPositionInGroup = codePanelData.NodeMetaDataObj[nodeIdHashed].DocumentationObj.Count();
                     codePanelData.NodeMetaDataObj[nodeIdHashed].DocumentationObj.Add(rowData);
                 }
                 else
                 {
                     codePanelData.NodeMetaDataObj.TryAdd(nodeIdHashed, new CodePanelNodeMetaData());
+                    rowData.RowPositionInGroup = codePanelData.NodeMetaDataObj[nodeIdHashed].DocumentationObj.Count();
                     codePanelData.NodeMetaDataObj[nodeIdHashed].DocumentationObj.Add(rowData);
                 }
             }
@@ -702,25 +705,28 @@ namespace APIViewWeb.Helpers
             {
                 if (codePanelData.NodeMetaDataObj.ContainsKey(nodeIdHashed))
                 {
+                    rowData.RowPositionInGroup = codePanelData.NodeMetaDataObj[nodeIdHashed].CodeLinesObj.Count();
                     codePanelData.NodeMetaDataObj[nodeIdHashed].CodeLinesObj.Add(rowData);
                 }
                 else
                 {
                     codePanelData.NodeMetaDataObj.TryAdd(nodeIdHashed, new CodePanelNodeMetaData());
+                    rowData.RowPositionInGroup = codePanelData.NodeMetaDataObj[nodeIdHashed].CodeLinesObj.Count();
                     codePanelData.NodeMetaDataObj[nodeIdHashed].CodeLinesObj.Add(rowData);
                 }
             }
 
             if (commentsForRow != null && commentsForRow.Type == CodePanelRowDatatype.CommentThread && commentsForRow.CommentsObj.Any())
             {
+                commentsForRow.AssociatedRowPositionInGroup = rowData.RowPositionInGroup;
                 if (codePanelData.NodeMetaDataObj.ContainsKey(nodeIdHashed))
                 {
-                    codePanelData.NodeMetaDataObj[nodeIdHashed].CommentThreadObj.Add(commentsForRow);
+                    codePanelData.NodeMetaDataObj[nodeIdHashed].CommentThreadObj.Add(codePanelData.NodeMetaDataObj[nodeIdHashed].CodeLinesObj.Count() - 1, commentsForRow); //Map comment to the index of associated codeLine
                 }
                 else
                 {
                     codePanelData.NodeMetaDataObj.TryAdd(nodeIdHashed, new CodePanelNodeMetaData());
-                    codePanelData.NodeMetaDataObj[nodeIdHashed].CommentThreadObj.Add(commentsForRow);
+                    codePanelData.NodeMetaDataObj[nodeIdHashed].CommentThreadObj.Add(codePanelData.NodeMetaDataObj[nodeIdHashed].CodeLinesObj.Count() - 1, commentsForRow); //Map comment to the index of associated codeLine
                 }
             }
         }
