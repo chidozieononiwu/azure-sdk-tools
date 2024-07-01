@@ -17,7 +17,7 @@ var codefilesContainer = new BlobContainerClient(config["BlobConnectionString"],
 
 async Task<List<APIRevisionListItemModel>> GetCodeFilesIds(string language)
 {
-    var query = $"SELECT * FROM c WHERE c.Language = '{language}' AND c.id = 'cfa75d944a3645f5b315498ca020a8db'";
+    var query = $"SELECT * FROM c WHERE c.Language = '{language}' AND (c.Files[0].ParserStyle != 'Tree' OR NOT IS_DEFINED(c.Files[0].ParserStyle))";
     QueryDefinition queryDefinition = new QueryDefinition(query);
     using FeedIterator<APIRevisionListItemModel> feedIterator = apiRevisionContainer.GetItemQueryIterator<APIRevisionListItemModel>(queryDefinition);
     var result = new List<APIRevisionListItemModel>();

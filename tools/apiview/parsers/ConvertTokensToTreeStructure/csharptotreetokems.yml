@@ -16,13 +16,7 @@ stages:
           vmImage: 'windows-latest'
 
         steps:
-          - script: 'dotnet pack $(ParserProject) -o $(Build.BinariesDirectory)'
-            displayName: 'Create C# Parser Tool'
-          
-          - script: 'ls $(Build.BinariesDirectory)'
-            displayName: 'View Output'
-
-          - script: 'dotnet tool install --global --add-source $(Build.BinariesDirectory) --version 1.0.0-dev.20240607.1 CSharpAPIParser'
+          - script: 'dotnet tool install --global --add-source https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json --version 1.0.0-dev.20240626.4 CSharpAPIParser'
             displayName: 'Install Parser'
 
           - script: 'dotnet build $(ScriptDirectory)'
