@@ -115,11 +115,18 @@ export class ReviewPageComponent implements OnInit {
     this.sideMenu = [
       {
           icon: 'bi bi-clock-history',
+          title: 'Revisions',
           command: () => { this.revisionSidePanel = !this.revisionSidePanel; }
       },
       {
         icon: 'bi bi-chat-left-dots',
+        title: 'Conversations',
         badge: (this.numberOfActiveConversation > 0) ? this.numberOfActiveConversation.toString() : undefined,
+        command: () => { this.conversationSidePanel = !this.conversationSidePanel; }
+      },
+      {
+        icon: 'bi bi-puzzle',
+        title: 'Samples',
         command: () => { this.conversationSidePanel = !this.conversationSidePanel; }
       }
     ];
