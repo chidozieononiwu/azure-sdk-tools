@@ -13,6 +13,7 @@ jobs:
       - name: Run PowerShell script
         shell: pwsh
         run: |
+            Write-Host "Test Colored Log"
             $esc = [char]27
             $green = "${esc}[32m"
             $reset = "${esc}[0m"
