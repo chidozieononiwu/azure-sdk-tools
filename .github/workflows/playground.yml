@@ -13,11 +13,6 @@ jobs:
       - name: Run PowerShell script
         shell: pwsh
         run: |
-            Write-Host "Test Colored Log"
-            $esc = [char]27
-            $green = "${esc}[32m"
-            $reset = "${esc}[0m"
-
-            Write-Host "Regular Log"
-            Write-Host "${green} Logg Success ${reset}"
-            Write-Host "Regular Log"
+            Write-Warning ("::warning::Test Warning" -replace "`n", "%0D%0A")
+            Write-Debug "::debug::Test Debug"
+            Write-Debug ("::error::Test Error" -replace "`n", "%0D%0A")
