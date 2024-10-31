@@ -13,6 +13,5 @@ jobs:
       - name: Run PowerShell script
         shell: pwsh
         run: |
-            Write-Warning ("::warning::Test Warning" -replace "`n", "%0D%0A")
-            Write-Debug "::debug::Test Debug"
-            Write-Debug ("::error::Test Error" -replace "`n", "%0D%0A")
+            Write-Debug ("::debug::Test Debug" -replace "`n", "%0D%0A")
+            Write-Error ("::error::Test Error" -replace "`n", "%0D%0A")
