@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ConfigService } from '../config/config.service';
 import { Observable } from 'rxjs';
 import { CommentItemModel, CommentType } from 'src/app/_models/commentItemModel';
+import { CreateCommentModel, UpdateCommentModel } from 'src/app/_models/createUpdateCommentModel';
 
 @Injectable({
   providedIn: 'root'
@@ -22,41 +23,42 @@ export class CommentsService {
   }
 
   createComment(reviewId: string, revisionId: string, elementId: string, commentText: string, commentType: CommentType, resolutionLocked : boolean = false) : Observable<CommentItemModel> {
-    let params = new HttpParams();
-    params = params.append('reviewId', reviewId);
+    const data = new CreateCommentModel();
+    data.reviewId = reviewId;
+
     if (commentType == CommentType.APIRevision) {
-      params = params.append('apiRevisionId', revisionId);
+      data.apiRevisionId = revisionId;
     }
     else if (commentType == CommentType.SampleRevision) {
-      params = params.append('sampleRevisionId', revisionId);
+      data.sampleRevisionId = revisionId;
     }
-    params = params.append('elementId', elementId);
-    params = params.append('commentText', commentText);
-    params = params.append('commentType', commentType);
-    params = params.append('resolutionLocked', resolutionLocked);
+    data.elementId = elementId;
+    data.commentText = commentText;
+    data.commentType = commentType;
+    data.resolutionLocked = resolutionLocked;
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     })
 
-    return this.http.post<CommentItemModel>(this.baseUrl, {}, { 
+    return this.http.post<CommentItemModel>(this.baseUrl, data, { 
       headers: headers,
-      params: params,
       withCredentials: true });
   }
 
   updateComment(reviewId: string, commentId: string, commentText: string) {
-    let params = new HttpParams();
-    params = params.append('commentText', commentText);
+    const data = new UpdateCommentModel();
+    data.commentText = commentText;
+    data.reviewId = reviewId;
+    data.commentId = commentId;
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
     })
 
-    return this.http.patch(this.baseUrl + `/${reviewId}/${commentId}/updateCommentText`, {}, { 
+    return this.http.patch(this.baseUrl + `/${reviewId}/${commentId}/updateCommentText`, data, { 
       headers: headers,
       observe: 'response',
-      params: params,
       withCredentials: true });
   }
 

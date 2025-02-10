@@ -95,58 +95,47 @@ namespace APIViewWeb.LeanControllers
         /// <summary>
         /// Create a new Comment
         /// </summary>
-        /// <param name="reviewId"></param>
-        /// <param name="apiRevisionId"></param>
-        /// <param name="sampleRevisionId"></param>
-        /// <param name="elementId"></param>
-        /// <param name="commentText"></param>
-        /// <param name="commentType"></param>
-        /// <param name="resolutionLocked"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost(Name = "CreateComment")]
-        public async Task<ActionResult> CreateCommentAsync(
-            string reviewId, string elementId, string commentText,
-            CommentType commentType, string apiRevisionId = null, string sampleRevisionId = null,
-            bool resolutionLocked = false)
+        public async Task<ActionResult> CreateCommentAsync([FromBody] CreateCommentModel model)
         {
-            if (string.IsNullOrEmpty(commentText) || (string.IsNullOrEmpty(apiRevisionId) && string.IsNullOrEmpty(sampleRevisionId)))
+            if (string.IsNullOrEmpty(model.CommentText) || (string.IsNullOrEmpty(model.ApiRevisionId) && string.IsNullOrEmpty(model.SampleRevisionId)))
             {
                 return new BadRequestResult();
             }
 
             var comment = new CommentItemModel
             {
-                ReviewId = reviewId,
-                APIRevisionId = apiRevisionId,
-                SampleRevisionId = sampleRevisionId,
-                ElementId = elementId,
-                CommentText = commentText,
-                ResolutionLocked = resolutionLocked,
+                ReviewId = model.ReviewId,
+                APIRevisionId = model.ApiRevisionId,
+                SampleRevisionId = model.SampleRevisionId,
+                ElementId = model.ElementId,
+                CommentText = model.CommentText,
+                ResolutionLocked = model.ResolutionLocked,
                 CreatedBy = User.GetGitHubLogin(),
                 CreatedOn = DateTime.UtcNow,
-                CommentType = commentType
+                CommentType = model.CommentType
             };
 
             await _commentsManager.AddCommentAsync(User, comment);
-            var review = await _reviewManager.GetReviewAsync(User, reviewId);
+            var review = await _reviewManager.GetReviewAsync(User, model.ReviewId);
             if (review != null)
             {
                 await _notificationManager.SubscribeAsync(review, User);
             }
-             return new LeanJsonResult(comment, StatusCodes.Status201Created, Url.Action("GetComments", new { reviewId = reviewId }));
+            return new LeanJsonResult(comment, StatusCodes.Status201Created, Url.Action("GetComments", new { reviewId = model.ReviewId }));
         }
 
         /// <summary>
         /// Create a new Comment
         /// </summary>
-        /// <param name="reviewId"></param>
-        /// <param name="commentId"></param>
-        /// <param name="commentText"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
         [HttpPatch("{reviewId}/{commentId}/updateCommentText", Name = "UpdateCommentText")]
-        public async Task<ActionResult> UpdateCommentTextAsync(string reviewId, string commentId, string commentText)
+        public async Task<ActionResult> UpdateCommentTextAsync([FromBody] UpdateCommentModel model)
         {
-            await _commentsManager.UpdateCommentAsync(User, reviewId, commentId, commentText, new string[0]);
+            await _commentsManager.UpdateCommentAsync(User, model.ReviewId, model.CommentId, model.CommentText, new string[0]);
             return Ok();
         }
 
