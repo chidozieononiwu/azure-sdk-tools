@@ -80,6 +80,8 @@ export class ReviewPageOptionsComponent implements OnInit, OnChanges {
   reviewIsApproved: boolean | undefined = undefined;
   reviewApprover: string = 'azure-sdk';
   copyReviewTextButtonText : string = 'Copy review text';
+  generateAIReviewButtonText : string = 'Generate AI review';
+  aiReviewGenerationState : 'NotStarted' | 'InProgress' | 'Completed' = 'NotStarted';
 
   codeLineSearchText: FormControl = new FormControl('');
 
@@ -354,6 +356,17 @@ export class ReviewPageOptionsComponent implements OnInit, OnChanges {
     }, 1500);
 
     this.copyReviewTextEmitter.emit(true);
+  }
+
+  generateAIReview(event: Event) {
+    this.aiReviewGenerationState = 'InProgress';
+    this.generateAIReviewButtonText = 'Generating review...';
+
+    setTimeout(() => {
+      this.aiReviewGenerationState = 'Completed';
+      this.generateAIReviewButtonText = 'AI review generated!';
+    }, 1500);
+
   }
 
   clearReviewSearch() {
