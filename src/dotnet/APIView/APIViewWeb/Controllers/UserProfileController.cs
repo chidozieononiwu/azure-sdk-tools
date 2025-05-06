@@ -37,12 +37,13 @@ namespace APIViewWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Update(string email, string[] languages, string theme="light-theme", bool useBetaIndexPage=false)
+        public async Task<ActionResult> Update(string email, string[] languages, string theme="light-theme", bool useBetaIndexPage=false, ScrollBarSizes scrollBarSize = ScrollBarSizes.Small)
         {
             UserProfileModel profile = await _userProfileManager.TryGetUserProfileAsync(User);
             UserPreferenceModel preference = await _userPreferenceCache.GetUserPreferences(User);
 
             preference.Theme = theme;
+            preference.ScrollBarSize = scrollBarSize;
             preference.UseBetaIndexPage = useBetaIndexPage;
 
             HashSet<string> Languages = new HashSet<string>(languages);

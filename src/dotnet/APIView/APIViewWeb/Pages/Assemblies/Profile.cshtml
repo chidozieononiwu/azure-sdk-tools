@@ -19,9 +19,17 @@
         "dark-theme",
         "dark-solarized-theme"
     };
+
+    List<ScrollBarSizes> scrollBarSizes = new List<ScrollBarSizes>()
+    {
+        ScrollBarSizes.Small,
+        ScrollBarSizes.Medium,
+        ScrollBarSizes.Large
+    };
     string[] Languages = LanguageServiceHelpers.SupportedLanguages;
     var userPreference = (TempData["UserPreference"] as UserPreferenceModel) ?? new UserPreferenceModel();
     var theme = userPreference.Theme ?? "light-theme";
+    var scrollBarSize = userPreference.ScrollBarSize ?? ScrollBarSizes.Small;
     var useBetaIndexPage = userPreference.UseBetaIndexPage ?? false;
 }
 <div class="container py-2 mb-5">
@@ -34,11 +42,11 @@
         <div>
             @if (Model.userProfile.Email == null)
             {
-                    <h3>Setup Profile</h3>
+                <h3>Setup Profile</h3>
             }
             else
             {
-                    <h3>Edit Profile</h3>
+                <h3>Edit Profile</h3>
             }
         </div>
         <hr />
@@ -75,6 +83,25 @@
                                 {
                                     var displayName = item.Replace("-theme", "");
                                     if (item.Equals(theme))
+                                    {
+                                        <option value="@item" selected>@displayName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item">@displayName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group form-row">
+                        <label for="ScrollBarSize" class="font-weight-bold" style="line-height: 38px"> Scroll Bar Size </label>
+                        <div class="px-0">
+                            <select name="ScrollBarSize" id="scroll-bar-size-selector" aria-label="Scroll Bar Size Selector">
+                                @foreach (var item in scrollBarSizes)
+                                {
+                                    var displayName = item.ToString();
+                                    if (item.Equals(scrollBarSize))
                                     {
                                         <option value="@item" selected>@displayName</option>
                                     }

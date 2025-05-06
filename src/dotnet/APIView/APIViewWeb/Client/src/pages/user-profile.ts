@@ -2,9 +2,11 @@ import { updatePageSettings } from "../shared/helpers";
 
 $(() => {
   const themeSelector = $('#theme-selector');
+  const scrollBarSizeSelector = $('#scroll-bar-size-selector');
   const approvableLangSelect = $('#approvable-language-select');
 
   (<any>themeSelector).SumoSelect();
+  (<any>scrollBarSizeSelector).SumoSelect();
   (<any>approvableLangSelect).SumoSelect({selectAll: true});
 
   $(document).on("submit", "form[data-post-update='userProfile']", e => {
@@ -37,5 +39,8 @@ $(() => {
       })
       body.addClass(newTheme);
     });
+  });
+  scrollBarSizeSelector.on('change', function () {
+    updatePageSettings(function (){});
   });
 });
