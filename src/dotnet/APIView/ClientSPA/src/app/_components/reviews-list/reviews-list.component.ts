@@ -100,13 +100,12 @@ export class ReviewsListComponent implements OnInit, AfterViewInit {
       next: (response : any) => {
         if (response.result && response.pagination) {
           if (resetReviews) {
-            const arraySize = Math.ceil(response.pagination!.totalCount + Math.min(20, (0.05 * response.pagination!.totalCount))) // Add 5% extra rows to avoid flikering
-            this.reviews = Array.from({ length: arraySize  });
+            this.reviews = []
             this.insertIndex = 0;
           }
 
           if (response.result.length > 0) {
-            this.reviews.splice(this.insertIndex, this.insertIndex + response.result.length, ...response.result);
+            this.reviews.push(...response.result);
             this.insertIndex = this.insertIndex + response.result.length;
             this.pagination = response.pagination;
             this.totalNumberOfReviews = this.pagination?.totalCount!;
