@@ -1,0 +1,53 @@
+pr: none
+trigger: none
+
+# The live test cleanup pipeline runs every 4 hours. This job materializes the counts it logs into a
+# small Kusto table that backs the cleanup dashboard. Running twice a day with a 2 day lookback gives
+# plenty of overlap, and the append is idempotent so overlapping runs cannot create duplicates.
+schedules:
+  - cron: '30 2,14 * * *'
+    displayName: Live test cleanup metrics
+    branches:
+      include:
+        - main
+    always: true
+
+parameters:
+  - name: LookbackDays
+    type: number
+    default: 2
+  - name: WhatIf
+    type: boolean
+    default: false
+  - name: Pool
+    type: string
+    default: azsdk-pool
+
+stages:
+- stage: Run
+
+  variables:
+  - template: /eng/pipelines/templates/variables/globals.yml
+
+  jobs:
+  - job: UpdateMetrics
+    displayName: Update live test cleanup metrics
+    timeoutInMinutes: 60
+    pool:
+      name: ${{ parameters.Pool }}
+      demands: ImageOverride -equals ubuntu-24.04
+
+    steps:
+    - task: AzurePowerShell@5
+      displayName: Append cleanup metrics to Kusto
+      inputs:
+        # Same connection used to deploy the pipeline-witness Kusto cluster, so it can write to it.
+        azureSubscription: Azure SDK Engineering System
+        azurePowerShellVersion: LatestVersion
+        pwsh: true
+        ScriptType: FilePath
+        ScriptPath: eng/scripts/Update-LiveTestCleanupMetrics.ps1
+        ${{ if eq(parameters.WhatIf, true) }}:
+          ScriptArguments: -LookbackDays ${{ parameters.LookbackDays }} -WhatIf
+        ${{ else }}:
+          ScriptArguments: -LookbackDays ${{ parameters.LookbackDays }}

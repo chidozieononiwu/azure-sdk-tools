@@ -15,6 +15,9 @@ improve our overall security risks and manage costs.
 
 The cleanup script implementing these guidelines can be found [here](https://github.com/Azure/azure-sdk-tools/blob/main/eng/scripts/live-test-resource-cleanup.ps1).
 
+Cleanup effectiveness per subscription is tracked over time in a dashboard; see
+[Live test resource cleanup dashboard](./live-test-cleanup-dashboard.md).
+
 This section applies to resource groups located in any of the dev/test subscriptions managed by the Azure SDK
 Engineering System team, such as:
 
